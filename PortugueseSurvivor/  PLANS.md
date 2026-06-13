@@ -1,37 +1,19 @@
-Portuguese Survivor v1.0
+# Portuguese Survivor v1.0
 
-Sprint 1
+Sprint 1 - Foundation Layer
 
-Foundation Layer
+Sprint 2 - Models Layer
 
-Sprint 2
+Sprint 3 - SQLite Layer
 
-Models Layer
+Sprint 4 - Riverpod Layer
 
-Sprint 3
+Sprint 5 - Firebase Layer
 
-SQLite Layer
+Sprint 6 - Screens Layer
 
-Sprint 4
+Sprint 7 - Widgets Layer
 
-Riverpod Layer
+Sprint 8 - Learning Engine
 
-Sprint 5
-
-Firebase Layer
-
-Sprint 6
-
-Screens Layer
-
-Sprint 7
-
-Widgets Layer
-
-Sprint 8
-
-Learning Engine
-
-Sprint 9
-
-Production Build
+Sprint 9 - Production Build
