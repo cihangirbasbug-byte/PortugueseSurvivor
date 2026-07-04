@@ -21,15 +21,15 @@ class ContinueLessonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 22,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -66,7 +66,7 @@ class ContinueLessonCard extends StatelessWidget {
                     color: Colors.grey.shade600,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 ProgressSection(
                   label: 'İlerleme',
                   value: progress,
@@ -92,7 +92,7 @@ class ContinueLessonCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               FilledButton(
                 onPressed: () {
                   Navigator.of(context).push(
@@ -103,6 +103,7 @@ class ContinueLessonCard extends StatelessWidget {
                 },
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
+                  minimumSize: const Size(96, 44),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(999),
                   ),
