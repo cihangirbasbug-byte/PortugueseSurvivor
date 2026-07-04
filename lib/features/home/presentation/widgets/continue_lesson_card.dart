@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../lesson/presentation/lesson_page.dart';
 import 'progress_section.dart';
 
 class ContinueLessonCard extends StatelessWidget {
@@ -93,7 +94,13 @@ class ContinueLessonCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               FilledButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const LessonPage(),
+                    ),
+                  );
+                },
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   shape: RoundedRectangleBorder(
