@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../data/models/mission_model.dart';
+import '../data/models/scene_model.dart';
+import '../data/repositories/mission_repository.dart';
 import 'widgets/answer_button.dart';
 import 'widgets/audio_button.dart';
 import 'widgets/lesson_complete_card.dart';
@@ -15,52 +18,93 @@ class LessonPage extends StatefulWidget {
 }
 
 class _LessonPageState extends State<LessonPage> {
-  int _step = 0;
+  final MissionRepository _repository = MissionRepository();
+  MissionModel? _mission;
+  int _sceneIndex = 0;
   int? _selectedAnswerIndex;
   bool _showFeedback = false;
   bool _isCorrect = false;
+  bool _isLoading = true;
 
-  final List<String> _answers = [
-    'Merhaba',
-    'Hoşça kal',
-    'Teşekkür ederim',
-    'Lütfen',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadMission();
+  }
+
+  Future<void> _loadMission() async {
+    final mission = await _repository.loadMission('mission_001');
+    if (!mounted) return;
+    setState(() {
+      _mission = mission;
+      _isLoading = false;
+    });
+  }
 
   void _handleAnswer(int index) {
+    final scene = _mission?.scenes[_sceneIndex];
+    final isCorrect = scene?.answer == scene?.options[index];
+
     setState(() {
       _selectedAnswerIndex = index;
       _showFeedback = true;
-      _isCorrect = index == 0;
+      _isCorrect = isCorrect;
     });
 
-    if (_isCorrect) {
+    if (isCorrect) {
       showDialog<void>(
         context: context,
         barrierDismissible: false,
         builder: (context) => XpDialog(
           title: 'Harika!',
           message: 'Doğru cevap! Yeni kelimeyi öğrendin.',
-          xp: 5,
+          xp: scene?.reward ?? 0,
           onPressed: () {
             Navigator.of(context).pop();
-            setState(() {
-              _step = 2;
-              _selectedAnswerIndex = null;
-              _showFeedback = false;
-            });
+            _goToNextScene();
           },
         ),
       );
     }
   }
 
+  void _goToNextScene() {
+    final mission = _mission;
+    if (mission == null) return;
+
+    if (_sceneIndex < mission.scenes.length - 1) {
+      setState(() {
+        _sceneIndex += 1;
+        _selectedAnswerIndex = null;
+        _showFeedback = false;
+      });
+    } else {
+      _repository.saveProgress(
+        mission.id,
+        completed: true,
+        xpEarned: mission.xpReward,
+        courageEarned: mission.courageReward,
+      );
+      setState(() {
+        _sceneIndex = mission.scenes.length;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_isLoading || _mission == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final scene = _sceneIndex < _mission!.scenes.length ? _mission!.scenes[_sceneIndex] : null;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Ders 1'),
+        title: Text(_mission!.title),
         backgroundColor: AppColors.background,
       ),
       body: SafeArea(
@@ -69,7 +113,7 @@ class _LessonPageState extends State<LessonPage> {
             constraints: const BoxConstraints(maxWidth: 640),
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: _buildStepContent(),
+              child: _buildSceneContent(scene),
             ),
           ),
         ),
@@ -77,22 +121,66 @@ class _LessonPageState extends State<LessonPage> {
     );
   }
 
-  Widget _buildStepContent() {
-    switch (_step) {
-      case 0:
+  Widget _buildSceneContent(SceneModel? scene) {
+    if (scene == null) {
+      return LessonCompleteCard(
+        xp: _mission?.xpReward ?? 20,
+        onPressed: () {
+          Navigator.of(context).maybePop();
+        },
+      );
+    }
+
+    switch (scene.type) {
+      case 'intro':
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Öğrenmeye Başla',
+              scene.title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(height: 16),
-            const WordCard(
-              portugueseWord: 'Olá',
-              turkishMeaning: 'Merhaba',
+            Text(
+              scene.body,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.grey.shade700,
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: _goToNextScene,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: const Text('Devam'),
+              ),
+            ),
+          ],
+        );
+      case 'word':
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              scene.title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            WordCard(
+              portugueseWord: scene.body,
+              turkishMeaning: scene.answer,
               hint: 'Portekizce kelime',
             ),
             const SizedBox(height: 20),
@@ -116,11 +204,7 @@ class _LessonPageState extends State<LessonPage> {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () {
-                  setState(() {
-                    _step = 1;
-                  });
-                },
+                onPressed: _goToNextScene,
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -133,23 +217,23 @@ class _LessonPageState extends State<LessonPage> {
             ),
           ],
         );
-      case 1:
+      case 'quiz':
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Olá ne demektir?',
+              scene.prompt,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(height: 20),
-            ...List.generate(_answers.length, (index) {
+            ...List.generate(scene.options.length, (index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: AnswerButton(
-                  label: _answers[index],
-                  isCorrect: index == 0,
+                  label: scene.options[index],
+                  isCorrect: scene.options[index] == scene.answer,
                   isSelected: _selectedAnswerIndex == index,
                   onPressed: () => _handleAnswer(index),
                 ),
@@ -168,12 +252,70 @@ class _LessonPageState extends State<LessonPage> {
               ),
           ],
         );
+      case 'celebration':
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              scene.title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              scene.body,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.grey.shade700,
+              ),
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: _goToNextScene,
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: const Text('Devam'),
+            ),
+          ],
+        );
+      case 'realLifeTip':
       default:
-        return LessonCompleteCard(
-          xp: 20,
-          onPressed: () {
-            Navigator.of(context).maybePop();
-          },
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              scene.title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              scene.body,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.grey.shade700,
+              ),
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: _goToNextScene,
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: const Text('Devam'),
+            ),
+          ],
         );
     }
   }

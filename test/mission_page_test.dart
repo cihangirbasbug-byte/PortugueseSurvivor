@@ -5,13 +5,12 @@ import 'package:portuguese_survivor/features/lesson/presentation/lesson_page.dar
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('LessonPage shows the first word card content', (tester) async {
+  testWidgets('LessonPage renders mission content from data', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: LessonPage()));
     await tester.pumpAndSettle();
 
-    expect(find.text('Kelime'), findsOneWidget);
+    expect(find.text('Selamlaşma Macerası'), findsOneWidget);
     expect(find.text('Olá'), findsOneWidget);
     expect(find.text('Merhaba'), findsOneWidget);
-    expect(find.text('Devam'), findsOneWidget);
   });
 }

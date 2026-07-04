@@ -1,0 +1,64 @@
+{
+  "id": "mission_001",
+  "title": "Selamlaşma Macerası",
+  "description": "İlk Portekizce kelimeyi öğren.",
+  "xpReward": 20,
+  "courageReward": 5,
+  "scenes": [
+    {
+      "type": "word",
+      "title": "Kelime",
+      "body": "Olá",
+      "prompt": "Bu kelimenin anlamı nedir?",
+      "answer": "Merhaba",
+      "options": ["Merhaba", "Hoşça kal", "Teşekkür ederim", "Lütfen"],
+      "reward": 5,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "intro",
+      "title": "Öğrenmeye Başla",
+      "body": "Bugün yeni bir kelime öğreniyoruz.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "quiz",
+      "title": "Mini Quiz",
+      "body": "Olá ne demektir?",
+      "prompt": "Olá ne demektir?",
+      "answer": "Merhaba",
+      "options": ["Merhaba", "Hoşça kal", "Teşekkür ederim", "Lütfen"],
+      "reward": 5,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "celebration",
+      "title": "Harika!",
+      "body": "Kelimeyi öğrendin.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 10,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "realLifeTip",
+      "title": "Günlük İpucu",
+      "body": "Merhaba derken gülümse ve elini hafifçe sallayarak selam ver.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    }
+  ]
+}
