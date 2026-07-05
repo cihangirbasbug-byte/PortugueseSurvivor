@@ -4,11 +4,13 @@ import '../../../../../core/constants/app_colors.dart';
 
 class LessonCompleteCard extends StatelessWidget {
   final int xp;
+  final int courage;
   final VoidCallback onPressed;
 
   const LessonCompleteCard({
     super.key,
     required this.xp,
+    required this.courage,
     required this.onPressed,
   });
 
@@ -37,25 +39,52 @@ class LessonCompleteCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Ders Tamamlandı',
+            'Görev Tamamlandı',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Tebrikler!',
+            'Harika bir adım attın.',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: Colors.grey.shade700,
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            'Kazandın: +$xp XP',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: AppColors.primary,
-            ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  '+$xp XP',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.16),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  '+$courage Cesaret',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.orange.shade800,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 24),
           FilledButton(
@@ -67,7 +96,7 @@ class LessonCompleteCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(999),
               ),
             ),
-            child: const Text('Sonraki Ders'),
+            child: const Text('Devam Et'),
           ),
         ],
       ),

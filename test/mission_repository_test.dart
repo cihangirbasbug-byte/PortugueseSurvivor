@@ -13,7 +13,7 @@ void main() {
       final mission = await repository.loadMission('mission_001');
 
       expect(mission.id, 'mission_001');
-      expect(mission.title, 'Selamlaşma Macerası');
+      expect(mission.title, 'İlk Okul Günüm');
       expect(mission.scenes, isNotEmpty);
     });
 

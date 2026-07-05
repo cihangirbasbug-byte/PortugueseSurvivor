@@ -9,6 +9,8 @@ class SceneModel {
     required this.reward,
     required this.tip,
     required this.imagePath,
+    required this.character,
+    required this.illustration,
   });
 
   final String type;
@@ -20,6 +22,8 @@ class SceneModel {
   final int reward;
   final String tip;
   final String imagePath;
+  final String character;
+  final String illustration;
 
   factory SceneModel.fromJson(Map<String, dynamic> json) {
     return SceneModel(
@@ -35,6 +39,8 @@ class SceneModel {
       reward: json['reward'] as int? ?? 0,
       tip: json['tip'] as String? ?? '',
       imagePath: json['imagePath'] as String? ?? '',
+      character: json['character'] as String? ?? '',
+      illustration: json['illustration'] as String? ?? '',
     );
   }
 }

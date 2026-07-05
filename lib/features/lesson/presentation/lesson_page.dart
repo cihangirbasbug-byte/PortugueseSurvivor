@@ -7,6 +7,7 @@ import '../data/repositories/mission_repository.dart';
 import 'widgets/answer_button.dart';
 import 'widgets/audio_button.dart';
 import 'widgets/lesson_complete_card.dart';
+import 'widgets/scene_action_button.dart';
 import 'widgets/word_card.dart';
 import 'widgets/xp_dialog.dart';
 
@@ -24,6 +25,7 @@ class _LessonPageState extends State<LessonPage> {
   int? _selectedAnswerIndex;
   bool _showFeedback = false;
   bool _isCorrect = false;
+  bool _showHint = false;
   bool _isLoading = true;
 
   @override
@@ -49,6 +51,7 @@ class _LessonPageState extends State<LessonPage> {
       _selectedAnswerIndex = index;
       _showFeedback = true;
       _isCorrect = isCorrect;
+      _showHint = false;
     });
 
     if (isCorrect) {
@@ -57,8 +60,9 @@ class _LessonPageState extends State<LessonPage> {
         barrierDismissible: false,
         builder: (context) => XpDialog(
           title: 'Harika!',
-          message: 'Doğru cevap! Yeni kelimeyi öğrendin.',
-          xp: scene?.reward ?? 0,
+          message: 'İlk Portekizce kelimeni öğrendin.',
+          xp: _mission?.xpReward ?? 20,
+          courage: _mission?.courageReward ?? 10,
           onPressed: () {
             Navigator.of(context).pop();
             _goToNextScene();
@@ -77,6 +81,7 @@ class _LessonPageState extends State<LessonPage> {
         _sceneIndex += 1;
         _selectedAnswerIndex = null;
         _showFeedback = false;
+        _showHint = false;
       });
     } else {
       _repository.saveProgress(
@@ -125,6 +130,7 @@ class _LessonPageState extends State<LessonPage> {
     if (scene == null) {
       return LessonCompleteCard(
         xp: _mission?.xpReward ?? 20,
+        courage: _mission?.courageReward ?? 10,
         onPressed: () {
           Navigator.of(context).maybePop();
         },
@@ -136,6 +142,22 @@ class _LessonPageState extends State<LessonPage> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if (scene.character.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  scene.character,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 16),
             Text(
               scene.title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -151,19 +173,77 @@ class _LessonPageState extends State<LessonPage> {
               ),
             ),
             const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: _goToNextScene,
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+            SceneActionButton(
+              label: scene.prompt.isNotEmpty ? scene.prompt : 'Başlayalım',
+              onPressed: _goToNextScene,
+            ),
+          ],
+        );
+      case 'story':
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (scene.character.isNotEmpty)
+              Text(
+                scene.character,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
                 ),
-                child: const Text('Devam'),
               ),
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    scene.title,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      color: AppColors.accent.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Center(
+                      child: Text(
+                        scene.illustration.isNotEmpty ? scene.illustration : '🏫',
+                        style: const TextStyle(fontSize: 42),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    scene.body,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            SceneActionButton(
+              label: 'Devam',
+              onPressed: _goToNextScene,
             ),
           ],
         );
@@ -171,6 +251,15 @@ class _LessonPageState extends State<LessonPage> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if (scene.character.isNotEmpty)
+              Text(
+                scene.character,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
+              ),
+            const SizedBox(height: 12),
             Text(
               scene.title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -201,19 +290,59 @@ class _LessonPageState extends State<LessonPage> {
               ],
             ),
             const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: _goToNextScene,
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+            SceneActionButton(
+              label: 'Devam',
+              onPressed: _goToNextScene,
+            ),
+          ],
+        );
+      case 'practice':
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (scene.character.isNotEmpty)
+              Text(
+                scene.character,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
                 ),
-                child: const Text('Devam'),
               ),
+            const SizedBox(height: 12),
+            Text(
+              scene.title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              scene.body,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.grey.shade700,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AudioButton(
+                  label: 'Mikrofon',
+                  icon: Icons.mic_rounded,
+                  onPressed: () {},
+                ),
+                const SizedBox(width: 12),
+                TextButton(
+                  onPressed: _goToNextScene,
+                  child: const Text('Atla'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            SceneActionButton(
+              label: 'Devam',
+              onPressed: _goToNextScene,
             ),
           ],
         );
@@ -242,12 +371,39 @@ class _LessonPageState extends State<LessonPage> {
             if (_showFeedback)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  _isCorrect ? 'Harika!' : 'Tekrar deneyelim.',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: _isCorrect ? AppColors.primary : Colors.orange.shade700,
-                    fontWeight: FontWeight.w700,
-                  ),
+                child: Column(
+                  children: [
+                    Text(
+                      _isCorrect ? 'Harika!' : 'Güzel denedin.',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: _isCorrect ? AppColors.primary : Colors.orange.shade700,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (!_isCorrect) ...[
+                      const SizedBox(height: 8),
+                      TextButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            _showHint = true;
+                          });
+                        },
+                        icon: const Icon(Icons.lightbulb_outline_rounded),
+                        label: const Text('İpucu'),
+                      ),
+                      if (_showHint)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            scene.tip.isNotEmpty ? scene.tip : 'Öğretmen seni selamlıyor.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ],
                 ),
               ),
           ],
@@ -271,21 +427,13 @@ class _LessonPageState extends State<LessonPage> {
               ),
             ),
             const SizedBox(height: 24),
-            FilledButton(
+            SceneActionButton(
+              label: 'Devam',
               onPressed: _goToNextScene,
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: const Text('Devam'),
             ),
           ],
         );
       case 'realLifeTip':
-      default:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -304,19 +452,22 @@ class _LessonPageState extends State<LessonPage> {
               ),
             ),
             const SizedBox(height: 24),
-            FilledButton(
+            SceneActionButton(
+              label: 'Devam',
               onPressed: _goToNextScene,
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: const Text('Devam'),
             ),
           ],
         );
+      case 'complete':
+        return LessonCompleteCard(
+          xp: _mission?.xpReward ?? 20,
+          courage: _mission?.courageReward ?? 10,
+          onPressed: () {
+            Navigator.of(context).maybePop();
+          },
+        );
+      default:
+        return const SizedBox.shrink();
     }
   }
 }

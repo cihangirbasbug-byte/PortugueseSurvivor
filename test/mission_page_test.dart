@@ -7,10 +7,11 @@ void main() {
 
   testWidgets('LessonPage renders mission content from data', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: LessonPage()));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
-    expect(find.text('Selamlaşma Macerası'), findsOneWidget);
-    expect(find.text('Olá'), findsOneWidget);
-    expect(find.text('Merhaba'), findsOneWidget);
+    expect(find.text('İlk Okul Günüm'), findsOneWidget);
+    expect(find.text('Merhaba!'), findsOneWidget);
+    expect(find.textContaining('Ben Pico'), findsOneWidget);
   });
 }
