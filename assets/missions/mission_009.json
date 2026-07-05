@@ -1,0 +1,86 @@
+{
+  "id": "mission_009",
+  "title": "Anlamadım",
+  "description": "Tekrar istemek için temel cümleleri öğren.",
+  "xpReward": 20,
+  "courageReward": 5,
+  "scenes": [
+    {
+      "type": "intro",
+      "title": "Başlıyoruz",
+      "body": "Bugün bir şeyi tekrar istemeyi öğreneceğiz. Bu çok güçlü bir beceri.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "intro",
+      "title": "Pico'nun Mesajı",
+      "body": "İpucu: Bir şey anlamadığında sakin kal; tekrar isteyebilirsin. Bu normaldir.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 1",
+      "body": "Não percebi.",
+      "prompt": "Bu ifade ne anlama gelir?",
+      "answer": "Anlamadım.",
+      "options": ["Anlamadım.", "Anladım.", "Teşekkür ederim.", "İyi günler."],
+      "reward": 5,
+      "tip": "Telaffuz: nau per-se-bi",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 2",
+      "body": "Pode repetir?",
+      "prompt": "Bu ifade ne anlama gelir?",
+      "answer": "Tekrar edebilir misin?",
+      "options": ["Tekrar edebilir misin?", "Ne istiyorsun?", "Nerede oturuyorsun?", "Beni duyuyor musun?"],
+      "reward": 5,
+      "tip": "Telaffuz: po-de re-pe-tir",
+      "imagePath": ""
+    },
+    {
+      "type": "quiz",
+      "title": "Mini Quiz",
+      "body": "İpucu: Bir şeyi tekrar istemekle ilgili bir cümle arıyorsun.",
+      "prompt": "Não percebi. ne demek?",
+      "answer": "Anlamadım.",
+      "options": ["Anlamadım.", "Merhaba.", "Tekrar edebilirim.", "Tamam."],
+      "reward": 5,
+      "tip": "Bir iletişim cümlesi.",
+      "imagePath": ""
+    },
+    {
+      "type": "celebration",
+      "title": "Harika!",
+      "body": "Şimdi bir şeyi anlamadığında sakin bir şekilde tekrar isteyebilirsin.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 10,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "realLifeTip",
+      "title": "Günlük İpucu",
+      "body": "Bir şeyin ne olduğunu anlamadığında gülümseyip tekrar isteyebilirsin; bu çok doğal ve naziktir.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    }
+  ]
+}

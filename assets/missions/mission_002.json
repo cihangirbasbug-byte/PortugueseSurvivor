@@ -1,0 +1,86 @@
+{
+  "id": "mission_002",
+  "title": "Benim Adım",
+  "description": "İsmini tanıtmak için temel cümleleri öğren.",
+  "xpReward": 20,
+  "courageReward": 5,
+  "scenes": [
+    {
+      "type": "intro",
+      "title": "Başlıyoruz",
+      "body": "Bugün kendini tanıtmayı öğreneceğiz. Küçük bir adım, büyük bir başarı.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "intro",
+      "title": "Pico'nun Mesajı",
+      "body": "İpucu: Önce 'ben' ve 'adım' kelimelerini ayır. Sonra cümleyi bir araya getir.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 1",
+      "body": "Meu nome é",
+      "prompt": "Bu ifade ne anlama gelir?",
+      "answer": "Benim adım",
+      "options": ["Benim adım", "Senin adın", "Bizim adımız", "Onun adı"],
+      "reward": 5,
+      "tip": "Telaffuz: mew no-mi eh",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 2",
+      "body": "Como te chamas?",
+      "prompt": "Bu soru ne sorar?",
+      "answer": "Adın ne?",
+      "options": ["Adın ne?", "Nasılsın?", "Ne yapıyorsun?", "Beni tanıyor musun?"],
+      "reward": 5,
+      "tip": "Telaffuz: ko-mu ti sha-mus",
+      "imagePath": ""
+    },
+    {
+      "type": "quiz",
+      "title": "Mini Quiz",
+      "body": "İpucu: Kişi tanıtmak için kullanılan ifadeye bak.",
+      "prompt": "Meu nome é ne demek?",
+      "answer": "Benim adım",
+      "options": ["Benim adım", "Adın ne?", "Merhaba", "Teşekkür ederim"],
+      "reward": 5,
+      "tip": "Bir tanıtım cümlesi.",
+      "imagePath": ""
+    },
+    {
+      "type": "celebration",
+      "title": "Harika!",
+      "body": "Artık kendini tanıtmak için yeni bir ifade biliyorsun.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 10,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "realLifeTip",
+      "title": "Günlük İpucu",
+      "body": "Yeni biriyle tanıştığında adını söylemek çok naziktir; bunu gülümseyerek yap.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    }
+  ]
+}

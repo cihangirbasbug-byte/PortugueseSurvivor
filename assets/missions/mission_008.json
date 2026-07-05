@@ -1,0 +1,86 @@
+{
+  "id": "mission_008",
+  "title": "Su İçebilir Miyim?",
+  "description": "Su istemek için bir cümle öğren.",
+  "xpReward": 20,
+  "courageReward": 5,
+  "scenes": [
+    {
+      "type": "intro",
+      "title": "Başlıyoruz",
+      "body": "Bugün bir isteği nazikçe söylemeyi öğreneceğiz.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "intro",
+      "title": "Pico'nun Mesajı",
+      "body": "İpucu: Bir şey istemek için kısa ve nazik bir cümle kullan. Bu çok önemli.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 1",
+      "body": "Posso beber água?",
+      "prompt": "Bu soru ne anlama gelir?",
+      "answer": "Su içebilir miyim?",
+      "options": ["Su içebilir miyim?", "Su nerede?", "Su istiyorum", "Su istemiyorum"],
+      "reward": 5,
+      "tip": "Telaffuz: pos-su be-ber a-gwa",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 2",
+      "body": "Água",
+      "prompt": "Bu kelime ne anlama gelir?",
+      "answer": "Su",
+      "options": ["Su", "Ekmek", "Çay", "Elma"],
+      "reward": 5,
+      "tip": "Telaffuz: a-gwa",
+      "imagePath": ""
+    },
+    {
+      "type": "quiz",
+      "title": "Mini Quiz",
+      "body": "İpucu: Bir içecek isteğiyle ilgili bir ifade arıyorsun.",
+      "prompt": "Posso beber água? ne demek?",
+      "answer": "Su içebilir miyim?",
+      "options": ["Su içebilir miyim?", "Su nerede?", "Su çok güzel", "Su içme"],
+      "reward": 5,
+      "tip": "Bir istek cümlesi.",
+      "imagePath": ""
+    },
+    {
+      "type": "celebration",
+      "title": "Harika!",
+      "body": "Artık bir şeyi nazikçe istemeyi biliyorsun. Güzel bir adım.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 10,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "realLifeTip",
+      "title": "Günlük İpucu",
+      "body": "Bir şey isterken 'lütfen' ile birlikte söylemek her zaman daha nazik görünür.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    }
+  ]
+}

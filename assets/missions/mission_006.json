@@ -1,0 +1,97 @@
+{
+  "id": "mission_006",
+  "title": "Teşekkür",
+  "description": "Nazik bir şekilde teşekkür etmeyi öğren.",
+  "xpReward": 20,
+  "courageReward": 5,
+  "scenes": [
+    {
+      "type": "intro",
+      "title": "Başlıyoruz",
+      "body": "Bugün teşekkür etmek için güzel kelimeler öğreneceğiz. Bu kelimeler her yerde işe yarar.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "intro",
+      "title": "Pico'nun Mesajı",
+      "body": "İpucu: Teşekkür ederken sıcak bir ses tonuyla söyle. İnsanlar bunu hemen hisseder.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 1",
+      "body": "Obrigado",
+      "prompt": "Bu kelime ne anlama gelir?",
+      "answer": "Teşekkür ederim",
+      "options": ["Teşekkür ederim", "Lütfen", "Merhaba", "Hoşça kal"],
+      "reward": 5,
+      "tip": "Telaffuz: o-bri-ga-do",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 2",
+      "body": "Obrigada",
+      "prompt": "Bu kelime ne anlama gelir?",
+      "answer": "Teşekkür ederim",
+      "options": ["Teşekkür ederim", "Evet", "Hayır", "Günaydın"],
+      "reward": 5,
+      "tip": "Telaffuz: o-bri-ga-da",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 3",
+      "body": "Por favor",
+      "prompt": "Bu ifade ne anlama gelir?",
+      "answer": "Lütfen",
+      "options": ["Lütfen", "İyi geceler", "Selam", "Nasılsın"],
+      "reward": 5,
+      "tip": "Telaffuz: por fa-vor",
+      "imagePath": ""
+    },
+    {
+      "type": "quiz",
+      "title": "Mini Quiz",
+      "body": "İpucu: Bir nezaket ifadesine bakıyorsun.",
+      "prompt": "Por favor ne demek?",
+      "answer": "Lütfen",
+      "options": ["Lütfen", "Teşekkür ederim", "Merhaba", "Günaydın"],
+      "reward": 5,
+      "tip": "Bir nezaket sözcüğü.",
+      "imagePath": ""
+    },
+    {
+      "type": "celebration",
+      "title": "Harika!",
+      "body": "Teşekkür ve lütfen kelimelerini ustalıkla öğrendin.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 10,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "realLifeTip",
+      "title": "Günlük İpucu",
+      "body": "Birine bir şey verdiğinde 'Obrigado' ya da 'Obrigada' demek çok hoş görünür.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    }
+  ]
+}

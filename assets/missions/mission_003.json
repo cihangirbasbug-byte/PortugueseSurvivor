@@ -1,0 +1,97 @@
+{
+  "id": "mission_003",
+  "title": "Sınıf",
+  "description": "Sınıfta kullanılacak temel kelimeler.",
+  "xpReward": 20,
+  "courageReward": 5,
+  "scenes": [
+    {
+      "type": "intro",
+      "title": "Başlıyoruz",
+      "body": "Bugün sınıf ortamında kullandığın kelimeleri öğreneceğiz.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "intro",
+      "title": "Pico'nun Mesajı",
+      "body": "İpucu: Sınıf kelimelerini bir resim gibi düşün. Her biri bir yer veya bir kişi.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 1",
+      "body": "Sala de aula",
+      "prompt": "Bu ifade ne anlama gelir?",
+      "answer": "Sınıf",
+      "options": ["Sınıf", "Bahçe", "Kütüphane", "Yemek odası"],
+      "reward": 5,
+      "tip": "Telaffuz: sa-la de a-u-la",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 2",
+      "body": "Professor",
+      "prompt": "Bu kelime ne anlama gelir?",
+      "answer": "Öğretmen",
+      "options": ["Öğretmen", "Öğrenci", "Doktor", "Aile"],
+      "reward": 5,
+      "tip": "Telaffuz: pro-fe-sor",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 3",
+      "body": "Aluno",
+      "prompt": "Bu kelime ne anlama gelir?",
+      "answer": "Öğrenci",
+      "options": ["Öğrenci", "Öğretmen", "Anne", "Baba"],
+      "reward": 5,
+      "tip": "Telaffuz: a-lu-no",
+      "imagePath": ""
+    },
+    {
+      "type": "quiz",
+      "title": "Mini Quiz",
+      "body": "İpucu: Sınıfta olan bir kişiyi veya yeri hatırla.",
+      "prompt": "Sala de aula ne demek?",
+      "answer": "Sınıf",
+      "options": ["Sınıf", "Öğretmen", "Öğrenci", "Kitap"],
+      "reward": 5,
+      "tip": "Bir mekân kelimesi.",
+      "imagePath": ""
+    },
+    {
+      "type": "celebration",
+      "title": "Harika!",
+      "body": "Sınıf kelimelerini güzelce öğrendin. Bu kadar hızlı ilerleme çok iyi.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 10,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "realLifeTip",
+      "title": "Günlük İpucu",
+      "body": "Okula giderken 'professor' ve 'aluno' kelimelerini bir cümlede kullanmaya çalış.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    }
+  ]
+}

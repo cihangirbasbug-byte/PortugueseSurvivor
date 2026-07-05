@@ -1,0 +1,108 @@
+{
+  "id": "mission_004",
+  "title": "Okul Çantam",
+  "description": "Okul çantasında bulunan eşyaları öğren.",
+  "xpReward": 20,
+  "courageReward": 5,
+  "scenes": [
+    {
+      "type": "intro",
+      "title": "Başlıyoruz",
+      "body": "Bugün okul çantandaki eşyaları tanıyacağız. Her birini tanımak çok eğlenceli.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "intro",
+      "title": "Pico'nun Mesajı",
+      "body": "İpucu: Eşyaları birer dost gibi düşün. Her biri senin gününü kolaylaştırır.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 1",
+      "body": "Mochila",
+      "prompt": "Bu kelime ne anlama gelir?",
+      "answer": "Çanta",
+      "options": ["Çanta", "Kalem", "Defter", "Kitap"],
+      "reward": 5,
+      "tip": "Telaffuz: mo-chi-la",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 2",
+      "body": "Livro",
+      "prompt": "Bu kelime ne anlama gelir?",
+      "answer": "Kitap",
+      "options": ["Kitap", "Defter", "Silgi", "Kalem"],
+      "reward": 5,
+      "tip": "Telaffuz: li-vru",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 3",
+      "body": "Caderno",
+      "prompt": "Bu kelime ne anlama gelir?",
+      "answer": "Defter",
+      "options": ["Defter", "Kitap", "Çanta", "Sırt çantası"],
+      "reward": 5,
+      "tip": "Telaffuz: kan-de-ro",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Kelime 4",
+      "body": "Lápis",
+      "prompt": "Bu kelime ne anlama gelir?",
+      "answer": "Kalem",
+      "options": ["Kalem", "Silgi", "Defter", "Çanta"],
+      "reward": 5,
+      "tip": "Telaffuz: la-pis",
+      "imagePath": ""
+    },
+    {
+      "type": "quiz",
+      "title": "Mini Quiz",
+      "body": "İpucu: Çanta içindeki eşyaları hatırla.",
+      "prompt": "Mochila ne demek?",
+      "answer": "Çanta",
+      "options": ["Çanta", "Kitap", "Defter", "Kalem"],
+      "reward": 5,
+      "tip": "Bir eşya adı.",
+      "imagePath": ""
+    },
+    {
+      "type": "celebration",
+      "title": "Harika!",
+      "body": "Okul çantasındaki kelimeleri başarıyla öğrendin. Çok iyi gidiyorsun.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 10,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "realLifeTip",
+      "title": "Günlük İpucu",
+      "body": "Okula giderken çantanı kontrol et; her şeyin yerli yerinde olsun.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    }
+  ]
+}

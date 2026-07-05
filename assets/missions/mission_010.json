@@ -1,0 +1,97 @@
+{
+  "id": "mission_010",
+  "title": "İlk Gün Tamamlandı",
+  "description": "Önceki kelimeleri tekrar ederek ilk gününü tamamla.",
+  "xpReward": 20,
+  "courageReward": 5,
+  "scenes": [
+    {
+      "type": "intro",
+      "title": "Başlıyoruz",
+      "body": "Bugün öğrendiğin kelimeleri tekrar ederek ilk gününü kutluyoruz.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "intro",
+      "title": "Pico'nun Mesajı",
+      "body": "İpucu: Tekrar, öğrenmenin en iyi yoludur. Sana güveniyorum.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Tekrar 1",
+      "body": "Olá",
+      "prompt": "Bu kelime ne anlama gelir?",
+      "answer": "Merhaba",
+      "options": ["Merhaba", "Teşekkür ederim", "Lütfen", "Günaydın"],
+      "reward": 5,
+      "tip": "Telaffuz: O-la",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Tekrar 2",
+      "body": "Bom dia",
+      "prompt": "Bu ifade ne anlama gelir?",
+      "answer": "Günaydın",
+      "options": ["Günaydın", "Merhaba", "Hoşça kal", "Teşekkür ederim"],
+      "reward": 5,
+      "tip": "Telaffuz: bom dya",
+      "imagePath": ""
+    },
+    {
+      "type": "word",
+      "title": "Tekrar 3",
+      "body": "Meu nome é",
+      "prompt": "Bu ifade ne anlama gelir?",
+      "answer": "Benim adım",
+      "options": ["Benim adım", "Adın ne?", "Nasılsın?", "İyiyim"],
+      "reward": 5,
+      "tip": "Telaffuz: mew no-mi eh",
+      "imagePath": ""
+    },
+    {
+      "type": "quiz",
+      "title": "Mini Quiz",
+      "body": "İpucu: Önceki görevlerden bir kelimeyi hatırla.",
+      "prompt": "Meu nome é ne demek?",
+      "answer": "Benim adım",
+      "options": ["Benim adım", "Günaydın", "Lütfen", "Su"],
+      "reward": 5,
+      "tip": "Bir tanıtım ifadesi.",
+      "imagePath": ""
+    },
+    {
+      "type": "celebration",
+      "title": "Harika!",
+      "body": "İlk gününü tamamladın. Öğrendiklerin artık daha sağlam.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 10,
+      "tip": "",
+      "imagePath": ""
+    },
+    {
+      "type": "realLifeTip",
+      "title": "Günlük İpucu",
+      "body": "Her gün kısa bir tekrar yapmak öğrenmeyi kalıcı hale getirir. Sen bunu başardın.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": ""
+    }
+  ]
+}
