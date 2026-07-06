@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart' as theme;
+
 class AppColors {
-  static const Color primary = Color(0xFF0E8A4B);
-
-  static const Color accent = Color(0xFFF5C542);
-
-  static const Color background = Color(0xFFF8F7F3);
-
-  static const Color text = Color(0xFF202020);
+  static const Color primary = theme.AppColors.primary;
+  static const Color accent = theme.AppColors.accent;
+  static const Color background = theme.AppColors.background;
+  static const Color text = theme.AppColors.text;
 }

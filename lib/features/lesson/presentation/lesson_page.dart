@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/app_colors.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/services/audio_playback_service.dart';
+import '../../../shared/widgets/celebration_card.dart';
+import '../../../shared/widgets/mission_header.dart';
+import '../../../shared/widgets/pico_avatar.dart';
+import '../../../shared/widgets/speech_bubble.dart';
 import '../data/models/mission_model.dart';
 import '../data/models/scene_model.dart';
 import '../data/repositories/mission_repository.dart';
@@ -185,10 +191,10 @@ class _LessonPageState extends State<LessonPage> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: AppSpacing.screenPadding,
               child: Column(
                 children: [
-                  _MissionHeader(
+                  MissionHeader(
                     chapterLabel: 'Chapter 1',
                     missionLabel: 'Mission 1 / 10',
                     title: mission.title,
@@ -197,7 +203,7 @@ class _LessonPageState extends State<LessonPage> {
                         ? 0
                         : (visualSceneIndex / sceneTotal).clamp(0.0, 1.0),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: AppSpacing.sm),
                   Expanded(
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 350),
@@ -253,31 +259,18 @@ class _LessonPageState extends State<LessonPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _IntroAnimationPanel(showBubble: _showIntroBubble),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               AnimatedOpacity(
                 opacity: _showIntroBubble ? 1 : 0,
                 duration: const Duration(milliseconds: 350),
                 child: AnimatedSlide(
                   offset: _showIntroBubble ? Offset.zero : const Offset(0, 0.08),
                   duration: const Duration(milliseconds: 350),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.06),
-                          blurRadius: 16,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
+                  child: SpeechBubble(
                     child: _TypewriterText(
                       text: scene.body,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.grey.shade700,
+                            color: AppColors.mutedText,
                             height: 1.4,
                           ),
                     ),
@@ -379,96 +372,6 @@ class _LessonPageState extends State<LessonPage> {
   }
 }
 
-class _MissionHeader extends StatelessWidget {
-  const _MissionHeader({
-    required this.chapterLabel,
-    required this.missionLabel,
-    required this.title,
-    required this.sceneLabel,
-    required this.progress,
-  });
-
-  final String chapterLabel;
-  final String missionLabel;
-  final String title;
-  final String sceneLabel;
-  final double progress;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _HeaderPill(label: chapterLabel),
-              _HeaderPill(label: missionLabel),
-              _HeaderPill(label: sceneLabel),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
-          ),
-          const SizedBox(height: 10),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 8,
-              backgroundColor: AppColors.accent.withValues(alpha: 0.15),
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HeaderPill extends StatelessWidget {
-  const _HeaderPill({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w700,
-            ),
-      ),
-    );
-  }
-}
-
 class _IntroAnimationPanel extends StatelessWidget {
   const _IntroAnimationPanel({required this.showBubble});
 
@@ -478,9 +381,9 @@ class _IntroAnimationPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -498,7 +401,7 @@ class _IntroAnimationPanel extends StatelessWidget {
                 'Sabah • Okul Girişi',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: Colors.grey.shade800,
+                      color: AppColors.text,
                     ),
               ),
             ],
@@ -507,51 +410,11 @@ class _IntroAnimationPanel extends StatelessWidget {
           Text(
             'Kuş sesleri • Hafif arka plan müziği',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey.shade700,
+                  color: AppColors.mutedText,
                 ),
           ),
           const SizedBox(height: 18),
-          TweenAnimationBuilder<double>(
-            tween: Tween<double>(begin: 0, end: 1),
-            duration: const Duration(milliseconds: 950),
-            curve: Curves.easeInOut,
-            builder: (context, progress, child) {
-              final flyInX = (1 - progress) * -72;
-              final lookAround = progress > 0.45 ? (progress - 0.45) * 0.09 : 0.0;
-              final smileScale = progress > 0.62 ? 1 + ((progress - 0.62) * 0.08) : 1.0;
-              final waveY = progress > 0.72 ? ((progress - 0.72) * 9) : 0.0;
-              final flap = progress > 0.82 ? ((progress - 0.82) * 0.20) : 0.0;
-
-              return Transform.translate(
-                offset: Offset(flyInX, waveY),
-                child: Transform.scale(
-                  scale: smileScale,
-                  child: Transform.rotate(
-                    angle: lookAround + flap,
-                    child: child,
-                  ),
-                ),
-              );
-            },
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.92),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 14,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: const Center(
-                child: Text('🦜', style: TextStyle(fontSize: 50)),
-              ),
-            ),
-          ),
+          const PicoAvatar(animate: true),
           const SizedBox(height: 10),
           if (showBubble)
             Container(
@@ -593,21 +456,9 @@ class _StoryScene extends StatelessWidget {
                   color: AppColors.primary,
                 ),
           ),
-        const SizedBox(height: 16),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
+        const SizedBox(height: AppSpacing.md),
+        SpeechBubble(
+          padding: const EdgeInsets.all(AppSpacing.xl),
           child: Column(
             children: [
               Text(
@@ -636,7 +487,7 @@ class _StoryScene extends StatelessWidget {
                 scene.body,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey.shade700,
+                      color: AppColors.mutedText,
                     ),
               ),
             ],
@@ -668,14 +519,14 @@ class _DialogueScene extends StatelessWidget {
                   color: AppColors.primary,
                 ),
           ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         Text(
           scene.title,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
               ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         TweenAnimationBuilder<double>(
           tween: Tween<double>(begin: 0.92, end: 1.0),
           duration: const Duration(milliseconds: 350),
@@ -683,20 +534,8 @@ class _DialogueScene extends StatelessWidget {
           builder: (context, bubbleScale, child) {
             return Transform.scale(scale: bubbleScale, child: child);
           },
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
+          child: SpeechBubble(
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               children: [
                 TweenAnimationBuilder<double>(
@@ -716,7 +555,7 @@ class _DialogueScene extends StatelessWidget {
                   scene.body,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey.shade700,
+                        color: AppColors.mutedText,
                       ),
                 ),
                 const SizedBox(height: 12),
@@ -724,7 +563,7 @@ class _DialogueScene extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE9F7EC),
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
                   ),
                   child: Text(
                     scene.answer.isNotEmpty ? scene.answer : 'Olá!',
@@ -871,7 +710,7 @@ class _PracticeSceneState extends State<_PracticeScene>
           widget.scene.body,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey.shade700,
+                color: AppColors.mutedText,
               ),
         ),
         const SizedBox(height: 24),
@@ -1005,7 +844,7 @@ class _QuizScene extends StatelessWidget {
                         scene.tip.isNotEmpty ? scene.tip : 'Öğretmen seni selamlıyor.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey.shade700,
+                              color: AppColors.mutedText,
                             ),
                       ),
                     ),
@@ -1038,43 +877,9 @@ class _CelebrationScene extends StatefulWidget {
 }
 
 class _CelebrationSceneState extends State<_CelebrationScene>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1800),
-    )..forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+  {
   @override
   Widget build(BuildContext context) {
-    final badgeAnim = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.0, 0.25, curve: Curves.easeOut),
-    );
-    final xpAnim = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.25, 0.55, curve: Curves.easeOut),
-    );
-    final courageAnim = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.55, 0.82, curve: Curves.easeOut),
-    );
-    final picoAnim = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.82, 1.0, curve: Curves.easeOutBack),
-    );
-
     return Stack(
       children: [
         Positioned.fill(
@@ -1098,66 +903,18 @@ class _CelebrationSceneState extends State<_CelebrationScene>
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              widget.scene.title,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+            CelebrationCard(
+              xp: widget.xp,
+              courage: widget.courage,
+              badge: widget.badge,
+              title: widget.scene.title,
+              message: widget.scene.body,
+              onPressed: widget.onNext,
+              buttonLabel: 'Devam',
+              showCountUp: true,
             ),
-            const SizedBox(height: 12),
-            Text(
-              widget.scene.body,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey.shade700,
-                  ),
-            ),
-            const SizedBox(height: 16),
-            FadeTransition(
-              opacity: badgeAnim,
-              child: _AnimatedRewardPill(
-                text: '🏅 ${widget.badge}',
-                textColor: AppColors.primary,
-                backgroundColor: AppColors.primary.withValues(alpha: 0.12),
-              ),
-            ),
-            const SizedBox(height: 10),
-            FadeTransition(
-              opacity: xpAnim,
-              child: AnimatedBuilder(
-                animation: xpAnim,
-                builder: (context, _) {
-                  final value = (widget.xp * xpAnim.value).round();
-                  return _AnimatedRewardPill(
-                    text: '⭐ +$value XP',
-                    textColor: AppColors.primary,
-                    backgroundColor: AppColors.accent.withValues(alpha: 0.22),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-            FadeTransition(
-              opacity: courageAnim,
-              child: AnimatedBuilder(
-                animation: courageAnim,
-                builder: (context, _) {
-                  final value = (widget.courage * courageAnim.value).round();
-                  return _AnimatedRewardPill(
-                    text: '❤️ +$value Cesaret',
-                    textColor: Colors.orange.shade800,
-                    backgroundColor: Colors.orange.withValues(alpha: 0.18),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 14),
-            ScaleTransition(
-              scale: Tween<double>(begin: 0.85, end: 1.05).animate(picoAnim),
-              child: const Text('🦜', style: TextStyle(fontSize: 56)),
-            ),
-            const SizedBox(height: 24),
-            SceneActionButton(label: 'Devam', onPressed: widget.onNext),
+            const SizedBox(height: AppSpacing.sm),
+            const PicoAvatar(size: 64, animate: true),
           ],
         ),
       ],
@@ -1187,7 +944,7 @@ class _RealLifeScene extends StatelessWidget {
           scene.body,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey.shade700,
+                color: AppColors.mutedText,
               ),
         ),
         const SizedBox(height: 24),
@@ -1285,36 +1042,6 @@ class _FadeInCard extends StatelessWidget {
         return Opacity(opacity: value, child: widgetChild);
       },
       child: child,
-    );
-  }
-}
-
-class _AnimatedRewardPill extends StatelessWidget {
-  const _AnimatedRewardPill({
-    required this.text,
-    required this.textColor,
-    required this.backgroundColor,
-  });
-
-  final String text;
-  final Color textColor;
-  final Color backgroundColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: textColor,
-            ),
-      ),
     );
   }
 }

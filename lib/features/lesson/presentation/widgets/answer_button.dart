@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_radius.dart';
+import '../../../../../core/theme/app_spacing.dart';
+
 class AnswerButton extends StatelessWidget {
   final String label;
   final bool isCorrect;
@@ -17,8 +21,8 @@ class AnswerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isSelected
-        ? (isCorrect ? Colors.green.shade600 : Colors.red.shade400)
-        : Colors.white;
+        ? (isCorrect ? AppColors.success : AppColors.danger)
+        : AppColors.surface;
 
     return _PressScale(
       onPressed: onPressed,
@@ -36,9 +40,9 @@ class AnswerButton extends StatelessWidget {
                   ? color
                   : Colors.grey.shade300,
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppRadius.md),
             ),
           ),
           child: Text(label),
