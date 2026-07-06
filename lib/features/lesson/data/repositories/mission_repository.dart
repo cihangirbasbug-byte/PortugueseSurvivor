@@ -7,9 +7,26 @@ import '../models/mission_model.dart';
 
 class MissionRepository {
   Future<MissionModel> loadMission(String id) async {
-    final String data = await rootBundle.loadString('assets/missions/$id.json');
+    final String data = await _loadMissionJson(id);
     final decoded = jsonDecode(data) as Map<String, dynamic>;
     return MissionModel.fromJson(decoded);
+  }
+
+  Future<String> _loadMissionJson(String id) async {
+    final paths = <String>[
+      'assets/missions/chapter_01/$id.json',
+      'assets/missions/$id.json',
+    ];
+
+    for (final path in paths) {
+      try {
+        return await rootBundle.loadString(path);
+      } catch (_) {
+        // Try the next known mission path.
+      }
+    }
+
+    throw Exception('Mission asset not found: $id');
   }
 
   Future<Map<String, dynamic>> loadProgress(String missionId) async {

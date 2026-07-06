@@ -179,6 +179,57 @@ class _LessonPageState extends State<LessonPage> {
             ),
           ],
         );
+      case 'dialogue':
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (scene.character.isNotEmpty)
+              Text(
+                scene.character,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
+              ),
+            const SizedBox(height: 16),
+            Text(
+              scene.title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                scene.body,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Colors.grey.shade700,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            if (scene.answer.isNotEmpty)
+              Text(
+                scene.answer,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                ),
+              ),
+            const SizedBox(height: 20),
+            SceneActionButton(
+              label: scene.prompt.isNotEmpty ? scene.prompt : 'Devam',
+              onPressed: _goToNextScene,
+            ),
+          ],
+        );
       case 'story':
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -434,6 +485,8 @@ class _LessonPageState extends State<LessonPage> {
           ],
         );
       case 'realLifeTip':
+      case 'real_life':
+      case 'real_life_tip':
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
