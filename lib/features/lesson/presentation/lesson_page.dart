@@ -34,6 +34,7 @@ class _LessonPageState extends State<LessonPage> {
   bool _isLoading = true;
   bool _isReturningHome = false;
   bool _isCompletionSaved = false;
+  bool _isListening = false;
 
   @override
   void initState() {
@@ -152,7 +153,21 @@ class _LessonPageState extends State<LessonPage> {
             constraints: const BoxConstraints(maxWidth: 640),
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: _buildSceneContent(scene),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 400),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  );
+                },
+                child: KeyedSubtree(
+                  key: ValueKey<int>(_sceneIndex),
+                  child: _buildSceneContent(scene),
+                ),
+              ),
             ),
           ),
         ),
@@ -175,8 +190,99 @@ class _LessonPageState extends State<LessonPage> {
     switch (scene.type) {
       case 'intro':
         return Column(
+          key: const ValueKey<String>('scene_intro'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFFFF6DB),
+                    Color(0xFFE7F5FF),
+                  ],
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.wb_sunny_rounded, color: Colors.amber.shade700),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Sabah • Okul Girişi',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Kuş sesleri • Hafif arka plan müziği',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  TweenAnimationBuilder<double>(
+                    tween: Tween<double>(begin: -70, end: 0),
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeOutBack,
+                    builder: (context, value, child) {
+                      return Transform.translate(
+                        offset: Offset(value, 0),
+                        child: child,
+                      );
+                    },
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 0.95, end: 1.0),
+                      duration: const Duration(milliseconds: 650),
+                      curve: Curves.easeOut,
+                      builder: (context, scale, child) {
+                        return Transform.scale(scale: scale, child: child);
+                      },
+                      child: TweenAnimationBuilder<double>(
+                        tween: Tween<double>(begin: -0.08, end: 0.08),
+                        duration: const Duration(milliseconds: 700),
+                        curve: Curves.easeInOut,
+                        builder: (context, flap, child) {
+                          return Transform.rotate(
+                            angle: flap,
+                            child: child,
+                          );
+                        },
+                        child: Container(
+                          width: 92,
+                          height: 92,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.08),
+                                blurRadius: 14,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Text('🦜', style: TextStyle(fontSize: 46)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 18),
             if (scene.character.isNotEmpty)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -216,6 +322,7 @@ class _LessonPageState extends State<LessonPage> {
         );
       case 'dialogue':
         return Column(
+          key: const ValueKey<String>('scene_dialogue'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (scene.character.isNotEmpty)
@@ -240,24 +347,54 @@ class _LessonPageState extends State<LessonPage> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
-              child: Text(
-                scene.body,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey.shade700,
-                ),
+              child: Column(
+                children: [
+                  TweenAnimationBuilder<double>(
+                    tween: Tween<double>(begin: -8, end: 8),
+                    duration: const Duration(milliseconds: 800),
+                    curve: Curves.easeInOut,
+                    builder: (context, waveOffset, child) {
+                      return Transform.translate(
+                        offset: Offset(0, waveOffset),
+                        child: child,
+                      );
+                    },
+                    child: const Text('👩‍🏫', style: TextStyle(fontSize: 52)),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    scene.body,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE9F7EC),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Text(
+                      scene.answer.isNotEmpty ? scene.answer : 'Olá!',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            if (scene.answer.isNotEmpty)
-              Text(
-                scene.answer,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
-                ),
-              ),
             const SizedBox(height: 20),
             SceneActionButton(
               label: scene.prompt.isNotEmpty ? scene.prompt : 'Devam',
@@ -267,6 +404,7 @@ class _LessonPageState extends State<LessonPage> {
         );
       case 'story':
         return Column(
+          key: const ValueKey<String>('scene_story'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (scene.character.isNotEmpty)
@@ -335,6 +473,7 @@ class _LessonPageState extends State<LessonPage> {
         );
       case 'word':
         return Column(
+          key: const ValueKey<String>('scene_word'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (scene.character.isNotEmpty)
@@ -384,6 +523,7 @@ class _LessonPageState extends State<LessonPage> {
         );
       case 'practice':
         return Column(
+          key: const ValueKey<String>('scene_practice'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (scene.character.isNotEmpty)
@@ -413,10 +553,38 @@ class _LessonPageState extends State<LessonPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AudioButton(
-                  label: 'Mikrofon',
-                  icon: Icons.mic_rounded,
-                  onPressed: () {},
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isListening = !_isListening;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeInOut,
+                    width: _isListening ? 108 : 96,
+                    height: _isListening ? 108 : 96,
+                    decoration: BoxDecoration(
+                      color: _isListening ? AppColors.primary : Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.primary.withValues(alpha: 0.4),
+                        width: 3,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: _isListening ? 0.24 : 0.12),
+                          blurRadius: _isListening ? 20 : 10,
+                          spreadRadius: _isListening ? 6 : 0,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.mic_rounded,
+                      size: 46,
+                      color: _isListening ? Colors.white : AppColors.primary,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 TextButton(
@@ -424,6 +592,18 @@ class _LessonPageState extends State<LessonPage> {
                   child: const Text('Atla'),
                 ),
               ],
+            ),
+            const SizedBox(height: 10),
+            AnimatedOpacity(
+              opacity: _isListening ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 300),
+              child: Text(
+                'Dinleniyor...',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
             const SizedBox(height: 24),
             SceneActionButton(
@@ -434,6 +614,7 @@ class _LessonPageState extends State<LessonPage> {
         );
       case 'quiz':
         return Column(
+          key: const ValueKey<String>('scene_quiz'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
@@ -495,27 +676,93 @@ class _LessonPageState extends State<LessonPage> {
           ],
         );
       case 'celebration':
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        return Stack(
+          key: const ValueKey<String>('scene_celebration'),
           children: [
-            Text(
-              scene.title,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(6, (index) {
+                    return TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: -90, end: 280),
+                      duration: Duration(milliseconds: 1200 + (index * 120)),
+                      curve: Curves.easeIn,
+                      builder: (context, value, child) {
+                        return Transform.translate(
+                          offset: Offset(0, value),
+                          child: child,
+                        );
+                      },
+                      child: Text(index.isEven ? '🎉' : '✨', style: const TextStyle(fontSize: 22)),
+                    );
+                  }),
+                ),
               ),
             ),
-            const SizedBox(height: 16),
-            Text(
-              scene.body,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey.shade700,
-              ),
-            ),
-            const SizedBox(height: 24),
-            SceneActionButton(
-              label: 'Devam',
-              onPressed: _goToNextScene,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0.92, end: 1.08),
+                  duration: const Duration(milliseconds: 700),
+                  curve: Curves.easeInOut,
+                  builder: (context, scale, child) {
+                    return Transform.scale(scale: scale, child: child);
+                  },
+                  child: const Text('🦜🏆', style: TextStyle(fontSize: 64)),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  scene.title,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  scene.body,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    TweenAnimationBuilder<int>(
+                      tween: IntTween(begin: 0, end: _mission?.xpReward ?? 0),
+                      duration: const Duration(milliseconds: 650),
+                      builder: (context, value, _) {
+                        return _AnimatedRewardPill(
+                          text: '+$value XP',
+                          textColor: AppColors.primary,
+                          backgroundColor: AppColors.accent.withValues(alpha: 0.22),
+                        );
+                      },
+                    ),
+                    TweenAnimationBuilder<int>(
+                      tween: IntTween(begin: 0, end: _mission?.courageReward ?? 0),
+                      duration: const Duration(milliseconds: 700),
+                      builder: (context, value, _) {
+                        return _AnimatedRewardPill(
+                          text: '+$value Cesaret',
+                          textColor: Colors.orange.shade800,
+                          backgroundColor: Colors.orange.withValues(alpha: 0.18),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                SceneActionButton(
+                  label: 'Devam',
+                  onPressed: _goToNextScene,
+                ),
+              ],
             ),
           ],
         );
@@ -523,6 +770,7 @@ class _LessonPageState extends State<LessonPage> {
       case 'real_life':
       case 'real_life_tip':
         return Column(
+          key: const ValueKey<String>('scene_real_life'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
@@ -560,5 +808,35 @@ class _LessonPageState extends State<LessonPage> {
       default:
         return const SizedBox.shrink();
     }
+  }
+}
+
+class _AnimatedRewardPill extends StatelessWidget {
+  const _AnimatedRewardPill({
+    required this.text,
+    required this.textColor,
+    required this.backgroundColor,
+  });
+
+  final String text;
+  final Color textColor;
+  final Color backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w800,
+          color: textColor,
+        ),
+      ),
+    );
   }
 }

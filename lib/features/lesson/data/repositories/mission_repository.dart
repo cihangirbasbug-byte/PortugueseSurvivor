@@ -14,6 +14,8 @@ class MissionRepository {
 
   Future<String> _loadMissionJson(String id) async {
     final paths = <String>[
+      'missions/chapter_01/$id.json',
+      'missions/$id.json',
       'assets/missions/chapter_01/$id.json',
       'assets/missions/$id.json',
     ];

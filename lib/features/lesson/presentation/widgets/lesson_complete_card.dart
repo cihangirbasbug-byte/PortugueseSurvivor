@@ -34,10 +34,26 @@ class LessonCompleteCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.celebration_rounded,
-            size: 56,
-            color: AppColors.primary,
+          Container(
+            width: 116,
+            height: 116,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.accent.withValues(alpha: 0.35),
+                  AppColors.primary.withValues(alpha: 0.25),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: const Center(
+              child: Text(
+                '🏆',
+                style: TextStyle(fontSize: 54),
+              ),
+            ),
           ),
           const SizedBox(height: 16),
           Text(
@@ -48,7 +64,8 @@ class LessonCompleteCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Harika bir adım attın.',
+            'Bugün sadece bir kelime öğrenmedin.\nBugün ilk adımı attın.',
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: Colors.grey.shade700,
             ),
