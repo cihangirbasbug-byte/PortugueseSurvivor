@@ -9,13 +9,10 @@ void main() {
   testWidgets('LessonPage shows the first school day intro content', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: LessonPage(missionId: 'mission_001')));
     await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(milliseconds: 1200));
 
     expect(find.text('İlk Okul Günüm'), findsOneWidget);
     expect(find.byType(SceneActionButton), findsOneWidget);
-
-    final hasKnownIntroTitle =
-        find.text('Pico yanında').evaluate().isNotEmpty || find.text('Merhaba!').evaluate().isNotEmpty;
-    expect(hasKnownIntroTitle, isTrue);
+    expect(find.textContaining('Kuş sesleri'), findsOneWidget);
   });
 }

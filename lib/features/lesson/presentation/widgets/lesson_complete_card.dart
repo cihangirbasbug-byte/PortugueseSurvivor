@@ -125,7 +125,7 @@ class _LessonCompleteCardState extends State<LessonCompleteCard>
                 animation: _badgeOpacity,
                 child: widget.badge.isNotEmpty
                     ? _RewardPill(
-                        text: 'Rozet: ${widget.badge}',
+                        text: '🏅 ${widget.badge}',
                         backgroundColor: AppColors.primary.withValues(alpha: 0.12),
                         textColor: AppColors.primary,
                       )
@@ -134,7 +134,7 @@ class _LessonCompleteCardState extends State<LessonCompleteCard>
               _buildAnimatedPill(
                 animation: _xpOpacity,
                 child: _RewardPill(
-                  text: '+${widget.xp} XP',
+                  text: '⭐ +${widget.xp} XP',
                   backgroundColor: AppColors.accent.withValues(alpha: 0.2),
                   textColor: AppColors.primary,
                 ),
@@ -142,7 +142,7 @@ class _LessonCompleteCardState extends State<LessonCompleteCard>
               _buildAnimatedPill(
                 animation: _courageOpacity,
                 child: _RewardPill(
-                  text: '+${widget.courage} Cesaret',
+                  text: '❤️ +${widget.courage} Cesaret',
                   backgroundColor: Colors.orange.withValues(alpha: 0.16),
                   textColor: Colors.orange.shade800,
                 ),

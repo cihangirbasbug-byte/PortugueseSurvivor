@@ -5,11 +5,13 @@ import '../../../../../core/constants/app_colors.dart';
 class SceneActionButton extends StatefulWidget {
   final String label;
   final VoidCallback onPressed;
+  final bool isLarge;
 
   const SceneActionButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.isLarge = false,
   });
 
   @override
@@ -61,9 +63,10 @@ class _SceneActionButtonState extends State<SceneActionButton>
             onPressed: widget.onPressed,
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              minimumSize: Size.fromHeight(widget.isLarge ? 60 : 52),
+              padding: EdgeInsets.symmetric(vertical: widget.isLarge ? 18 : 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(widget.isLarge ? 999 : 16),
               ),
             ),
             child: Text(widget.label),

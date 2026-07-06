@@ -15,7 +15,7 @@
     {
       "type": "intro",
       "title": "Pico yanında",
-      "body": "Merhaba!\nBen Pico.\nBugün Portekiz'deki ilk okul günün.\nHeyecanlı hissedebilirsin.\nBu çok normal.\nAma yalnız değilsin.\nBen senin yanındayım.\nHazırsan başlayalım!",
+      "body": "Merhaba!\nBen Pico.\nBugün Portekiz'deki ilk okul günün.\nHeyecanlanman çok normal.\nBen senin yanındayım.\nHazırsan maceramız başlıyor!",
       "prompt": "Maceraya Başla",
       "answer": "",
       "options": [],
@@ -110,7 +110,7 @@
     {
       "type": "complete",
       "title": "Görev tamamlandı",
-      "body": "Bugün sadece bir kelime öğrenmedin.\nBugün ilk adımı attın.",
+      "body": "Bugün sadece bir kelime öğrenmedin.\nBugün ilk cesur adımını attın.",
       "prompt": "",
       "answer": "",
       "options": [],
