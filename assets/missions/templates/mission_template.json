@@ -1,0 +1,163 @@
+{
+  "metadata": {
+    "id": "mission_001",
+    "chapter": "chapter_01",
+    "title": "Mission Title",
+    "description": "Mission summary.",
+    "duration": "3 minutes"
+  },
+  "goals": {
+    "learning_goal": "One concrete language target.",
+    "emotion_goal": "One confidence/emotion target.",
+    "real_life_goal": "One practical real-life outcome."
+  },
+  "rewards": {
+    "xp": 20,
+    "courage": 10,
+    "badge": "Badge Name"
+  },
+  "unlock_rule": {
+    "type": "sequential",
+    "requires": [
+      "mission_000"
+    ]
+  },
+  "audio": {
+    "intro": "audio/chapter_01/mission_001/intro.mp3",
+    "scenes": {
+      "quiz": "audio/chapter_01/mission_001/quiz.mp3"
+    },
+    "celebration": "audio/chapter_01/mission_001/celebration.mp3"
+  },
+  "animations": {
+    "intro": "fade_in",
+    "scenes": {
+      "practice": "pulse"
+    },
+    "celebration": "confetti"
+  },
+  "real_life": {
+    "challenge": "Try this phrase in a real school moment.",
+    "tip": "Keep your tone warm and clear."
+  },
+  "id": "mission_001",
+  "title": "Mission Title",
+  "description": "Mission summary.",
+  "duration": "3 minutes",
+  "learning_goal": "One concrete language target.",
+  "emotion_goal": "One confidence/emotion target.",
+  "real_life_goal": "One practical real-life outcome.",
+  "xp": 20,
+  "courage": 10,
+  "badge": "Badge Name",
+  "scenes": [
+    {
+      "type": "intro",
+      "title": "Pico intro",
+      "body": "Warm emotional setup.",
+      "prompt": "Start",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": "",
+      "character": "Pico",
+      "illustration": ""
+    },
+    {
+      "type": "story",
+      "title": "Story context",
+      "body": "Short real-life scene.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": "",
+      "character": "Pico",
+      "illustration": "🏫"
+    },
+    {
+      "type": "dialogue",
+      "title": "Dialogue",
+      "body": "Teacher or friend speaks.",
+      "prompt": "Continue",
+      "answer": "Olá!",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": "",
+      "character": "Teacher",
+      "illustration": ""
+    },
+    {
+      "type": "practice",
+      "title": "Practice",
+      "body": "Try saying the phrase.",
+      "prompt": "",
+      "answer": "Olá!",
+      "options": [],
+      "reward": 0,
+      "tip": "Say it slowly first.",
+      "imagePath": "",
+      "character": "Pico",
+      "illustration": ""
+    },
+    {
+      "type": "quiz",
+      "title": "Quiz",
+      "body": "",
+      "prompt": "Which answer is correct?",
+      "answer": "Olá!",
+      "options": [
+        "Olá!",
+        "Obrigado!",
+        "Tchau!"
+      ],
+      "reward": 20,
+      "tip": "Use the greeting phrase.",
+      "imagePath": "",
+      "character": "",
+      "illustration": ""
+    },
+    {
+      "type": "celebration",
+      "title": "Celebration",
+      "body": "You did it.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 20,
+      "tip": "",
+      "imagePath": "",
+      "character": "Pico",
+      "illustration": ""
+    },
+    {
+      "type": "real_life",
+      "title": "Real life",
+      "body": "Try this in daily life.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "Keep it short and clear.",
+      "imagePath": "",
+      "character": "Pico",
+      "illustration": ""
+    },
+    {
+      "type": "mission_complete",
+      "title": "Mission complete",
+      "body": "You completed the mission.",
+      "prompt": "",
+      "answer": "",
+      "options": [],
+      "reward": 0,
+      "tip": "",
+      "imagePath": "",
+      "character": "",
+      "illustration": ""
+    }
+  ]
+}

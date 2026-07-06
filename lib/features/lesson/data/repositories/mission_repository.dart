@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/mission_model.dart';
+import 'mission_validation_helper.dart';
 
 class MissionRepository {
   Map<String, dynamic>? _assetManifestCache;
@@ -11,6 +12,8 @@ class MissionRepository {
   Future<MissionModel> loadMission(String id, {String? chapterId}) async {
     final String data = await _loadMissionJson(id, chapterId: chapterId);
     final decoded = jsonDecode(data) as Map<String, dynamic>;
+    final source = chapterId == null ? id : '$chapterId/$id';
+    MissionValidationHelper.validateMissionJson(decoded, sourcePath: source);
     return MissionModel.fromJson(decoded);
   }
 
@@ -36,7 +39,10 @@ class MissionRepository {
         final mission = await loadMission(missionId, chapterId: chapterId);
         missions.add(mission);
         misses = 0;
-      } catch (_) {
+      } catch (error) {
+        if (error is FormatException) {
+          rethrow;
+        }
         if (chapterId == 'chapter_01') {
           try {
             final legacyMission = await loadMission(missionId);
@@ -44,7 +50,10 @@ class MissionRepository {
             useLegacyPaths = true;
             misses = 0;
             continue;
-          } catch (_) {
+          } catch (legacyError) {
+            if (legacyError is FormatException) {
+              rethrow;
+            }
             // Continue to standard miss handling.
           }
         }
@@ -78,7 +87,10 @@ class MissionRepository {
       try {
         await loadMission(missionId, chapterId: chapterId);
         return chapterId;
-      } catch (_) {
+      } catch (error) {
+        if (error is FormatException) {
+          rethrow;
+        }
         // Continue probing chapters.
       }
     }
@@ -105,7 +117,10 @@ class MissionRepository {
         try {
           await loadMission('mission_001', chapterId: chapterId);
           chapterSet.add(chapterId);
-        } catch (_) {
+        } catch (error) {
+          if (error is FormatException) {
+            rethrow;
+          }
           // Ignore non-existing chapters.
         }
       }
@@ -201,6 +216,8 @@ class MissionRepository {
       ]);
     } else {
       directPaths.addAll([
+        'missions/chapter_01/$id.json',
+        'assets/missions/chapter_01/$id.json',
         'missions/$id.json',
         'assets/missions/$id.json',
       ]);
