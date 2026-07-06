@@ -1,0 +1,37 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:portuguese_survivor/core/services/mission_manager.dart';
+import 'package:portuguese_survivor/features/lesson/data/repositories/mission_repository.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  group('MissionManager', () {
+    test('loads chapter mission states', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+      final manager = MissionManager(repository: repository);
+
+      final states = await manager.loadMissionStates('chapter_01');
+
+      expect(states, isNotEmpty);
+      expect(states.first.mission.id, 'mission_001');
+      expect(states.first.isUnlocked, true);
+    });
+
+    test('completing mission unlocks next mission automatically', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+      final manager = MissionManager(repository: repository);
+
+      final mission = await manager.loadMission('mission_001');
+      await manager.completeMission(mission);
+
+      final firstProgress = await repository.loadProgress('mission_001');
+      final secondProgress = await repository.loadProgress('mission_002');
+
+      expect(firstProgress['completed'], true);
+      expect(secondProgress['unlocked'], true);
+    });
+  });
+}

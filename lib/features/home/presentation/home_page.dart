@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/services/mission_manager.dart';
+import '../../../core/services/progress_service.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../lesson/data/models/mission_model.dart';
 import '../../lesson/data/repositories/mission_repository.dart';
@@ -21,11 +23,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final MissionRepository _missionRepository = MissionRepository();
+  final MissionRepository _repository = MissionRepository();
+  late final MissionManager _missionManager = MissionManager(repository: _repository);
+  late final ProgressService _progressService = ProgressService(repository: _repository);
 
-  List<MissionModel> _missions = const <MissionModel>[];
-  Map<String, Map<String, dynamic>> _progressByMission = const <String, Map<String, dynamic>>{};
+  List<MissionState> _missionStates = const <MissionState>[];
+  ProgressSummary _summary =
+      const ProgressSummary(totalXp: 0, totalCourage: 0, completionPercent: 0, badges: <String>[]);
+  MissionModel? _currentMission;
   bool _isLoadingMission = true;
+  static const String _chapterId = 'chapter_01';
 
   static const int _baseXp = 1250;
 
@@ -36,20 +43,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadHomeMissionState() async {
-    final missions = await _missionRepository.loadChapter01Missions();
-    final progressEntries = await Future.wait(
-      missions.map((mission) async {
-        final progress = await _missionRepository.loadProgress(mission.id);
-        return MapEntry(mission.id, progress);
-      }),
-    );
+    final states = await _missionManager.loadMissionStates(_chapterId);
+    final summary = await _progressService.summarizeChapter(_chapterId);
+    final currentMission = await _missionManager.currentMission(_chapterId);
 
     if (!mounted) return;
     setState(() {
-      _missions = missions;
-      _progressByMission = {
-        for (final entry in progressEntries) entry.key: entry.value,
-      };
+      _missionStates = states;
+      _summary = summary;
+      _currentMission = currentMission;
       _isLoadingMission = false;
     });
   }
@@ -68,17 +70,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final completedMissionCount = _missions
-        .where((mission) => (_progressByMission[mission.id]?['completed'] as bool?) ?? false)
-        .length;
-    final totalEarnedXp = _missions.fold<int>(
-      0,
-      (sum, mission) => sum + ((_progressByMission[mission.id]?['xpEarned'] as int?) ?? 0),
-    );
-    final currentMission = _resolveCurrentMission();
-    final currentMissionProgress = currentMission == null
-        ? 0.0
-        : _missionProgress(currentMission);
+    final completedMissionCount =
+      _missionStates.where((state) => state.isCompleted).length;
+    final totalEarnedXp = _summary.totalXp;
+    final currentMission = _currentMission;
+    MissionState? currentMissionState;
+    for (final state in _missionStates) {
+      if (currentMission != null && state.mission.id == currentMission.id) {
+        currentMissionState = state;
+        break;
+      }
+    }
+    final currentMissionProgress = currentMissionState?.progress ?? 0.0;
     final currentMissionXp = currentMission?.xpReward ?? 20;
 
     return Scaffold(
@@ -218,9 +221,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 24),
                   DailyGoalCard(
-                    progress: _missions.isEmpty ? 0 : completedMissionCount / _missions.length,
+                    progress: _summary.completionPercent,
                     completed: completedMissionCount,
-                    target: _missions.isEmpty ? 10 : _missions.length,
+                    target: _missionStates.isEmpty ? 0 : _missionStates.length,
                   ),
                   const SizedBox(height: 20),
                   ContinueLessonCard(
@@ -251,16 +254,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> _buildMissionCards(String? currentMissionId) {
-    if (_missions.isEmpty) {
+    if (_missionStates.isEmpty) {
       return const <Widget>[];
     }
 
     final widgets = <Widget>[];
-    for (var i = 0; i < _missions.length; i++) {
-      final mission = _missions[i];
-      final progress = _progressByMission[mission.id] ?? const <String, dynamic>{};
-      final completed = progress['completed'] as bool? ?? false;
-      final unlocked = progress['unlocked'] as bool? ?? mission.id == 'mission_001';
+    for (var i = 0; i < _missionStates.length; i++) {
+      final state = _missionStates[i];
+      final mission = state.mission;
+      final completed = state.isCompleted;
+      final unlocked = state.isUnlocked;
       final isCurrent = mission.id == currentMissionId;
 
       widgets.add(
@@ -269,7 +272,7 @@ class _HomePageState extends State<HomePage> {
           subtitle: mission.learningGoal,
           xp: mission.xpReward,
           difficulty: 'Bölüm 1',
-          progress: _missionProgress(mission),
+          progress: state.progress,
           icon: Icons.menu_book_rounded,
           accentColor: AppColors.primary,
           isLocked: !unlocked,
@@ -279,36 +282,11 @@ class _HomePageState extends State<HomePage> {
         ),
       );
 
-      if (i != _missions.length - 1) {
+      if (i != _missionStates.length - 1) {
         widgets.add(const SizedBox(height: 12));
       }
     }
 
     return widgets;
-  }
-
-  MissionModel? _resolveCurrentMission() {
-    if (_missions.isEmpty) return null;
-
-    for (final mission in _missions) {
-      final progress = _progressByMission[mission.id] ?? const <String, dynamic>{};
-      final unlocked = progress['unlocked'] as bool? ?? mission.id == 'mission_001';
-      final completed = progress['completed'] as bool? ?? false;
-      if (unlocked && !completed) {
-        return mission;
-      }
-    }
-
-    return _missions.last;
-  }
-
-  double _missionProgress(MissionModel mission) {
-    final progress = _progressByMission[mission.id] ?? const <String, dynamic>{};
-    final completed = progress['completed'] as bool? ?? false;
-    if (completed) return 1.0;
-
-    final xpEarned = progress['xpEarned'] as int? ?? 0;
-    if (mission.xpReward <= 0) return 0.0;
-    return (xpEarned / mission.xpReward).clamp(0.0, 1.0);
   }
 }

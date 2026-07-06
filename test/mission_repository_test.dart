@@ -35,22 +35,34 @@ void main() {
       expect(progress['courageEarned'], 5);
     });
 
-    test('completing a mission unlocks the next mission', () async {
+    test('stores and reads unlocked mission state', () async {
       SharedPreferences.setMockInitialValues({});
       final repository = MissionRepository();
 
-      await repository.saveProgress(
-        'mission_001',
-        completed: true,
-        xpEarned: 20,
-        courageEarned: 10,
-      );
+      await repository.setMissionUnlocked('mission_002', true);
 
-      final first = await repository.loadProgress('mission_001');
       final second = await repository.loadProgress('mission_002');
 
-      expect(first['unlocked'], true);
       expect(second['unlocked'], true);
+    });
+
+    test('loads chapter missions without hardcoded chapter rules', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+
+      final missions = await repository.loadChapterMissions('chapter_01');
+
+      expect(missions.length, greaterThanOrEqualTo(10));
+      expect(missions.first.id, 'mission_001');
+    });
+
+    test('discovers available mission chapters from asset paths', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+
+      final chapters = await repository.loadAvailableChapters();
+
+      expect(chapters, contains('chapter_01'));
     });
   });
 }

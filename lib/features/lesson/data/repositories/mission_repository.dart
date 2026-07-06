@@ -6,29 +6,138 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/mission_model.dart';
 
 class MissionRepository {
-  static const int chapter01MissionCount = 10;
+  Map<String, dynamic>? _assetManifestCache;
 
-  Future<MissionModel> loadMission(String id) async {
-    final String data = await _loadMissionJson(id);
+  Future<MissionModel> loadMission(String id, {String? chapterId}) async {
+    final String data = await _loadMissionJson(id, chapterId: chapterId);
     final decoded = jsonDecode(data) as Map<String, dynamic>;
     return MissionModel.fromJson(decoded);
   }
 
-  Future<List<MissionModel>> loadChapter01Missions() async {
-    final futures = List<Future<MissionModel>>.generate(
-      chapter01MissionCount,
-      (index) => loadMission(_missionIdFromNumber(index + 1)),
-    );
-    return Future.wait(futures);
+  Future<List<MissionModel>> loadChapterMissions(String chapterId) async {
+    final missions = <MissionModel>[];
+    var useLegacyPaths = false;
+    var misses = 0;
+
+    for (var i = 1; i <= 999; i++) {
+      final missionId = 'mission_${i.toString().padLeft(3, '0')}';
+      if (useLegacyPaths) {
+        try {
+          final mission = await loadMission(missionId);
+          missions.add(mission);
+          misses = 0;
+          continue;
+        } catch (_) {
+          break;
+        }
+      }
+
+      try {
+        final mission = await loadMission(missionId, chapterId: chapterId);
+        missions.add(mission);
+        misses = 0;
+      } catch (_) {
+        if (chapterId == 'chapter_01') {
+          try {
+            final legacyMission = await loadMission(missionId);
+            missions.add(legacyMission);
+            useLegacyPaths = true;
+            misses = 0;
+            continue;
+          } catch (_) {
+            // Continue to standard miss handling.
+          }
+        }
+
+        misses += 1;
+        if (misses >= 1) {
+          break;
+        }
+      }
+    }
+
+    missions.sort((a, b) => _missionSortKey(a.id).compareTo(_missionSortKey(b.id)));
+    return missions;
   }
 
-  Future<String> _loadMissionJson(String id) async {
-    final paths = <String>[
-      'missions/chapter_01/$id.json',
-      'missions/$id.json',
-      'assets/missions/chapter_01/$id.json',
-      'assets/missions/$id.json',
-    ];
+  Future<String?> findMissionChapter(String missionId) async {
+    final manifest = await _loadAssetManifest();
+    final keys = manifest.keys.cast<String>();
+    final regex = RegExp(r'missions\/(chapter_\d{2})\/' + missionId + r'\.json$');
+
+    for (final key in keys) {
+      final normalized = key.replaceAll('\\', '/');
+      final match = regex.firstMatch(normalized);
+      if (match != null) {
+        return match.group(1);
+      }
+    }
+
+    for (var i = 1; i <= 99; i++) {
+      final chapterId = 'chapter_${i.toString().padLeft(2, '0')}';
+      try {
+        await loadMission(missionId, chapterId: chapterId);
+        return chapterId;
+      } catch (_) {
+        // Continue probing chapters.
+      }
+    }
+
+    return null;
+  }
+
+  Future<List<String>> loadAvailableChapters() async {
+    final manifest = await _loadAssetManifest();
+    final chapterSet = <String>{};
+
+    final keys = manifest.keys.cast<String>();
+    for (final key in keys) {
+      final normalized = key.replaceAll('\\', '/');
+      final match = RegExp(r'missions\/(chapter_\d{2})\/mission_\d{3}\.json$').firstMatch(normalized);
+      if (match != null) {
+        chapterSet.add(match.group(1)!);
+      }
+    }
+
+    if (chapterSet.isEmpty) {
+      for (var i = 1; i <= 99; i++) {
+        final chapterId = 'chapter_${i.toString().padLeft(2, '0')}';
+        try {
+          await loadMission('mission_001', chapterId: chapterId);
+          chapterSet.add(chapterId);
+        } catch (_) {
+          // Ignore non-existing chapters.
+        }
+      }
+    }
+
+    if (chapterSet.isEmpty) {
+      try {
+        await loadMission('mission_001');
+        chapterSet.add('chapter_01');
+      } catch (_) {
+        // Ignore when even legacy chapter_01 fallback is unavailable.
+      }
+
+      for (var i = 1; i <= 99; i++) {
+        final chapterId = 'chapter_${i.toString().padLeft(2, '0')}';
+        final candidatePaths = <String>[
+          'assets/missions/$chapterId/mission_001.json',
+          'missions/$chapterId/mission_001.json',
+        ];
+        final exists = await _pathExists(candidatePaths);
+        if (exists) {
+          chapterSet.add(chapterId);
+        }
+      }
+    }
+
+    final chapters = chapterSet.toList()..sort();
+    return chapters;
+  }
+
+  Future<String> _loadMissionJson(String id, {String? chapterId}) async {
+    final paths = await _pathCandidatesForId(id, chapterId: chapterId);
 
     for (final path in paths) {
       try {
@@ -61,29 +170,72 @@ class MissionRepository {
     await prefs.setBool('${missionId}_completed', completed);
     await prefs.setInt('${missionId}_xp', xpEarned);
     await prefs.setInt('${missionId}_courage', courageEarned);
+  }
 
-    if (completed) {
-      await prefs.setBool('${missionId}_unlocked', true);
-      final nextMissionId = _nextMissionId(missionId);
-      if (nextMissionId != null) {
-        await prefs.setBool('${nextMissionId}_unlocked', true);
+  Future<void> setMissionUnlocked(String missionId, bool unlocked) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('${missionId}_unlocked', unlocked);
+  }
+
+  Future<Map<String, dynamic>> _loadAssetManifest() async {
+    if (_assetManifestCache != null) {
+      return _assetManifestCache!;
+    }
+
+    try {
+      final raw = await rootBundle.loadString('AssetManifest.json');
+      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      _assetManifestCache = decoded;
+    } catch (_) {
+      _assetManifestCache = <String, dynamic>{};
+    }
+    return _assetManifestCache!;
+  }
+
+  Future<List<String>> _pathCandidatesForId(String id, {String? chapterId}) async {
+    final directPaths = <String>[];
+    if (chapterId != null && chapterId.isNotEmpty) {
+      directPaths.addAll([
+        'missions/$chapterId/$id.json',
+        'assets/missions/$chapterId/$id.json',
+      ]);
+    } else {
+      directPaths.addAll([
+        'missions/$id.json',
+        'assets/missions/$id.json',
+      ]);
+    }
+
+    final manifest = await _loadAssetManifest();
+    final discovered = manifest.keys
+        .cast<String>()
+        .where((key) {
+          final normalized = key.replaceAll('\\', '/');
+          if (chapterId != null && chapterId.isNotEmpty) {
+            return normalized.endsWith('/$chapterId/$id.json');
+          }
+          return normalized.endsWith('/$id.json');
+        })
+        .toList()
+      ..sort();
+
+    return [...directPaths, ...discovered];
+  }
+
+  int _missionSortKey(String value) {
+    final match = RegExp(r'mission_(\d{3})').firstMatch(value);
+    return int.tryParse(match?.group(1) ?? '') ?? 999999;
+  }
+
+  Future<bool> _pathExists(List<String> candidates) async {
+    for (final path in candidates) {
+      try {
+        await rootBundle.loadString(path);
+        return true;
+      } catch (_) {
+        // Try next path candidate.
       }
     }
-  }
-
-  String _missionIdFromNumber(int missionNumber) {
-    final number = missionNumber.toString().padLeft(3, '0');
-    return 'mission_$number';
-  }
-
-  String? _nextMissionId(String missionId) {
-    final match = RegExp(r'^mission_(\d{3})$').firstMatch(missionId);
-    if (match == null) return null;
-
-    final current = int.tryParse(match.group(1)!);
-    if (current == null) return null;
-    if (current >= chapter01MissionCount) return null;
-
-    return _missionIdFromNumber(current + 1);
+    return false;
   }
 }

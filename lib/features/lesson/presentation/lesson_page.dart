@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/services/mission_manager.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -10,7 +11,6 @@ import '../../../shared/widgets/pico_avatar.dart';
 import '../../../shared/widgets/speech_bubble.dart';
 import '../data/models/mission_model.dart';
 import '../data/models/scene_model.dart';
-import '../data/repositories/mission_repository.dart';
 import 'widgets/answer_button.dart';
 import 'widgets/audio_button.dart';
 import 'widgets/lesson_complete_card.dart';
@@ -31,7 +31,7 @@ class LessonPage extends StatefulWidget {
 }
 
 class _LessonPageState extends State<LessonPage> {
-  final MissionRepository _repository = MissionRepository();
+  final MissionManager _missionManager = MissionManager();
   final AudioPlaybackService _audioPlaybackService = NoopAudioPlaybackService();
 
   MissionModel? _mission;
@@ -52,7 +52,7 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   Future<void> _loadMission() async {
-    final mission = await _repository.loadMission(widget.missionId);
+    final mission = await _missionManager.loadMission(widget.missionId);
     await _audioPlaybackService.prepareForMission(widget.missionId);
 
     if (!mounted) return;
@@ -150,12 +150,7 @@ class _LessonPageState extends State<LessonPage> {
     if (mission == null) return;
 
     _isCompletionSaved = true;
-    _repository.saveProgress(
-      mission.id,
-      completed: true,
-      xpEarned: mission.xpReward,
-      courageEarned: mission.courageReward,
-    );
+    _missionManager.completeMission(mission);
   }
 
   void _scheduleReturnToHome() {
