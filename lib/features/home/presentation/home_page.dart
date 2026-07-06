@@ -23,9 +23,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final MissionRepository _missionRepository = MissionRepository();
 
-  MissionModel? _firstMission;
-  bool _missionCompleted = false;
-  int _missionXpEarned = 0;
+  List<MissionModel> _missions = const <MissionModel>[];
+  Map<String, Map<String, dynamic>> _progressByMission = const <String, Map<String, dynamic>>{};
   bool _isLoadingMission = true;
 
   static const int _baseXp = 1250;
@@ -37,22 +36,28 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadHomeMissionState() async {
-    final mission = await _missionRepository.loadMission('mission_001');
-    final progress = await _missionRepository.loadProgress(mission.id);
+    final missions = await _missionRepository.loadChapter01Missions();
+    final progressEntries = await Future.wait(
+      missions.map((mission) async {
+        final progress = await _missionRepository.loadProgress(mission.id);
+        return MapEntry(mission.id, progress);
+      }),
+    );
 
     if (!mounted) return;
     setState(() {
-      _firstMission = mission;
-      _missionCompleted = progress['completed'] as bool? ?? false;
-      _missionXpEarned = progress['xpEarned'] as int? ?? 0;
+      _missions = missions;
+      _progressByMission = {
+        for (final entry in progressEntries) entry.key: entry.value,
+      };
       _isLoadingMission = false;
     });
   }
 
-  Future<void> _openMission001() async {
+  Future<void> _openMission(String missionId) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => const LessonPage(missionId: 'mission_001'),
+        builder: (_) => LessonPage(missionId: missionId),
       ),
     );
 
@@ -63,12 +68,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final mission = _firstMission;
-    final missionXp = mission?.xpReward ?? 20;
-    final missionProgress = mission == null
+    final completedMissionCount = _missions
+        .where((mission) => (_progressByMission[mission.id]?['completed'] as bool?) ?? false)
+        .length;
+    final totalEarnedXp = _missions.fold<int>(
+      0,
+      (sum, mission) => sum + ((_progressByMission[mission.id]?['xpEarned'] as int?) ?? 0),
+    );
+    final currentMission = _resolveCurrentMission();
+    final currentMissionProgress = currentMission == null
         ? 0.0
-        : (_missionXpEarned / mission.xpReward).clamp(0.0, 1.0);
-    final completedMissionCount = _missionCompleted ? 1 : 0;
+        : _missionProgress(currentMission);
+    final currentMissionXp = currentMission?.xpReward ?? 20;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -189,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(width: 12),
                             const Expanded(child: StreakCard(days: 12)),
                             const SizedBox(width: 12),
-                            Expanded(child: XpCard(xp: _baseXp + _missionXpEarned)),
+                            Expanded(child: XpCard(xp: _baseXp + totalEarnedXp)),
                           ],
                         );
                       }
@@ -200,24 +211,24 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(height: 12),
                           const StreakCard(days: 12),
                           const SizedBox(height: 12),
-                          XpCard(xp: _baseXp + _missionXpEarned),
+                          XpCard(xp: _baseXp + totalEarnedXp),
                         ],
                       );
                     },
                   ),
                   const SizedBox(height: 24),
                   DailyGoalCard(
-                    progress: completedMissionCount / 1,
+                    progress: _missions.isEmpty ? 0 : completedMissionCount / _missions.length,
                     completed: completedMissionCount,
-                    target: 1,
+                    target: _missions.isEmpty ? 10 : _missions.length,
                   ),
                   const SizedBox(height: 20),
                   ContinueLessonCard(
                     title: 'Devam Et',
-                    subtitle: mission?.learningGoal ?? 'Görev yükleniyor...',
-                    progress: missionProgress,
-                    xp: missionXp,
-                    missionId: mission?.id ?? 'mission_001',
+                    subtitle: currentMission?.learningGoal ?? 'Görev yükleniyor...',
+                    progress: currentMissionProgress,
+                    xp: currentMissionXp,
+                    missionId: currentMission?.id ?? 'mission_001',
                     onMissionCompleted: _loadHomeMissionState,
                   ),
                   const SizedBox(height: 28),
@@ -228,36 +239,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  LessonCard(
-                    title: 'Selamlaşma',
-                    subtitle: mission?.learningGoal ?? 'Görev yükleniyor...',
-                    xp: missionXp,
-                    difficulty: 'Başlangıç',
-                    progress: missionProgress,
-                    icon: Icons.waving_hand_rounded,
-                    accentColor: const Color(0xFF0E8A4B),
-                    onTap: _openMission001,
-                  ),
-                  const SizedBox(height: 12),
-                  const LessonCard(
-                    title: 'Rakamlar',
-                    subtitle: '1’den 20’ye kadar say',
-                    xp: 25,
-                    difficulty: 'Kolay',
-                    progress: 0.62,
-                    icon: Icons.numbers_rounded,
-                    accentColor: Color(0xFFF5C542),
-                  ),
-                  const SizedBox(height: 12),
-                  const LessonCard(
-                    title: 'Renkler',
-                    subtitle: 'Temel renk kelimelerini öğren',
-                    xp: 30,
-                    difficulty: 'Pratik',
-                    progress: 0.48,
-                    icon: Icons.palette_rounded,
-                    accentColor: Color(0xFF7C4DFF),
-                  ),
+                  ..._buildMissionCards(currentMission?.id),
                   if (_isLoadingMission) const SizedBox(height: 12),
                 ],
               ),
@@ -266,5 +248,67 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildMissionCards(String? currentMissionId) {
+    if (_missions.isEmpty) {
+      return const <Widget>[];
+    }
+
+    final widgets = <Widget>[];
+    for (var i = 0; i < _missions.length; i++) {
+      final mission = _missions[i];
+      final progress = _progressByMission[mission.id] ?? const <String, dynamic>{};
+      final completed = progress['completed'] as bool? ?? false;
+      final unlocked = progress['unlocked'] as bool? ?? mission.id == 'mission_001';
+      final isCurrent = mission.id == currentMissionId;
+
+      widgets.add(
+        LessonCard(
+          title: '${i + 1}. ${mission.title}',
+          subtitle: mission.learningGoal,
+          xp: mission.xpReward,
+          difficulty: 'Bölüm 1',
+          progress: _missionProgress(mission),
+          icon: Icons.menu_book_rounded,
+          accentColor: AppColors.primary,
+          isLocked: !unlocked,
+          isCompleted: completed,
+          isCurrent: isCurrent,
+          onTap: unlocked ? () => _openMission(mission.id) : null,
+        ),
+      );
+
+      if (i != _missions.length - 1) {
+        widgets.add(const SizedBox(height: 12));
+      }
+    }
+
+    return widgets;
+  }
+
+  MissionModel? _resolveCurrentMission() {
+    if (_missions.isEmpty) return null;
+
+    for (final mission in _missions) {
+      final progress = _progressByMission[mission.id] ?? const <String, dynamic>{};
+      final unlocked = progress['unlocked'] as bool? ?? mission.id == 'mission_001';
+      final completed = progress['completed'] as bool? ?? false;
+      if (unlocked && !completed) {
+        return mission;
+      }
+    }
+
+    return _missions.last;
+  }
+
+  double _missionProgress(MissionModel mission) {
+    final progress = _progressByMission[mission.id] ?? const <String, dynamic>{};
+    final completed = progress['completed'] as bool? ?? false;
+    if (completed) return 1.0;
+
+    final xpEarned = progress['xpEarned'] as int? ?? 0;
+    if (mission.xpReward <= 0) return 0.0;
+    return (xpEarned / mission.xpReward).clamp(0.0, 1.0);
   }
 }

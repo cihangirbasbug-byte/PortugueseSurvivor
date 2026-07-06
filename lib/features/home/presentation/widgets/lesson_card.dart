@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'progress_section.dart';
 
 class LessonCard extends StatelessWidget {
@@ -12,6 +12,9 @@ class LessonCard extends StatelessWidget {
   final IconData icon;
   final Color accentColor;
   final VoidCallback? onTap;
+  final bool isLocked;
+  final bool isCompleted;
+  final bool isCurrent;
 
   const LessonCard({
     super.key,
@@ -23,6 +26,9 @@ class LessonCard extends StatelessWidget {
     this.icon = Icons.language_rounded,
     this.accentColor = AppColors.primary,
     this.onTap,
+    this.isLocked = false,
+    this.isCompleted = false,
+    this.isCurrent = false,
   });
 
   @override
@@ -30,13 +36,17 @@ class LessonCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
+        onTap: isLocked ? null : onTap,
         borderRadius: BorderRadius.circular(20),
         child: Ink(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isCurrent ? AppColors.primary.withValues(alpha: 0.35) : Colors.transparent,
+              width: 1.5,
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),
@@ -51,12 +61,12 @@ class LessonCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.14),
+              color: (isLocked ? Colors.grey : accentColor).withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
-              icon,
-              color: accentColor,
+              isLocked ? Icons.lock_rounded : (isCompleted ? Icons.check_circle_rounded : icon),
+              color: isLocked ? Colors.grey.shade700 : (isCompleted ? AppColors.success : accentColor),
               size: 24,
             ),
           ),
@@ -75,15 +85,7 @@ class LessonCard extends StatelessWidget {
                 Text(
                   subtitle,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Portekizce: Olá',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w700,
+                    color: isLocked ? Colors.grey.shade500 : Colors.grey.shade600,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -103,9 +105,9 @@ class LessonCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
-                        difficulty,
+                        isLocked ? 'Kilitli' : (isCompleted ? 'Tamamlandı' : (isCurrent ? 'Aktif' : difficulty)),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.primary,
+                          color: isLocked ? Colors.grey.shade700 : AppColors.primary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -123,6 +125,21 @@ class LessonCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (isCurrent)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          'Şimdi',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ],

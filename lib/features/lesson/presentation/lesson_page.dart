@@ -344,6 +344,7 @@ class _LessonPageState extends State<LessonPage> {
           child: _RealLifeScene(scene: scene, onNext: _goToNextScene),
         );
       case 'complete':
+      case 'mission_complete':
         _markMissionCompleted();
         _scheduleReturnToHome();
         return LessonCompleteCard(
@@ -364,7 +365,7 @@ class _LessonPageState extends State<LessonPage> {
   SceneModel? _resolveCompleteScene() {
     final scenes = _mission?.scenes ?? const <SceneModel>[];
     for (final item in scenes) {
-      if (item.type == 'complete') {
+      if (item.type == 'complete' || item.type == 'mission_complete') {
         return item;
       }
     }
