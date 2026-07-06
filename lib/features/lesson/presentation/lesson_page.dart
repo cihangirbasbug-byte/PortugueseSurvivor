@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/services/audio_playback_service.dart';
 import '../../../core/constants/app_colors.dart';
 import '../data/models/mission_model.dart';
 import '../data/models/scene_model.dart';
@@ -25,6 +26,7 @@ class LessonPage extends StatefulWidget {
 
 class _LessonPageState extends State<LessonPage> {
   final MissionRepository _repository = MissionRepository();
+  final AudioPlaybackService _audioPlaybackService = NoopAudioPlaybackService();
   MissionModel? _mission;
   int _sceneIndex = 0;
   int? _selectedAnswerIndex;
@@ -44,11 +46,18 @@ class _LessonPageState extends State<LessonPage> {
 
   Future<void> _loadMission() async {
     final mission = await _repository.loadMission(widget.missionId);
+    await _audioPlaybackService.prepareForMission(widget.missionId);
     if (!mounted) return;
     setState(() {
       _mission = mission;
       _isLoading = false;
     });
+  }
+
+  @override
+  void dispose() {
+    _audioPlaybackService.stop();
+    super.dispose();
   }
 
   void _handleAnswer(int index) {
@@ -140,11 +149,14 @@ class _LessonPageState extends State<LessonPage> {
     }
 
     final scene = _sceneIndex < _mission!.scenes.length ? _mission!.scenes[_sceneIndex] : null;
+    final sceneTotal = _mission!.scenes.length;
+    final visualSceneIndex = scene == null ? sceneTotal : (_sceneIndex + 1);
+    final chapterMission = _parseMissionMeta(_mission!.id);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(_mission!.title),
+        title: const Text('Görev'),
         backgroundColor: AppColors.background,
       ),
       body: SafeArea(
@@ -153,20 +165,48 @@ class _LessonPageState extends State<LessonPage> {
             constraints: const BoxConstraints(maxWidth: 640),
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 400),
-                switchInCurve: Curves.easeOutCubic,
-                switchOutCurve: Curves.easeInCubic,
-                transitionBuilder: (child, animation) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: child,
-                  );
-                },
-                child: KeyedSubtree(
-                  key: ValueKey<int>(_sceneIndex),
-                  child: _buildSceneContent(scene),
-                ),
+              child: Column(
+                children: [
+                  _MissionHeader(
+                    chapterLabel: 'Chapter ${chapterMission.$1}',
+                    missionLabel: 'Mission ${chapterMission.$2}',
+                    title: _mission!.title,
+                    sceneIndex: visualSceneIndex,
+                    sceneTotal: sceneTotal,
+                  ),
+                  const SizedBox(height: 14),
+                  Expanded(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 430),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) {
+                        final slide = Tween<Offset>(
+                          begin: const Offset(0.08, 0),
+                          end: Offset.zero,
+                        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(position: slide, child: child),
+                        );
+                      },
+                      child: KeyedSubtree(
+                        key: ValueKey<int>(_sceneIndex),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SingleChildScrollView(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                                child: _buildSceneContent(scene),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -175,12 +215,28 @@ class _LessonPageState extends State<LessonPage> {
     );
   }
 
+  (int, int) _parseMissionMeta(String missionId) {
+    final digits = RegExp(r'\d+').stringMatch(missionId);
+    final missionNumber = int.tryParse(digits ?? '1') ?? 1;
+    return (1, missionNumber);
+  }
+
   Widget _buildSceneContent(SceneModel? scene) {
     if (scene == null) {
+      SceneModel? completeScene;
+      final scenes = _mission?.scenes ?? const <SceneModel>[];
+      for (final item in scenes) {
+        if (item.type == 'complete') {
+          completeScene = item;
+          break;
+        }
+      }
       return LessonCompleteCard(
         xp: _mission?.xpReward ?? 20,
         courage: _mission?.courageReward ?? 10,
         badge: _mission?.badge ?? '',
+        title: completeScene?.title ?? 'Görev tamamlandı',
+        message: completeScene?.body ?? 'Harika bir adım attın.',
         onPressed: () {
           Navigator.of(context).pop(true);
         },
@@ -189,7 +245,8 @@ class _LessonPageState extends State<LessonPage> {
 
     switch (scene.type) {
       case 'intro':
-        return Column(
+        return _FadeInCard(
+          child: Column(
           key: const ValueKey<String>('scene_intro'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -306,12 +363,11 @@ class _LessonPageState extends State<LessonPage> {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              scene.body,
-              textAlign: TextAlign.center,
+            _TypewriterText(
+              text: scene.body,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey.shade700,
-              ),
+                    color: Colors.grey.shade700,
+                  ),
             ),
             const SizedBox(height: 24),
             SceneActionButton(
@@ -319,9 +375,11 @@ class _LessonPageState extends State<LessonPage> {
               onPressed: _goToNextScene,
             ),
           ],
+          ),
         );
       case 'dialogue':
-        return Column(
+        return _FadeInCard(
+          child: Column(
           key: const ValueKey<String>('scene_dialogue'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -341,58 +399,66 @@ class _LessonPageState extends State<LessonPage> {
               ),
             ),
             const SizedBox(height: 16),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: -8, end: 8),
-                    duration: const Duration(milliseconds: 800),
-                    curve: Curves.easeInOut,
-                    builder: (context, waveOffset, child) {
-                      return Transform.translate(
-                        offset: Offset(0, waveOffset),
-                        child: child,
-                      );
-                    },
-                    child: const Text('👩‍🏫', style: TextStyle(fontSize: 52)),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    scene.body,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey.shade700,
+            TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0.92, end: 1.0),
+              duration: const Duration(milliseconds: 380),
+              curve: Curves.easeOutBack,
+              builder: (context, bubbleScale, child) {
+                return Transform.scale(scale: bubbleScale, child: child);
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE9F7EC),
-                      borderRadius: BorderRadius.circular(18),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: -8, end: 8),
+                      duration: const Duration(milliseconds: 800),
+                      curve: Curves.easeInOut,
+                      builder: (context, waveOffset, child) {
+                        return Transform.translate(
+                          offset: Offset(0, waveOffset),
+                          child: child,
+                        );
+                      },
+                      child: const Text('👩‍🏫', style: TextStyle(fontSize: 52)),
                     ),
-                    child: Text(
-                      scene.answer.isNotEmpty ? scene.answer : 'Olá!',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.primary,
+                    const SizedBox(height: 10),
+                    Text(
+                      scene.body,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey.shade700,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE9F7EC),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Text(
+                        scene.answer.isNotEmpty ? scene.answer : 'Olá!',
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -401,9 +467,11 @@ class _LessonPageState extends State<LessonPage> {
               onPressed: _goToNextScene,
             ),
           ],
+          ),
         );
       case 'story':
-        return Column(
+        return _FadeInCard(
+          child: Column(
           key: const ValueKey<String>('scene_story'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -470,6 +538,7 @@ class _LessonPageState extends State<LessonPage> {
               onPressed: _goToNextScene,
             ),
           ],
+          ),
         );
       case 'word':
         return Column(
@@ -504,13 +573,17 @@ class _LessonPageState extends State<LessonPage> {
                 AudioButton(
                   label: 'Ses',
                   icon: Icons.volume_up_rounded,
-                  onPressed: () {},
+                  onPressed: () {
+                    _audioPlaybackService.playSceneCue('scene_word_audio');
+                  },
                 ),
                 const SizedBox(width: 12),
                 AudioButton(
                   label: 'Tekrar',
                   icon: Icons.refresh_rounded,
-                  onPressed: () {},
+                  onPressed: () {
+                    _audioPlaybackService.playSceneCue('scene_word_repeat');
+                  },
                 ),
               ],
             ),
@@ -801,6 +874,8 @@ class _LessonPageState extends State<LessonPage> {
           xp: _mission?.xpReward ?? 20,
           courage: _mission?.courageReward ?? 10,
           badge: _mission?.badge ?? '',
+          title: scene.title,
+          message: scene.body,
           onPressed: () {
             Navigator.of(context).pop(true);
           },
@@ -808,6 +883,193 @@ class _LessonPageState extends State<LessonPage> {
       default:
         return const SizedBox.shrink();
     }
+  }
+}
+
+class _MissionHeader extends StatelessWidget {
+  const _MissionHeader({
+    required this.chapterLabel,
+    required this.missionLabel,
+    required this.title,
+    required this.sceneIndex,
+    required this.sceneTotal,
+  });
+
+  final String chapterLabel;
+  final String missionLabel;
+  final String title;
+  final int sceneIndex;
+  final int sceneTotal;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = sceneTotal == 0 ? 0.0 : (sceneIndex / sceneTotal).clamp(0.0, 1.0);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _HeaderPill(label: chapterLabel),
+              _HeaderPill(label: missionLabel),
+              _HeaderPill(label: 'Sahne $sceneIndex/$sceneTotal'),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: AppColors.accent.withValues(alpha: 0.15),
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HeaderPill extends StatelessWidget {
+  const _HeaderPill({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: AppColors.primary,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
+class _TypewriterText extends StatefulWidget {
+  const _TypewriterText({
+    required this.text,
+    this.style,
+  });
+
+  final String text;
+  final TextStyle? style;
+
+  @override
+  State<_TypewriterText> createState() => _TypewriterTextState();
+}
+
+class _TypewriterTextState extends State<_TypewriterText>
+  with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: _durationFor(widget.text),
+    )..forward();
+  }
+
+  Duration _durationFor(String text) {
+    final ms = (text.length * 18).clamp(250, 3000);
+    return Duration(milliseconds: ms);
+  }
+
+  @override
+  void didUpdateWidget(covariant _TypewriterText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.text != widget.text) {
+      _controller.dispose();
+      _controller = AnimationController(
+        vsync: this,
+        duration: _durationFor(widget.text),
+      )..forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _completeNow() {
+    _controller.value = 1.0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _completeNow,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          final visibleChars = (widget.text.length * _controller.value).floor();
+          final visibleText = widget.text.substring(0, visibleChars.clamp(0, widget.text.length));
+          return Text(
+            visibleText,
+            textAlign: TextAlign.center,
+            style: widget.style,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _FadeInCard extends StatelessWidget {
+  const _FadeInCard({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeOut,
+      builder: (context, value, widgetChild) {
+        return Opacity(
+          opacity: value,
+          child: widgetChild,
+        );
+      },
+      child: child,
+    );
   }
 }
 
