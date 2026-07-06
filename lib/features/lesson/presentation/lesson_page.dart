@@ -12,7 +12,12 @@ import 'widgets/word_card.dart';
 import 'widgets/xp_dialog.dart';
 
 class LessonPage extends StatefulWidget {
-  const LessonPage({super.key});
+  const LessonPage({
+    super.key,
+    required this.missionId,
+  });
+
+  final String missionId;
 
   @override
   State<LessonPage> createState() => _LessonPageState();
@@ -27,6 +32,8 @@ class _LessonPageState extends State<LessonPage> {
   bool _isCorrect = false;
   bool _showHint = false;
   bool _isLoading = true;
+  bool _isReturningHome = false;
+  bool _isCompletionSaved = false;
 
   @override
   void initState() {
@@ -35,7 +42,7 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   Future<void> _loadMission() async {
-    final mission = await _repository.loadMission('mission_001');
+    final mission = await _repository.loadMission(widget.missionId);
     if (!mounted) return;
     setState(() {
       _mission = mission;
@@ -77,23 +84,50 @@ class _LessonPageState extends State<LessonPage> {
     if (mission == null) return;
 
     if (_sceneIndex < mission.scenes.length - 1) {
+      final nextSceneIndex = _sceneIndex + 1;
       setState(() {
-        _sceneIndex += 1;
+        _sceneIndex = nextSceneIndex;
         _selectedAnswerIndex = null;
         _showFeedback = false;
         _showHint = false;
       });
+
+      final nextScene = mission.scenes[nextSceneIndex];
+      if (nextScene.type == 'complete') {
+        _markMissionCompleted();
+        _scheduleReturnToHome();
+      }
     } else {
-      _repository.saveProgress(
-        mission.id,
-        completed: true,
-        xpEarned: mission.xpReward,
-        courageEarned: mission.courageReward,
-      );
+      _markMissionCompleted();
       setState(() {
         _sceneIndex = mission.scenes.length;
       });
+      _scheduleReturnToHome();
     }
+  }
+
+  void _markMissionCompleted() {
+    if (_isCompletionSaved) return;
+
+    final mission = _mission;
+    if (mission == null) return;
+
+    _isCompletionSaved = true;
+    _repository.saveProgress(
+      mission.id,
+      completed: true,
+      xpEarned: mission.xpReward,
+      courageEarned: mission.courageReward,
+    );
+  }
+
+  void _scheduleReturnToHome() {
+    if (_isReturningHome) return;
+    _isReturningHome = true;
+    Future<void>.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+    });
   }
 
   @override
@@ -131,8 +165,9 @@ class _LessonPageState extends State<LessonPage> {
       return LessonCompleteCard(
         xp: _mission?.xpReward ?? 20,
         courage: _mission?.courageReward ?? 10,
+        badge: _mission?.badge ?? '',
         onPressed: () {
-          Navigator.of(context).maybePop();
+          Navigator.of(context).pop(true);
         },
       );
     }
@@ -512,11 +547,14 @@ class _LessonPageState extends State<LessonPage> {
           ],
         );
       case 'complete':
+        _markMissionCompleted();
+        _scheduleReturnToHome();
         return LessonCompleteCard(
           xp: _mission?.xpReward ?? 20,
           courage: _mission?.courageReward ?? 10,
+          badge: _mission?.badge ?? '',
           onPressed: () {
-            Navigator.of(context).maybePop();
+            Navigator.of(context).pop(true);
           },
         );
       default:

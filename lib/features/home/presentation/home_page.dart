@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../lesson/data/models/mission_model.dart';
+import '../../lesson/data/repositories/mission_repository.dart';
+import '../../lesson/presentation/lesson_page.dart';
 import 'widgets/continue_lesson_card.dart';
 import 'widgets/daily_goal_card.dart';
 import 'widgets/heart_card.dart';
@@ -10,11 +13,63 @@ import 'widgets/xp_card.dart';
 
 const String testVersion = 'HOME V2';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final MissionRepository _missionRepository = MissionRepository();
+
+  MissionModel? _firstMission;
+  bool _missionCompleted = false;
+  int _missionXpEarned = 0;
+  bool _isLoadingMission = true;
+
+  static const int _baseXp = 1250;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHomeMissionState();
+  }
+
+  Future<void> _loadHomeMissionState() async {
+    final mission = await _missionRepository.loadMission('mission_001');
+    final progress = await _missionRepository.loadProgress(mission.id);
+
+    if (!mounted) return;
+    setState(() {
+      _firstMission = mission;
+      _missionCompleted = progress['completed'] as bool? ?? false;
+      _missionXpEarned = progress['xpEarned'] as int? ?? 0;
+      _isLoadingMission = false;
+    });
+  }
+
+  Future<void> _openMission001() async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const LessonPage(missionId: 'mission_001'),
+      ),
+    );
+
+    if (result == true) {
+      await _loadHomeMissionState();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final mission = _firstMission;
+    final missionXp = mission?.xpReward ?? 20;
+    final missionProgress = mission == null
+        ? 0.0
+        : (_missionXpEarned / mission.xpReward).clamp(0.0, 1.0);
+    final completedMissionCount = _missionCompleted ? 1 : 0;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -128,40 +183,42 @@ class HomePage extends StatelessWidget {
                   LayoutBuilder(
                     builder: (context, constraints) {
                       if (constraints.maxWidth >= 700) {
-                        return const Row(
+                        return Row(
                           children: [
-                            Expanded(child: HeartCard(hearts: 5)),
-                            SizedBox(width: 12),
-                            Expanded(child: StreakCard(days: 12)),
-                            SizedBox(width: 12),
-                            Expanded(child: XpCard(xp: 1250)),
+                            const Expanded(child: HeartCard(hearts: 5)),
+                            const SizedBox(width: 12),
+                            const Expanded(child: StreakCard(days: 12)),
+                            const SizedBox(width: 12),
+                            Expanded(child: XpCard(xp: _baseXp + _missionXpEarned)),
                           ],
                         );
                       }
 
-                      return const Column(
+                      return Column(
                         children: [
-                          HeartCard(hearts: 5),
-                          SizedBox(height: 12),
-                          StreakCard(days: 12),
-                          SizedBox(height: 12),
-                          XpCard(xp: 1250),
+                          const HeartCard(hearts: 5),
+                          const SizedBox(height: 12),
+                          const StreakCard(days: 12),
+                          const SizedBox(height: 12),
+                          XpCard(xp: _baseXp + _missionXpEarned),
                         ],
                       );
                     },
                   ),
                   const SizedBox(height: 24),
-                  const DailyGoalCard(
-                    progress: 0.72,
-                    completed: 18,
-                    target: 25,
+                  DailyGoalCard(
+                    progress: completedMissionCount / 1,
+                    completed: completedMissionCount,
+                    target: 1,
                   ),
                   const SizedBox(height: 20),
-                  const ContinueLessonCard(
+                  ContinueLessonCard(
                     title: 'Devam Et',
-                    subtitle: 'Merhaba demeyi öğren',
-                    progress: 0.68,
-                    xp: 20,
+                    subtitle: mission?.learningGoal ?? 'Görev yükleniyor...',
+                    progress: missionProgress,
+                    xp: missionXp,
+                    missionId: mission?.id ?? 'mission_001',
+                    onMissionCompleted: _loadHomeMissionState,
                   ),
                   const SizedBox(height: 28),
                   Text(
@@ -171,14 +228,15 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const LessonCard(
+                  LessonCard(
                     title: 'Selamlaşma',
-                    subtitle: 'Merhaba demeyi öğren',
-                    xp: 20,
+                    subtitle: mission?.learningGoal ?? 'Görev yükleniyor...',
+                    xp: missionXp,
                     difficulty: 'Başlangıç',
-                    progress: 0.85,
+                    progress: missionProgress,
                     icon: Icons.waving_hand_rounded,
-                    accentColor: Color(0xFF0E8A4B),
+                    accentColor: const Color(0xFF0E8A4B),
+                    onTap: _openMission001,
                   ),
                   const SizedBox(height: 12),
                   const LessonCard(
@@ -200,6 +258,7 @@ class HomePage extends StatelessWidget {
                     icon: Icons.palette_rounded,
                     accentColor: Color(0xFF7C4DFF),
                   ),
+                  if (_isLoadingMission) const SizedBox(height: 12),
                 ],
               ),
             ),

@@ -9,6 +9,8 @@ class ContinueLessonCard extends StatelessWidget {
   final String subtitle;
   final double progress;
   final int xp;
+  final String missionId;
+  final VoidCallback? onMissionCompleted;
 
   const ContinueLessonCard({
     super.key,
@@ -16,6 +18,8 @@ class ContinueLessonCard extends StatelessWidget {
     required this.subtitle,
     required this.progress,
     required this.xp,
+    required this.missionId,
+    this.onMissionCompleted,
   });
 
   @override
@@ -97,9 +101,13 @@ class ContinueLessonCard extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const LessonPage(),
+                      builder: (_) => LessonPage(missionId: missionId),
                     ),
-                  );
+                  ).then((result) {
+                    if (result == true) {
+                      onMissionCompleted?.call();
+                    }
+                  });
                 },
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,

@@ -11,6 +11,7 @@ class LessonCard extends StatelessWidget {
   final double progress;
   final IconData icon;
   final Color accentColor;
+  final VoidCallback? onTap;
 
   const LessonCard({
     super.key,
@@ -21,24 +22,30 @@ class LessonCard extends StatelessWidget {
     this.progress = 0.0,
     this.icon = Icons.language_rounded,
     this.accentColor = AppColors.primary,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+        child: Ink(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Row(
+          child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
@@ -122,6 +129,8 @@ class LessonCard extends StatelessWidget {
             ),
           ),
         ],
+          ),
+        ),
       ),
     );
   }

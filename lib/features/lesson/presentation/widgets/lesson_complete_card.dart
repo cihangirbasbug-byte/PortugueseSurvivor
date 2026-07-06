@@ -5,12 +5,14 @@ import '../../../../../core/constants/app_colors.dart';
 class LessonCompleteCard extends StatelessWidget {
   final int xp;
   final int courage;
+  final String badge;
   final VoidCallback onPressed;
 
   const LessonCompleteCard({
     super.key,
     required this.xp,
     required this.courage,
+    required this.badge,
     required this.onPressed,
   });
 
@@ -84,6 +86,21 @@ class LessonCompleteCard extends StatelessWidget {
                   ),
                 ),
               ),
+              if (badge.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    'Rozet: $badge',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 24),
