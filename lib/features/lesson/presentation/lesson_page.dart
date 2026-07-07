@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/animation/pico_animation_controller.dart';
 import '../../../core/services/mission_manager.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -33,6 +34,8 @@ class LessonPage extends StatefulWidget {
 class _LessonPageState extends State<LessonPage> {
   final MissionManager _missionManager = MissionManager();
   final AudioPlaybackService _audioPlaybackService = NoopAudioPlaybackService();
+  final PicoAnimationController _picoAnimationController =
+      PicoAnimationController();
 
   MissionModel? _mission;
   int _sceneIndex = 0;
@@ -62,13 +65,34 @@ class _LessonPageState extends State<LessonPage> {
       _showIntroBubble = false;
     });
 
+    _syncPicoAnimationForCurrentScene();
     _scheduleIntroBubble();
   }
 
   @override
   void dispose() {
     _audioPlaybackService.stop();
+    _picoAnimationController.dispose();
     super.dispose();
+  }
+
+  void _syncPicoAnimationForCurrentScene() {
+    final mission = _mission;
+    if (mission == null) {
+      return;
+    }
+
+    final usePicoAnimations = mission.id == 'mission_001';
+    if (!usePicoAnimations) {
+      _picoAnimationController.setState(PicoAnimationState.idle);
+      return;
+    }
+
+    final scene = _sceneIndex < mission.scenes.length
+        ? mission.scenes[_sceneIndex]
+        : _resolveCompleteScene();
+    final sceneType = scene?.type ?? 'mission_complete';
+    _picoAnimationController.setSceneType(sceneType);
   }
 
   void _scheduleIntroBubble() {
@@ -124,6 +148,7 @@ class _LessonPageState extends State<LessonPage> {
           _showIntroBubble = false;
         }
       });
+      _syncPicoAnimationForCurrentScene();
 
       if (nextSceneIndex == 0) {
         _scheduleIntroBubble();
@@ -139,6 +164,7 @@ class _LessonPageState extends State<LessonPage> {
       setState(() {
         _sceneIndex = mission.scenes.length;
       });
+      _syncPicoAnimationForCurrentScene();
       _scheduleReturnToHome();
     }
   }
@@ -240,6 +266,7 @@ class _LessonPageState extends State<LessonPage> {
         badge: _mission?.badge ?? '',
         title: complete?.title ?? 'Görev tamamlandı',
         message: complete?.body ?? 'Bugün ilk cesur adımını attın.',
+        picoAnimationController: _picoAnimationController,
         onPressed: () {
           Navigator.of(context).pop(true);
         },
@@ -253,7 +280,10 @@ class _LessonPageState extends State<LessonPage> {
             key: const ValueKey<String>('scene_intro'),
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _IntroAnimationPanel(showBubble: _showIntroBubble),
+              _IntroAnimationPanel(
+                showBubble: _showIntroBubble,
+                picoAnimationController: _picoAnimationController,
+              ),
               const SizedBox(height: AppSpacing.md),
               AnimatedOpacity(
                 opacity: _showIntroBubble ? 1 : 0,
@@ -329,6 +359,7 @@ class _LessonPageState extends State<LessonPage> {
             badge: _mission?.badge ?? 'İlk Adım',
             xp: _mission?.xpReward ?? 20,
             courage: _mission?.courageReward ?? 10,
+            picoAnimationController: _picoAnimationController,
             onNext: _goToNextScene,
           ),
         );
@@ -348,6 +379,7 @@ class _LessonPageState extends State<LessonPage> {
           badge: _mission?.badge ?? '',
           title: scene.title,
           message: scene.body,
+          picoAnimationController: _picoAnimationController,
           onPressed: () {
             Navigator.of(context).pop(true);
           },
@@ -369,9 +401,13 @@ class _LessonPageState extends State<LessonPage> {
 }
 
 class _IntroAnimationPanel extends StatelessWidget {
-  const _IntroAnimationPanel({required this.showBubble});
+  const _IntroAnimationPanel({
+    required this.showBubble,
+    required this.picoAnimationController,
+  });
 
   final bool showBubble;
+  final PicoAnimationController picoAnimationController;
 
   @override
   Widget build(BuildContext context) {
@@ -410,7 +446,7 @@ class _IntroAnimationPanel extends StatelessWidget {
                 ),
           ),
           const SizedBox(height: 18),
-          const PicoAvatar(animate: true),
+          PicoAvatar(controller: picoAnimationController),
           const SizedBox(height: 10),
           if (showBubble)
             Container(
@@ -859,6 +895,7 @@ class _CelebrationScene extends StatefulWidget {
     required this.badge,
     required this.xp,
     required this.courage,
+    required this.picoAnimationController,
     required this.onNext,
   });
 
@@ -866,6 +903,7 @@ class _CelebrationScene extends StatefulWidget {
   final String badge;
   final int xp;
   final int courage;
+  final PicoAnimationController picoAnimationController;
   final VoidCallback onNext;
 
   @override
@@ -910,7 +948,10 @@ class _CelebrationSceneState extends State<_CelebrationScene>
               showCountUp: true,
             ),
             const SizedBox(height: AppSpacing.sm),
-            const PicoAvatar(size: 64, animate: true),
+            PicoAvatar(
+              size: 64,
+              controller: widget.picoAnimationController,
+            ),
           ],
         ),
       ],
