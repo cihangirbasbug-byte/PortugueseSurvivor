@@ -22,7 +22,11 @@ class DailyGoalCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFFFFDF7), Color(0xFFFFF6E8)],
+        ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(

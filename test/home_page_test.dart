@@ -7,7 +7,8 @@ void main() {
   testWidgets('HomePage shows the main welcome and lesson content', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1200));
 
     expect(find.text('Merhaba Sidelya 👋'), findsOneWidget);
     expect(find.text('Bugünkü görevin seni bekliyor!'), findsOneWidget);

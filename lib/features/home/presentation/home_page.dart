@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 import '../../../core/services/mission_manager.dart';
 import '../../../core/services/progress_service.dart';
@@ -149,49 +150,87 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 18),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: Colors.grey.shade200),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            color: AppColors.accent.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: const Center(
-                            child: Text('🦜', style: TextStyle(fontSize: 22)),
-                          ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        width: 55,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          color: AppColors.accent.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(999),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: RichText(
-                            text: TextSpan(
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              children: [
-                                TextSpan(
-                                  text: 'Pico\n',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primary,
+                        child: const Center(
+                          child: Text('🦜', style: TextStyle(fontSize: 29)),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TweenAnimationBuilder<double>(
+                          tween: Tween<double>(begin: 0, end: 1),
+                          duration: const Duration(milliseconds: 450),
+                          curve: Curves.easeOut,
+                          builder: (context, value, child) {
+                            return Opacity(
+                              opacity: value,
+                              child: Transform.translate(
+                                offset: Offset((1 - value) * -8, 0),
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(18),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.06),
+                                      blurRadius: 14,
+                                      offset: const Offset(0, 6),
+                                    ),
+                                  ],
+                                ),
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    children: [
+                                      TextSpan(
+                                        text: 'Pico\n',
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: '"Bugün sadece 3 dakikalık bir görevimiz var."',
+                                        style: TextStyle(color: Colors.grey.shade700),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                TextSpan(
-                                  text: '"Bugün sadece 3 dakikalık bir görevimiz var."',
-                                  style: TextStyle(color: Colors.grey.shade700),
+                              ),
+                              Positioned(
+                                left: -5,
+                                bottom: 10,
+                                child: Transform.rotate(
+                                  angle: math.pi / 4,
+                                  child: Container(
+                                    width: 12,
+                                    height: 12,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 24),
                   LayoutBuilder(

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../lesson/presentation/lesson_page.dart';
 import 'progress_section.dart';
 
-class ContinueLessonCard extends StatelessWidget {
+class ContinueLessonCard extends StatefulWidget {
   final String title;
   final String subtitle;
   final double progress;
@@ -21,6 +22,29 @@ class ContinueLessonCard extends StatelessWidget {
     required this.missionId,
     this.onMissionCompleted,
   });
+
+  @override
+  State<ContinueLessonCard> createState() => _ContinueLessonCardState();
+}
+
+class _ContinueLessonCardState extends State<ContinueLessonCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulseController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +82,14 @@ class ContinueLessonCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  widget.title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  subtitle,
+                  widget.subtitle,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey.shade600,
                   ),
@@ -73,8 +97,8 @@ class ContinueLessonCard extends StatelessWidget {
                 const SizedBox(height: 14),
                 ProgressSection(
                   label: 'İlerleme',
-                  value: progress,
-                  trailing: '${(progress * 100).round()}%',
+                  value: widget.progress,
+                  trailing: '${(widget.progress * 100).round()}%',
                 ),
               ],
             ),
@@ -89,7 +113,7 @@ class ContinueLessonCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
-                  '+$xp XP',
+                  '+${widget.xp} XP',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.primary,
                     fontWeight: FontWeight.w700,
@@ -97,26 +121,37 @@ class ContinueLessonCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              FilledButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => LessonPage(missionId: missionId),
-                    ),
-                  ).then((result) {
-                    if (result == true) {
-                      onMissionCompleted?.call();
-                    }
-                  });
+              AnimatedBuilder(
+                animation: _pulseController,
+                builder: (context, child) {
+                  final t = _pulseController.value;
+                  final pulseWindow = ((t - 0.88) / 0.12).clamp(0.0, 1.0);
+                  final scale = 1 + (math.sin(pulseWindow * math.pi) * 0.02);
+                  return Transform.scale(scale: scale, child: child);
                 },
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  minimumSize: const Size(96, 44),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(999),
+                child: FilledButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                            builder: (_) => LessonPage(missionId: widget.missionId),
+                          ),
+                        )
+                        .then((result) {
+                      if (result == true) {
+                        widget.onMissionCompleted?.call();
+                      }
+                    });
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    minimumSize: const Size(96, 44),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(999),
+                    ),
                   ),
+                  child: const Text('Devam'),
                 ),
-                child: const Text('Devam'),
               ),
             ],
           ),
