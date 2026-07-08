@@ -26,12 +26,14 @@ void main() {
 
       final mission = await manager.loadMission('mission_001');
       await manager.completeMission(mission);
+      final currentMission = await manager.currentMission('chapter_01');
 
       final firstProgress = await repository.loadProgress('mission_001');
       final secondProgress = await repository.loadProgress('mission_002');
 
       expect(firstProgress['completed'], true);
       expect(secondProgress['unlocked'], true);
+      expect(currentMission?.id, 'mission_002');
     });
   });
 }

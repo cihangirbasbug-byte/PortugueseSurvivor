@@ -64,5 +64,30 @@ void main() {
 
       expect(chapters, contains('chapter_01'));
     });
+
+    test('loads Mission 002 with requested rewards and flow', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+
+      final mission = await repository.loadMission('mission_002');
+
+      expect(mission.title, 'Benim Adım');
+      expect(mission.learningGoal, 'Meu nome é...');
+      expect(mission.courageReward, 15);
+      expect(mission.badge, 'Kendimi Tanıttım');
+      expect(
+        mission.scenes.map((scene) => scene.type).toList(),
+        <String>[
+          'intro',
+          'dialogue',
+          'word',
+          'practice',
+          'quiz',
+          'celebration',
+          'real_life',
+          'mission_complete',
+        ],
+      );
+    });
   });
 }
