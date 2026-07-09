@@ -35,5 +35,26 @@ void main() {
       expect(secondProgress['unlocked'], true);
       expect(currentMission?.id, 'mission_002');
     });
+
+    test('completing Mission 002 unlocks Mission 003 and Mission 004 follows', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+      final manager = MissionManager(repository: repository);
+
+      final mission1 = await manager.loadMission('mission_001');
+      await manager.completeMission(mission1);
+
+      final mission2 = await manager.loadMission('mission_002');
+      await manager.completeMission(mission2);
+
+      final currentAfterMission2 = await manager.currentMission('chapter_01');
+      expect(currentAfterMission2?.id, 'mission_003');
+
+      final mission3 = await manager.loadMission('mission_003');
+      await manager.completeMission(mission3);
+
+      final progress4 = await repository.loadProgress('mission_004');
+      expect(progress4['unlocked'], true);
+    });
   });
 }

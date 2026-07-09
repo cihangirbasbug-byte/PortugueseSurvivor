@@ -89,5 +89,31 @@ void main() {
         ],
       );
     });
+
+    test('loads Mission 003 with requested rewards and flow', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+
+      final mission = await repository.loadMission('mission_003');
+
+      expect(mission.title, 'Öğretmenimi Anlıyorum');
+      expect(mission.learningGoal, 'Senta-te.');
+      expect(mission.courageReward, 15);
+      expect(mission.badge, 'İlk Yönerge');
+      expect(
+        mission.scenes.map((scene) => scene.type).toList(),
+        <String>[
+          'intro',
+          'story',
+          'dialogue',
+          'word',
+          'practice',
+          'quiz',
+          'celebration',
+          'real_life',
+          'mission_complete',
+        ],
+      );
+    });
   });
 }
