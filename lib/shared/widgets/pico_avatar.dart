@@ -88,6 +88,13 @@ class _PicoAvatarState extends State<PicoAvatar>
           fit: BoxFit.contain,
           width: widget.size * 0.78,
           height: widget.size * 0.78,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(
+              Icons.smart_toy_rounded,
+              size: widget.size * 0.48,
+              color: Colors.lightBlue.shade700,
+            );
+          },
         ),
       ),
     );
