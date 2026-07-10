@@ -137,5 +137,36 @@ void main() {
       final summary = await progressService.summarizeChapter('chapter_01');
       expect(summary.badges, contains('Cesur İzin'));
     });
+
+    test('Mission 009 completion saves rewards/progress and unlocks Mission 010', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+      final manager = MissionManager(repository: repository);
+      final progressService = ProgressService(repository: repository);
+
+      final mission8 = await manager.loadMission('mission_008');
+      await manager.completeMission(mission8);
+
+      final progress9Before = await repository.loadProgress('mission_009');
+      expect(progress9Before['unlocked'], true);
+
+      final mission9 = await manager.loadMission('mission_009');
+      await manager.completeMission(mission9);
+
+      final progress9After = await repository.loadProgress('mission_009');
+      expect(progress9After['completed'], true);
+      expect(progress9After['xpEarned'], 20);
+      expect(progress9After['courageEarned'], 15);
+
+      final progress10 = await repository.loadProgress('mission_010');
+      expect(progress10['unlocked'], true);
+
+      final states = await manager.loadMissionStates('chapter_01');
+      final mission9State = states.firstWhere((state) => state.mission.id == 'mission_009');
+      expect(mission9State.progress, 1.0);
+
+      final summary = await progressService.summarizeChapter('chapter_01');
+      expect(summary.badges, contains('Nazik Arkadaş'));
+    });
   });
 }

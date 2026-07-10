@@ -217,5 +217,30 @@ void main() {
         ],
       );
     });
+
+    test('loads Mission 009 with requested rewards and flow', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+
+      final mission = await repository.loadMission('mission_009');
+
+      expect(mission.title, 'Teşekkür Ederim');
+      expect(mission.learningGoal, 'Obrigado! / Obrigada!');
+      expect(mission.courageReward, 15);
+      expect(mission.badge, 'Nazik Arkadaş');
+      expect(
+        mission.scenes.map((scene) => scene.type).toList(),
+        <String>[
+          'intro',
+          'story',
+          'dialogue',
+          'practice',
+          'quiz',
+          'celebration',
+          'real_life',
+          'mission_complete',
+        ],
+      );
+    });
   });
 }
