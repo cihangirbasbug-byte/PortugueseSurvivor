@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:portuguese_survivor/core/services/mission_manager.dart';
+import 'package:portuguese_survivor/core/services/progress_service.dart';
 import 'package:portuguese_survivor/features/lesson/data/repositories/mission_repository.dart';
 
 void main() {
@@ -73,6 +74,37 @@ void main() {
 
       final progress7 = await repository.loadProgress('mission_007');
       expect(progress7['unlocked'], true);
+    });
+
+    test('Mission 007 completion saves rewards/progress and unlocks Mission 008', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+      final manager = MissionManager(repository: repository);
+      final progressService = ProgressService(repository: repository);
+
+      final mission6 = await manager.loadMission('mission_006');
+      await manager.completeMission(mission6);
+
+      final progress7Before = await repository.loadProgress('mission_007');
+      expect(progress7Before['unlocked'], true);
+
+      final mission7 = await manager.loadMission('mission_007');
+      await manager.completeMission(mission7);
+
+      final progress7After = await repository.loadProgress('mission_007');
+      expect(progress7After['completed'], true);
+      expect(progress7After['xpEarned'], 20);
+      expect(progress7After['courageEarned'], 15);
+
+      final progress8 = await repository.loadProgress('mission_008');
+      expect(progress8['unlocked'], true);
+
+      final states = await manager.loadMissionStates('chapter_01');
+      final mission7State = states.firstWhere((state) => state.mission.id == 'mission_007');
+      expect(mission7State.progress, 1.0);
+
+      final summary = await progressService.summarizeChapter('chapter_01');
+      expect(summary.badges, contains('Cesur Yardımcı'));
     });
   });
 }

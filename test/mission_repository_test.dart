@@ -167,5 +167,30 @@ void main() {
         ],
       );
     });
+
+    test('loads Mission 007 with requested rewards and flow', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+
+      final mission = await repository.loadMission('mission_007');
+
+      expect(mission.title, 'Yardım İsteyebilirim');
+      expect(mission.learningGoal, 'Podes ajudar-me?');
+      expect(mission.courageReward, 15);
+      expect(mission.badge, 'Cesur Yardımcı');
+      expect(
+        mission.scenes.map((scene) => scene.type).toList(),
+        <String>[
+          'intro',
+          'story',
+          'dialogue',
+          'practice',
+          'quiz',
+          'celebration',
+          'real_life',
+          'mission_complete',
+        ],
+      );
+    });
   });
 }
