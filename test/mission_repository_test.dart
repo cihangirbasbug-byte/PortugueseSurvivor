@@ -115,5 +115,57 @@ void main() {
         ],
       );
     });
+
+    test('loads Mission 005 with requested rewards and flow', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+
+      final mission = await repository.loadMission('mission_005');
+
+      expect(mission.title, 'İlk Arkadaşım');
+      expect(mission.learningGoal, 'Queres brincar comigo?');
+      expect(mission.courageReward, 15);
+      expect(mission.badge, 'İlk Arkadaş');
+      expect(
+        mission.scenes.map((scene) => scene.type).toList(),
+        <String>[
+          'intro',
+          'story',
+          'dialogue',
+          'word',
+          'practice',
+          'quiz',
+          'celebration',
+          'real_life',
+          'mission_complete',
+        ],
+      );
+    });
+
+    test('loads Mission 006 with requested rewards and flow', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+
+      final mission = await repository.loadMission('mission_006');
+
+      expect(mission.title, 'Birlikte Oynayalım');
+      expect(mission.learningGoal, 'Vamos brincar!');
+      expect(mission.courageReward, 15);
+      expect(mission.badge, 'Takım Oyuncusu');
+      expect(
+        mission.scenes.map((scene) => scene.type).toList(),
+        <String>[
+          'intro',
+          'story',
+          'dialogue',
+          'word',
+          'practice',
+          'quiz',
+          'celebration',
+          'real_life',
+          'mission_complete',
+        ],
+      );
+    });
   });
 }
