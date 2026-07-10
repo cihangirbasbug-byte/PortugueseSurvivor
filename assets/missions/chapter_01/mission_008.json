@@ -1,21 +1,21 @@
 {
   "id": "mission_008",
   "title": "Su İsteyebilirim",
-  "description": "Günlük bir ihtiyacı nazikçe ifade etmeyi öğren.",
+  "description": "Posso Beber Água?: sınıfta nazikçe izin istemeyi öğren.",
   "duration": "3 minutes",
   "xp": 20,
-  "courage": 10,
-  "badge": "Nazik İstek",
-  "emotion_goal": "İhtiyacını söylerken özgüvenli hissetmek.",
-  "learning_goal": "Portekizce su isteme cümlesini kullanmak.",
-  "real_life_goal": "Susadığında uygun biçimde su istemek.",
+  "courage": 15,
+  "badge": "Cesur İzin",
+  "emotion_goal": "The child feels comfortable asking permission politely.",
+  "learning_goal": "Posso beber água?",
+  "real_life_goal": "Ask a teacher politely for permission to drink water.",
   "xpReward": 20,
-  "courageReward": 10,
+  "courageReward": 15,
   "scenes": [
     {
       "type": "intro",
       "title": "Pico yanında",
-      "body": "Susadığında ne söyleyeceğini öğrenelim.\nKısa ve nazik bir cümle kullanacağız.",
+      "body": "Pico ders sırasında susadığını hissediyor.\nŞimdi nazikçe izin istemeyi öğreneceğiz.",
       "prompt": "Başlayalım",
       "answer": "",
       "options": [],
@@ -27,8 +27,8 @@
     },
     {
       "type": "story",
-      "title": "Ders arası",
-      "body": "Kısa teneffüste susadın ve su şişen boş.",
+      "title": "Nazik örnek",
+      "body": "Başka bir öğrenci öğretmene kibarca soruyor: Posso beber água?",
       "prompt": "",
       "answer": "",
       "options": [],
@@ -40,13 +40,13 @@
     },
     {
       "type": "dialogue",
-      "title": "Nazik cümle",
-      "body": "Öğretmen seni dinlemek için yaklaşıyor.",
+      "title": "İzin cümlesi",
+      "body": "Öğren: Posso beber água?\nSu içebilir miyim?",
       "prompt": "Devam",
       "answer": "Posso beber água?",
       "options": [],
       "reward": 0,
-      "tip": "",
+      "tip": "Audio included: önce dinle, sonra tekrar et.",
       "imagePath": "",
       "character": "Öğretmen",
       "illustration": ""
@@ -54,12 +54,12 @@
     {
       "type": "practice",
       "title": "Sıra sende",
-      "body": "Bir kez söyle: Posso beber água?",
+      "body": "Mikrofona basıp tekrar et: Posso beber água?",
       "prompt": "",
       "answer": "Posso beber água?",
       "options": [],
       "reward": 0,
-      "tip": "Soru tonunu cümlenin sonunda yükselt.",
+      "tip": "Skip seçeneği var; sonra tekrar deneyebilirsin.",
       "imagePath": "",
       "character": "Pico",
       "illustration": ""
@@ -68,7 +68,7 @@
       "type": "quiz",
       "title": "Kısa soru",
       "body": "",
-      "prompt": "Su istemek için doğru ifade hangisi?",
+      "prompt": "Su içmek için izin istemede doğru cümle hangisi?",
       "answer": "Posso beber água?",
       "options": [
         "Posso beber água?",
@@ -76,7 +76,7 @@
         "Quero brincar"
       ],
       "reward": 20,
-      "tip": "Água, su demektir.",
+      "tip": "Doğru cümle kibar izin ifadesidir.",
       "imagePath": "",
       "character": "",
       "illustration": ""
@@ -84,7 +84,7 @@
     {
       "type": "celebration",
       "title": "Başardın",
-      "body": "İhtiyacını nazikçe ifade etmeyi öğrendin.",
+      "body": "Nazikçe izin istemeyi başardın.",
       "prompt": "",
       "answer": "",
       "options": [],
@@ -97,12 +97,12 @@
     {
       "type": "real_life",
       "title": "Gerçek hayat görevi",
-      "body": "Bugün su isterken göz teması kurup nazikçe konuş.",
+      "body": "Bugün okulda susarsan nazikçe izin istemeyi dene.",
       "prompt": "",
       "answer": "",
       "options": [],
       "reward": 0,
-      "tip": "Nazik ton, mesajını daha güçlü yapar.",
+      "tip": "Öğretmene sakin ve kibar bir sesle sor.",
       "imagePath": "",
       "character": "Pico",
       "illustration": ""
@@ -110,7 +110,7 @@
     {
       "type": "mission_complete",
       "title": "Görev tamamlandı",
-      "body": "Bugün ihtiyacını açıkça söyledin.\nBu seni daha bağımsız yapar.",
+      "body": "Bugün kibarca izin istemeyi öğrendin.\nMission 009 artık hazır.",
       "prompt": "",
       "answer": "",
       "options": [],
