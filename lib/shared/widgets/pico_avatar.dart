@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import '../../core/animation/pico_animation_controller.dart' as pico;
+import '../../core/constants/pico_assets.dart';
 import '../../core/theme/app_shadows.dart';
 
 class PicoAvatar extends StatefulWidget {
@@ -70,6 +71,9 @@ class _PicoAvatarState extends State<PicoAvatar>
 
   @override
   Widget build(BuildContext context) {
+    final state = _effectiveState;
+    final picoAssetPath = PicoAssets.forState(state);
+
     final avatar = Container(
       width: widget.size,
       height: widget.size,
@@ -78,8 +82,13 @@ class _PicoAvatarState extends State<PicoAvatar>
         shape: BoxShape.circle,
         boxShadow: AppShadows.soft,
       ),
-      child: const Center(
-        child: Text('🦜', style: TextStyle(fontSize: 50)),
+      child: Center(
+        child: Image.asset(
+          picoAssetPath,
+          fit: BoxFit.contain,
+          width: widget.size * 0.78,
+          height: widget.size * 0.78,
+        ),
       ),
     );
 
@@ -87,7 +96,6 @@ class _PicoAvatarState extends State<PicoAvatar>
       animation: _lifeController,
       builder: (context, child) {
         final t = _lifeController.value * 2 * math.pi;
-        final state = _effectiveState;
         final idleMotion = _idleMicroAnimation;
 
         var dx = 0.0;
@@ -115,6 +123,10 @@ class _PicoAvatarState extends State<PicoAvatar>
           case pico.PicoAnimationState.wave:
             dy = math.sin(t * 4) * 3;
             rotation = math.sin(t * 4) * 0.12;
+            break;
+          case pico.PicoAnimationState.listen:
+            dx = math.sin(t * 2.2) * 0.8;
+            rotation = math.sin(t * 2.2) * 0.025;
             break;
           case pico.PicoAnimationState.think:
             dx = math.sin(t * 1.8) * 1.6;

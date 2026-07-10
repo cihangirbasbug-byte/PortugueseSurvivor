@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/animation/pico_animation_controller.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/pico_avatar.dart';
 import '../../data/models/scene_model.dart';
 import '../widgets/answer_button.dart';
 
@@ -14,6 +16,7 @@ class QuizScene extends StatelessWidget {
     required this.showHint,
     required this.onAnswer,
     required this.onShowHint,
+    required this.picoAnimationController,
   });
 
   final SceneModel scene;
@@ -23,6 +26,7 @@ class QuizScene extends StatelessWidget {
   final bool showHint;
   final ValueChanged<int> onAnswer;
   final VoidCallback onShowHint;
+  final PicoAnimationController picoAnimationController;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,11 @@ class QuizScene extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          PicoAvatar(
+            size: 68,
+            controller: picoAnimationController,
+          ),
+          const SizedBox(height: 12),
           Text(
             scene.prompt,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(

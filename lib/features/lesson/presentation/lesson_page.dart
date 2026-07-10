@@ -312,6 +312,7 @@ class _LessonPageState extends State<LessonPage> {
           isCorrect: _isCorrect,
           showHint: _showHint,
           onAnswer: _handleAnswer,
+          picoAnimationController: _picoAnimationController,
           onShowHint: () {
             setState(() {
               _showHint = true;

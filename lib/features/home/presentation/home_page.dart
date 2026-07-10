@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import '../../../core/services/mission_manager.dart';
 import '../../../core/services/progress_service.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../shared/widgets/pico_avatar.dart';
 import '../../lesson/data/models/mission_model.dart';
 import '../../lesson/data/repositories/mission_repository.dart';
 import '../../lesson/presentation/lesson_page.dart';
@@ -161,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: const Center(
-                          child: Text('🦜', style: TextStyle(fontSize: 29)),
+                          child: PicoAvatar(size: 42),
                         ),
                       ),
                       const SizedBox(width: 10),

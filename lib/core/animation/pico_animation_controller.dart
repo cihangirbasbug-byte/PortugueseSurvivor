@@ -7,6 +7,7 @@ enum PicoAnimationState {
   idle,
   blink,
   wave,
+  listen,
   think,
   encourage,
   celebrate,
@@ -23,7 +24,7 @@ enum PicoIdleMicroAnimation {
 class PicoSceneAnimationMapper {
   static const Map<String, PicoAnimationState> _sceneMap = <String, PicoAnimationState>{
     'intro': PicoAnimationState.wave,
-    'dialogue': PicoAnimationState.idle,
+    'dialogue': PicoAnimationState.listen,
     'practice': PicoAnimationState.encourage,
     'quiz': PicoAnimationState.think,
     'celebration': PicoAnimationState.celebrate,
