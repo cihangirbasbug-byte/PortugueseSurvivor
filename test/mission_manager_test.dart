@@ -168,5 +168,54 @@ void main() {
       final summary = await progressService.summarizeChapter('chapter_01');
       expect(summary.badges, contains('Nazik Arkadaş'));
     });
+
+    test('Mission 010 completion finalizes chapter 1 summary and reaches 100 percent', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+      final manager = MissionManager(repository: repository);
+      final progressService = ProgressService(repository: repository);
+
+      final missionIds = <String>[
+        'mission_001',
+        'mission_002',
+        'mission_003',
+        'mission_004',
+        'mission_005',
+        'mission_006',
+        'mission_007',
+        'mission_008',
+        'mission_009',
+      ];
+
+      for (final missionId in missionIds) {
+        final mission = await manager.loadMission(missionId);
+        await manager.completeMission(mission);
+      }
+
+      final progress10Before = await repository.loadProgress('mission_010');
+      expect(progress10Before['unlocked'], true);
+
+      final mission10 = await manager.loadMission('mission_010');
+      await manager.completeMission(mission10);
+
+      final progress10After = await repository.loadProgress('mission_010');
+      expect(progress10After['completed'], true);
+      expect(progress10After['xpEarned'], 30);
+      expect(progress10After['courageEarned'], 20);
+
+      final states = await manager.loadMissionStates('chapter_01');
+      final mission10State = states.firstWhere((state) => state.mission.id == 'mission_010');
+      expect(mission10State.progress, 1.0);
+
+      final summary = await progressService.summarizeChapter('chapter_01');
+      final chapterMissions = await repository.loadChapterMissions('chapter_01');
+      final expectedXp = chapterMissions.fold<int>(0, (sum, mission) => sum + mission.xpReward);
+      final expectedCourage = chapterMissions.fold<int>(0, (sum, mission) => sum + mission.courageReward);
+
+      expect(summary.totalXp, expectedXp);
+      expect(summary.totalCourage, expectedCourage);
+      expect(summary.completionPercent, 1.0);
+      expect(summary.badges, contains('İlk Gün Kahramanı'));
+    });
   });
 }

@@ -267,6 +267,8 @@ class _LessonPageState extends State<LessonPage> {
         title: complete?.title ?? 'Görev tamamlandı',
         message: complete?.body ?? 'Bugün ilk cesur adımını attın.',
         picoAnimationController: _picoAnimationController,
+        showChapterSummary: _mission?.id == 'mission_010',
+        chapterId: 'chapter_01',
         onPressed: () {
           Navigator.of(context).pop(true);
         },
@@ -346,6 +348,8 @@ class _LessonPageState extends State<LessonPage> {
           title: scene.title,
           message: scene.body,
           picoAnimationController: _picoAnimationController,
+          showChapterSummary: _mission?.id == 'mission_010',
+          chapterId: 'chapter_01',
           onPressed: () {
             Navigator.of(context).pop(true);
           },

@@ -242,5 +242,35 @@ void main() {
         ],
       );
     });
+
+    test('loads Mission 010 with requested rewards and finale flow', () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MissionRepository();
+
+      final mission = await repository.loadMission('mission_010');
+
+      expect(mission.title, 'İlk Günümü Tamamladım');
+      expect(mission.learningGoal, contains('Olá!'));
+      expect(mission.learningGoal, contains('Meu nome é...'));
+      expect(mission.learningGoal, contains('Senta-te.'));
+      expect(mission.learningGoal, contains('Podes ajudar-me?'));
+      expect(mission.learningGoal, contains('Posso beber água?'));
+      expect(mission.learningGoal, contains('Obrigado! / Obrigada!'));
+      expect(mission.courageReward, 20);
+      expect(mission.badge, 'İlk Gün Kahramanı');
+      expect(
+        mission.scenes.map((scene) => scene.type).toList(),
+        <String>[
+          'intro',
+          'story',
+          'dialogue',
+          'practice',
+          'quiz',
+          'celebration',
+          'real_life',
+          'mission_complete',
+        ],
+      );
+    });
   });
 }

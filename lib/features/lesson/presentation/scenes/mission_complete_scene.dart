@@ -12,6 +12,8 @@ class MissionCompleteScene extends StatelessWidget {
     required this.title,
     required this.message,
     required this.picoAnimationController,
+    this.showChapterSummary = false,
+    this.chapterId,
     required this.onPressed,
   });
 
@@ -21,6 +23,8 @@ class MissionCompleteScene extends StatelessWidget {
   final String title;
   final String message;
   final PicoAnimationController picoAnimationController;
+  final bool showChapterSummary;
+  final String? chapterId;
   final VoidCallback onPressed;
 
   @override
@@ -32,6 +36,8 @@ class MissionCompleteScene extends StatelessWidget {
       title: title,
       message: message,
       picoAnimationController: picoAnimationController,
+      showChapterSummary: showChapterSummary,
+      chapterId: chapterId,
       onPressed: onPressed,
     );
   }
