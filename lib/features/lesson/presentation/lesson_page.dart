@@ -82,12 +82,6 @@ class _LessonPageState extends State<LessonPage> {
       return;
     }
 
-    final usePicoAnimations = mission.id == 'mission_001';
-    if (!usePicoAnimations) {
-      _picoAnimationController.setState(PicoAnimationState.idle);
-      return;
-    }
-
     final scene = _sceneIndex < mission.scenes.length
         ? mission.scenes[_sceneIndex]
         : _resolveCompleteScene();
@@ -200,6 +194,10 @@ class _LessonPageState extends State<LessonPage> {
     final scene = _sceneIndex < mission.scenes.length ? mission.scenes[_sceneIndex] : null;
     final sceneTotal = mission.scenes.length;
     final visualSceneIndex = scene == null ? sceneTotal : (_sceneIndex + 1);
+    final missionNumber = int.tryParse(mission.id.replaceFirst('mission_', ''));
+    final missionLabel = missionNumber == null
+      ? 'Mission / 10'
+      : 'Mission ${missionNumber.toString().padLeft(2, '0')} / 10';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -217,7 +215,7 @@ class _LessonPageState extends State<LessonPage> {
                 children: [
                   MissionHeader(
                     chapterLabel: 'Chapter 1',
-                    missionLabel: 'Mission 1 / 10',
+                    missionLabel: missionLabel,
                     title: mission.title,
                     sceneLabel: 'Scene $visualSceneIndex / $sceneTotal',
                     progress: sceneTotal == 0

@@ -208,7 +208,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: '"Bugün sadece 3 dakikalık bir görevimiz var."',
+                                        text: '"Bugün kısa bir görevimiz var."',
                                         style: TextStyle(color: Colors.grey.shade700),
                                       ),
                                     ],
