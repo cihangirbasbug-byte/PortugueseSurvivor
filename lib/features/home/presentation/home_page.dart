@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
@@ -75,143 +77,107 @@ class _HomePageState extends State<HomePage> {
     final missionRewardXp = missionForAdventure?.xpReward ?? 20;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        titleSpacing: 0,
-        title: Row(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(left: 4),
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Center(
-                child: Text(
-                  'P',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.settings_rounded),
+      backgroundColor: const Color(0xFFFFF9E8),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFF9E8), Color(0xFFEAF6FF), Color(0xFFFFF8CD)],
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 980),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const _HomeHeroCard(),
-                  const SizedBox(height: 18),
-                  const _SectionTitle(
-                    title: 'Bugunun Macerasi',
-                    subtitle: 'Siradaki oynanabilir gorev burada.',
-                  ),
-                  const SizedBox(height: 12),
-                  _AdventureCard(
-                    title: missionForAdventure?.title ?? 'Bolum tamamlandi',
-                    subtitle: missionForAdventure != null
-                        ? 'Siradaki hedef: ${missionForAdventure.learningGoal}'
-                        : 'Yeni maceralar icin yakinda tekrar gel.',
-                    xp: missionRewardXp,
-                    progress: missionProgress,
-                    onPressed: missionForAdventure == null
-                        ? null
-                        : () => _openMission(missionForAdventure.id),
-                  ),
-                  const SizedBox(height: 22),
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      if (constraints.maxWidth > 760) {
-                        return Row(
+        ),
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 980),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _TopHeader(onRefresh: _loadHomeMissionState),
+                    const SizedBox(height: 14),
+                    const _HomeHeroCard(),
+                    const SizedBox(height: 18),
+                    const _SectionTitle(
+                      title: 'Bugunun Macerasi',
+                      subtitle: 'Siradaki oynanabilir gorev burada.',
+                    ),
+                    const SizedBox(height: 12),
+                    _AdventureCard(
+                      title: missionForAdventure?.title ?? 'Bolum tamamlandi',
+                      subtitle: missionForAdventure != null
+                          ? 'Siradaki hedef: ${missionForAdventure.learningGoal}'
+                          : 'Yeni maceralar icin yakinda tekrar gel.',
+                      xp: missionRewardXp,
+                      progress: missionProgress,
+                      onPressed: missionForAdventure == null ? null : () => _openMission(missionForAdventure.id),
+                    ),
+                    const SizedBox(height: 18),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth > 760) {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: _AnimatedStatCard(
+                                  icon: Icons.bolt_rounded,
+                                  title: 'Toplam XP',
+                                  value: _summary.totalXp,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _AnimatedStatCard(
+                                  icon: Icons.favorite_rounded,
+                                  title: 'Toplam Cesaret',
+                                  value: _summary.totalCourage,
+                                  color: const Color(0xFFE5A52A),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+
+                        return Column(
                           children: [
-                            Expanded(
-                              child: _AnimatedStatCard(
-                                icon: Icons.bolt_rounded,
-                                title: 'Toplam XP',
-                                value: _summary.totalXp,
-                                color: AppColors.primary,
-                              ),
+                            _AnimatedStatCard(
+                              icon: Icons.bolt_rounded,
+                              title: 'Toplam XP',
+                              value: _summary.totalXp,
+                              color: AppColors.primary,
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _AnimatedStatCard(
-                                icon: Icons.favorite_rounded,
-                                title: 'Toplam Cesaret',
-                                value: _summary.totalCourage,
-                                color: Colors.orange.shade700,
-                              ),
+                            const SizedBox(height: 12),
+                            _AnimatedStatCard(
+                              icon: Icons.favorite_rounded,
+                              title: 'Toplam Cesaret',
+                              value: _summary.totalCourage,
+                              color: const Color(0xFFE5A52A),
                             ),
                           ],
                         );
-                      }
-
-                      return Column(
-                        children: [
-                          _AnimatedStatCard(
-                            icon: Icons.bolt_rounded,
-                            title: 'Toplam XP',
-                            value: _summary.totalXp,
-                            color: AppColors.primary,
-                          ),
-                          const SizedBox(height: 12),
-                          _AnimatedStatCard(
-                            icon: Icons.favorite_rounded,
-                            title: 'Toplam Cesaret',
-                            value: _summary.totalCourage,
-                            color: Colors.orange.shade700,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  _DailyGoalRingCard(
-                    progress: _summary.completionPercent,
-                    completed: completedMissionCount,
-                    target: _missionStates.length,
-                  ),
-                  const SizedBox(height: 22),
-                  const _SectionTitle(
-                    title: 'Gorev Yolu',
-                    subtitle: 'Tamamlanan, aktif ve kilitli gorevler.',
-                  ),
-                  const SizedBox(height: 12),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: _MissionPath(
-                      key: ValueKey<String>(
-                        '${_missionStates.length}-${missionForAdventure?.id}-$completedMissionCount',
-                      ),
+                      },
+                    ),
+                    const SizedBox(height: 14),
+                    _DailyGoalRingCard(
+                      progress: _summary.completionPercent,
+                      completed: completedMissionCount,
+                      target: _missionStates.length,
+                    ),
+                    const SizedBox(height: 22),
+                    const _SectionTitle(
+                      title: 'Gorev Yolu',
+                      subtitle: 'Tamamlanan, aktif ve kilitli gorevler.',
+                    ),
+                    const SizedBox(height: 8),
+                    _MissionPath(
                       missionStates: _missionStates,
                       currentMissionId: missionForAdventure?.id,
                       onMissionTap: _openMission,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -221,25 +187,97 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class _HomeHeroCard extends StatelessWidget {
+class _TopHeader extends StatelessWidget {
+  const _TopHeader({required this.onRefresh});
+
+  final VoidCallback onRefresh;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: const LinearGradient(colors: [Color(0xFF0E8A4B), Color(0xFF40B86C)]),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF0E8A4B).withValues(alpha: 0.25),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: const Center(
+            child: Text(
+              'P',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 20),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            'Portekizli Hayatta Kal',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+          ),
+        ),
+        IconButton(
+          onPressed: onRefresh,
+          icon: const Icon(Icons.refresh_rounded),
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.settings_rounded),
+        ),
+      ],
+    );
+  }
+}
+
+class _HomeHeroCard extends StatefulWidget {
   const _HomeHeroCard();
+
+  @override
+  State<_HomeHeroCard> createState() => _HomeHeroCardState();
+}
+
+class _HomeHeroCardState extends State<_HomeHeroCard> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2800),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 22),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(32),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFFFEFD8), Color(0xFFFFF8EC), Color(0xFFEFF8FF)],
+          colors: [Color(0xFFFFF2D7), Color(0xFFFFFBEA), Color(0xFFE8F7FF)],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.07),
-            blurRadius: 24,
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 28,
             offset: const Offset(0, 14),
           ),
         ],
@@ -247,26 +285,51 @@ class _HomeHeroCard extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            right: 8,
-            top: 10,
-            child: Icon(Icons.wb_sunny_rounded, color: Colors.orange.shade300, size: 32),
+            left: 6,
+            top: 6,
+            child: Icon(Icons.wb_sunny_rounded, color: Colors.amber.shade600, size: 28),
           ),
           Positioned(
-            right: 12,
-            bottom: 8,
-            child: Icon(Icons.school_rounded, color: Colors.blueGrey.shade300, size: 34),
+            right: 10,
+            top: 14,
+            child: Icon(Icons.cloud_rounded, color: Colors.blue.shade200, size: 34),
+          ),
+          Positioned(
+            right: 6,
+            bottom: 4,
+            child: Row(
+              children: [
+                Icon(Icons.school_rounded, color: Colors.brown.shade300, size: 28),
+                const SizedBox(width: 3),
+                Icon(Icons.groups_rounded, color: Colors.blueGrey.shade300, size: 22),
+              ],
+            ),
           ),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const PicoAvatar(size: 130, animate: true),
-              const SizedBox(width: 14),
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  final t = _controller.value;
+                  final floatY = math.sin(t * math.pi * 2) * 5;
+                  final breathScale = 1 + (math.sin(t * math.pi * 2) * 0.03);
+                  return Transform.translate(
+                    offset: Offset(0, floatY),
+                    child: Transform.scale(scale: breathScale, child: child),
+                  );
+                },
+                child: const PicoAvatar(size: 190, animate: true),
+              ),
+              const SizedBox(width: 8),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                  margin: const EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.95),
+                    color: Colors.white.withValues(alpha: 0.96),
                     borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: const Color(0xFFE6F2EA), width: 1.2),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,12 +341,12 @@ class _HomeHeroCard extends StatelessWidget {
                               fontWeight: FontWeight.w800,
                             ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       Text(
                         'Bugun yeni bir Portekiz macerasi bizi bekliyor!',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               color: Colors.grey.shade700,
-                              height: 1.3,
+                              height: 1.35,
                             ),
                       ),
                     ],
@@ -311,12 +374,15 @@ class _SectionTitle extends StatelessWidget {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: const Color(0xFF23422F),
+              ),
         ),
         const SizedBox(height: 2),
         Text(
           subtitle,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
         ),
       ],
     );
@@ -342,9 +408,7 @@ class _AdventureCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final safeProgress = progress.clamp(0.0, 1.0);
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 260),
-      curve: Curves.easeOut,
+    return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -352,11 +416,11 @@ class _AdventureCard extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF1553D7), Color(0xFF2D78FF)],
+          colors: [Color(0xFF0E8A4B), Color(0xFF4DB777)],
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D78FF).withValues(alpha: 0.3),
+            color: const Color(0xFF0E8A4B).withValues(alpha: 0.28),
             blurRadius: 24,
             offset: const Offset(0, 14),
           ),
@@ -366,20 +430,21 @@ class _AdventureCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         color: Colors.white,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w900,
                       ),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.22),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
@@ -396,7 +461,7 @@ class _AdventureCard extends StatelessWidget {
           Text(
             subtitle,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: Colors.white.withValues(alpha: 0.92),
                   height: 1.3,
                 ),
           ),
@@ -405,13 +470,13 @@ class _AdventureCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
             child: TweenAnimationBuilder<double>(
               tween: Tween<double>(begin: 0, end: safeProgress),
-              duration: const Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 600),
               curve: Curves.easeOutCubic,
               builder: (context, value, _) {
                 return LinearProgressIndicator(
                   value: value,
-                  minHeight: 9,
-                  backgroundColor: Colors.white.withValues(alpha: 0.25),
+                  minHeight: 10,
+                  backgroundColor: Colors.white.withValues(alpha: 0.28),
                   valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                 );
               },
@@ -420,15 +485,21 @@ class _AdventureCard extends StatelessWidget {
           const SizedBox(height: 16),
           Align(
             alignment: Alignment.centerRight,
-            child: FilledButton.icon(
+            child: FilledButton(
               onPressed: onPressed,
-              icon: const Icon(Icons.rocket_launch_rounded),
-              label: const Text('Basla'),
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF1E5CF0),
+                foregroundColor: const Color(0xFF106A3D),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.rocket_launch_rounded),
+                  SizedBox(width: 8),
+                  Text('Basla', style: TextStyle(fontWeight: FontWeight.w700)),
+                ],
               ),
             ),
           ),
@@ -456,12 +527,16 @@ class _AnimatedStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(22),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, Color(0xFFFFFEF9)],
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 18,
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 20,
             offset: const Offset(0, 10),
           ),
         ],
@@ -469,12 +544,12 @@ class _AnimatedStatCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(11),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
+              color: color.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, size: 26, color: color),
+            child: Icon(icon, size: 28, color: color),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -484,20 +559,20 @@ class _AnimatedStatCard extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w700,
                       ),
                 ),
                 TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: 0, end: value.toDouble()),
-                  duration: const Duration(milliseconds: 700),
+                  duration: const Duration(milliseconds: 720),
                   curve: Curves.easeOutCubic,
                   builder: (context, animatedValue, _) {
                     return Text(
                       animatedValue.round().toString(),
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.text,
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFF23422F),
                           ),
                     );
                   },
@@ -531,11 +606,11 @@ class _DailyGoalRingCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
+        gradient: const LinearGradient(colors: [Colors.white, Color(0xFFFFFDF6)]),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 18,
             offset: const Offset(0, 10),
           ),
@@ -544,8 +619,8 @@ class _DailyGoalRingCard extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: 78,
-            height: 78,
+            width: 84,
+            height: 84,
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -568,9 +643,7 @@ class _DailyGoalRingCard extends StatelessWidget {
                 ),
                 Text(
                   '$percent%',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
                 ),
               ],
             ),
@@ -582,16 +655,12 @@ class _DailyGoalRingCard extends StatelessWidget {
               children: [
                 Text(
                   'Gunun Hedefi',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   'Harika gidiyorsun. $completed / $target gorevi tamamladin.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey.shade700,
-                      ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
                 ),
               ],
             ),
@@ -604,7 +673,6 @@ class _DailyGoalRingCard extends StatelessWidget {
 
 class _MissionPath extends StatelessWidget {
   const _MissionPath({
-    super.key,
     required this.missionStates,
     required this.currentMissionId,
     required this.onMissionTap,
@@ -616,107 +684,218 @@ class _MissionPath extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (missionStates.isEmpty) {
-      return const SizedBox.shrink();
+    if (missionStates.isEmpty) return const SizedBox.shrink();
+
+    final spacing = 130.0;
+    final startX = 58.0;
+    final width = startX * 2 + ((missionStates.length - 1) * spacing);
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SizedBox(
+        width: width,
+        height: 230,
+        child: Stack(
+          children: [
+            CustomPaint(
+              size: Size(width, 230),
+              painter: _AdventurePathPainter(
+                count: missionStates.length,
+                spacing: spacing,
+                startX: startX,
+              ),
+            ),
+            for (var i = 0; i < missionStates.length; i++)
+              _MissionNode(
+                state: missionStates[i],
+                x: startX + (i * spacing),
+                y: i.isEven ? 78 : 142,
+                isCurrent: missionStates[i].mission.id == currentMissionId && !missionStates[i].isCompleted,
+                onTap: onMissionTap,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AdventurePathPainter extends CustomPainter {
+  const _AdventurePathPainter({
+    required this.count,
+    required this.spacing,
+    required this.startX,
+  });
+
+  final int count;
+  final double spacing;
+  final double startX;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 7
+      ..strokeCap = StrokeCap.round
+      ..shader = const LinearGradient(
+        colors: [Color(0xFFD8ECCE), Color(0xFFECE7C9)],
+      ).createShader(Offset.zero & size);
+
+    for (var i = 0; i < count - 1; i++) {
+      final x1 = startX + (i * spacing);
+      final y1 = i.isEven ? 78.0 : 142.0;
+      final x2 = startX + ((i + 1) * spacing);
+      final y2 = (i + 1).isEven ? 78.0 : 142.0;
+      final control = Offset((x1 + x2) / 2, (math.min(y1, y2) - 36));
+
+      final path = Path()
+        ..moveTo(x1, y1)
+        ..quadraticBezierTo(control.dx, control.dy, x2, y2);
+      canvas.drawPath(path, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _AdventurePathPainter oldDelegate) {
+    return oldDelegate.count != count;
+  }
+}
+
+class _MissionNode extends StatefulWidget {
+  const _MissionNode({
+    required this.state,
+    required this.x,
+    required this.y,
+    required this.isCurrent,
+    required this.onTap,
+  });
+
+  final MissionState state;
+  final double x;
+  final double y;
+  final bool isCurrent;
+  final ValueChanged<String> onTap;
+
+  @override
+  State<_MissionNode> createState() => _MissionNodeState();
+}
+
+class _MissionNodeState extends State<_MissionNode> with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulse = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
+    if (widget.isCurrent) {
+      _pulse.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _MissionNode oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isCurrent && !_pulse.isAnimating) {
+      _pulse.repeat(reverse: true);
+    } else if (!widget.isCurrent && _pulse.isAnimating) {
+      _pulse.stop();
+      _pulse.value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mission = widget.state.mission;
+    final isLocked = !widget.state.isUnlocked;
+
+    Color fill;
+    IconData icon;
+    String subtitle;
+
+    if (isLocked) {
+      fill = const Color(0xFFB5BBC0);
+      icon = Icons.lock_rounded;
+      subtitle = 'Kilitli';
+    } else if (widget.state.isCompleted) {
+      fill = const Color(0xFF1FA35E);
+      icon = Icons.check_rounded;
+      subtitle = 'Tamamlandi';
+    } else if (widget.isCurrent) {
+      fill = const Color(0xFFFFC73B);
+      icon = Icons.play_arrow_rounded;
+      subtitle = 'Aktif';
+    } else {
+      fill = Colors.white;
+      icon = Icons.flag_rounded;
+      subtitle = 'Acik';
     }
 
-    return SizedBox(
-      height: 188,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: missionStates.length,
-        separatorBuilder: (context, index) => Center(
-          child: Container(
-            width: 44,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(999),
-            ),
-          ),
-        ),
-        itemBuilder: (context, index) {
-          final state = missionStates[index];
-          final mission = state.mission;
-          final isCurrent = mission.id == currentMissionId && !state.isCompleted;
-          final isLocked = !state.isUnlocked;
+    final nodeSize = widget.isCurrent ? 82.0 : 72.0;
 
-          final nodeColor = isLocked
-              ? Colors.grey.shade400
-              : (state.isCompleted
-                  ? AppColors.primary
-                  : (isCurrent ? const Color(0xFF2D78FF) : Colors.white));
-
-          final icon = isLocked
-              ? Icons.lock_rounded
-              : (state.isCompleted ? Icons.star_rounded : Icons.play_arrow_rounded);
-
-          final iconColor = isLocked || state.isCompleted || isCurrent
-              ? Colors.white
-              : const Color(0xFF2D78FF);
-
-          final textColor = isLocked ? Colors.grey.shade600 : AppColors.text;
-          final nodeSize = isCurrent ? 74.0 : 60.0;
-          final borderColor = isCurrent
-              ? const Color(0xFF2D78FF).withValues(alpha: 0.35)
-              : Colors.grey.shade300;
-
-          final topOffset = index.isEven ? 8.0 : 30.0;
-
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 220),
-            curve: Curves.easeOut,
-            margin: EdgeInsets.only(top: topOffset),
-            width: 110,
-            child: Column(
-              children: [
-                InkWell(
-                  borderRadius: BorderRadius.circular(999),
-                  onTap: isLocked ? null : () => onMissionTap(mission.id),
-                  child: Container(
-                    width: nodeSize,
-                    height: nodeSize,
-                    decoration: BoxDecoration(
-                      color: nodeColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: borderColor, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 14,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
+    return Positioned(
+      left: widget.x - (nodeSize / 2),
+      top: widget.y - (nodeSize / 2),
+      child: SizedBox(
+        width: nodeSize + 44,
+        child: Column(
+          children: [
+            AnimatedBuilder(
+              animation: _pulse,
+              builder: (context, child) {
+                final scale = widget.isCurrent ? 1 + (_pulse.value * 0.08) : 1.0;
+                return Transform.scale(scale: scale, child: child);
+              },
+              child: InkWell(
+                borderRadius: BorderRadius.circular(999),
+                onTap: isLocked ? null : () => widget.onTap(mission.id),
+                child: Container(
+                  width: nodeSize,
+                  height: nodeSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: fill,
+                    border: Border.all(
+                      color: widget.isCurrent ? const Color(0xFFF9E29D) : Colors.white,
+                      width: 4,
                     ),
-                    child: Icon(
-                      icon,
-                      size: isCurrent ? 32 : 26,
-                      color: iconColor,
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    icon,
+                    color: (isLocked || widget.state.isCompleted || widget.isCurrent)
+                        ? Colors.white
+                        : AppColors.primary,
+                    size: 34,
                   ),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  'M${mission.id.replaceFirst('mission_', '')}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: textColor,
-                      ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  isLocked ? 'Kilitli' : (state.isCompleted ? 'Tamamlandi' : (isCurrent ? 'Aktif' : 'Acik')),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: textColor,
-                      ),
-                ),
-              ],
+              ),
             ),
-          );
-        },
+            const SizedBox(height: 8),
+            Text(
+              'M${mission.id.replaceFirst('mission_', '')}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFF23422F),
+                  ),
+            ),
+            Text(
+              subtitle,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
+            ),
+          ],
+        ),
       ),
     );
   }

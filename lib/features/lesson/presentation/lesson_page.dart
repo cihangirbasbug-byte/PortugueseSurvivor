@@ -5,6 +5,7 @@ import '../../../core/services/mission_manager.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/services/audio_playback_service.dart';
+import '../../../shared/widgets/pico_avatar.dart';
 import '../../../shared/widgets/mission_header.dart';
 import '../data/models/mission_model.dart';
 import '../data/models/scene_model.dart';
@@ -200,55 +201,75 @@ class _LessonPageState extends State<LessonPage> {
       : 'Mission ${missionNumber.toString().padLeft(2, '0')} / 10';
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFFFF9EA),
       appBar: AppBar(
-        title: const Text('Görev'),
-        backgroundColor: AppColors.background,
+        title: const Text('Gorev'),
+        backgroundColor: const Color(0xFFFFF9EA),
       ),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 640),
-            child: Padding(
-              padding: AppSpacing.screenPadding,
-              child: Column(
-                children: [
-                  MissionHeader(
-                    chapterLabel: 'Chapter 1',
-                    missionLabel: missionLabel,
-                    title: mission.title,
-                    sceneLabel: 'Scene $visualSceneIndex / $sceneTotal',
-                    progress: sceneTotal == 0
-                        ? 0
-                        : (visualSceneIndex / sceneTotal).clamp(0.0, 1.0),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Expanded(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 350),
-                      switchInCurve: Curves.easeOut,
-                      switchOutCurve: Curves.easeIn,
-                      transitionBuilder: (child, animation) {
-                        return FadeTransition(opacity: animation, child: child);
-                      },
-                      child: KeyedSubtree(
-                        key: ValueKey<int>(_sceneIndex),
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return SingleChildScrollView(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                                child: _buildSceneContent(scene),
-                              ),
-                            );
-                          },
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFF9EA), Color(0xFFEAF6FF), Color(0xFFFFF8D0)],
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              const _LessonBackgroundDecor(),
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 700),
+                  child: Padding(
+                    padding: AppSpacing.screenPadding,
+                    child: Column(
+                      children: [
+                        _LessonHeroBanner(
+                          header: 'Okul Avlusu',
+                          scene: scene,
+                          controller: _picoAnimationController,
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        MissionHeader(
+                          chapterLabel: 'Chapter 1',
+                          missionLabel: missionLabel,
+                          title: mission.title,
+                          sceneLabel: 'Scene $visualSceneIndex / $sceneTotal',
+                          progress: sceneTotal == 0
+                              ? 0
+                              : (visualSceneIndex / sceneTotal).clamp(0.0, 1.0),
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Expanded(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 350),
+                            switchInCurve: Curves.easeOut,
+                            switchOutCurve: Curves.easeIn,
+                            transitionBuilder: (child, animation) {
+                              return FadeTransition(opacity: animation, child: child);
+                            },
+                            child: KeyedSubtree(
+                              key: ValueKey<int>(_sceneIndex),
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return SingleChildScrollView(
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                                      child: _buildSceneContent(scene),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -365,5 +386,171 @@ class _LessonPageState extends State<LessonPage> {
       }
     }
     return null;
+  }
+}
+
+class _LessonBackgroundDecor extends StatelessWidget {
+  const _LessonBackgroundDecor();
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Stack(
+        children: [
+          Positioned(
+            left: -20,
+            top: 30,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFFFE39D).withValues(alpha: 0.26),
+              ),
+            ),
+          ),
+          Positioned(
+            right: -30,
+            top: 90,
+            child: Container(
+              width: 170,
+              height: 170,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFBDE7FF).withValues(alpha: 0.3),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 24,
+            bottom: 120,
+            child: Icon(Icons.school_rounded, size: 54, color: Colors.brown.shade300),
+          ),
+          Positioned(
+            right: 28,
+            bottom: 124,
+            child: Icon(Icons.groups_rounded, size: 52, color: Colors.blueGrey.shade300),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LessonHeroBanner extends StatefulWidget {
+  const _LessonHeroBanner({
+    required this.header,
+    required this.scene,
+    required this.controller,
+  });
+
+  final String header;
+  final SceneModel? scene;
+  final PicoAnimationController controller;
+
+  @override
+  State<_LessonHeroBanner> createState() => _LessonHeroBannerState();
+}
+
+class _LessonHeroBannerState extends State<_LessonHeroBanner> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 2800))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scene = widget.scene;
+    final bubbleText = scene == null
+      ? 'Harika is cikardin, eve donmeye haziriz!'
+      : (scene.prompt.isNotEmpty ? scene.prompt : 'Hazirsan devam edelim!');
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFFFEFD1), Color(0xFFFFF9E6), Color(0xFFE8F7FF)],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final breath = 1 + (_controller.value * 0.04);
+              return Transform.scale(scale: breath, child: child);
+            },
+            child: PicoAvatar(size: 132, controller: widget.controller),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.person_rounded, color: Colors.indigo.shade300, size: 20),
+                    const SizedBox(width: 4),
+                    Icon(Icons.groups_rounded, color: Colors.teal.shade300, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        widget.header,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w800,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.95),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: const Color(0xFFE4EFDF), width: 1.1),
+                  ),
+                  child: Text(
+                    bubbleText,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey.shade700,
+                          height: 1.25,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -18,11 +18,49 @@ class MissionRepository {
   }
 
   Future<List<MissionModel>> loadChapterMissions(String chapterId) async {
+    final manifest = await _loadAssetManifest();
+    final chapterMissionIds = manifest.keys
+        .cast<String>()
+        .map((key) => key.replaceAll('\\', '/'))
+        .map((key) {
+          final marker = 'missions/$chapterId/';
+          final markerIndex = key.indexOf(marker);
+          if (markerIndex < 0 || !key.endsWith('.json')) {
+            return null;
+          }
+
+          final fileName = key.substring(markerIndex + marker.length);
+          final missionMatch = RegExp(r'^(mission_\d{3})\.json$').firstMatch(fileName);
+          return missionMatch?.group(1);
+        })
+        .whereType<String>()
+        .toSet()
+        .toList()
+      ..sort((a, b) => _missionSortKey(a).compareTo(_missionSortKey(b)));
+
+    if (chapterMissionIds.isNotEmpty) {
+      final missions = <MissionModel>[];
+      for (final missionId in chapterMissionIds) {
+        try {
+          missions.add(await loadMission(missionId, chapterId: chapterId));
+        } catch (error) {
+          if (error is FormatException) {
+            rethrow;
+          }
+          if (chapterId == 'chapter_01') {
+            missions.add(await loadMission(missionId));
+          }
+        }
+      }
+      return missions;
+    }
+
     final missions = <MissionModel>[];
     var useLegacyPaths = false;
     var misses = 0;
 
-    for (var i = 1; i <= 999; i++) {
+    final maxFallbackMission = chapterId == 'chapter_01' ? 10 : 999;
+    for (var i = 1; i <= maxFallbackMission; i++) {
       final missionId = 'mission_${i.toString().padLeft(3, '0')}';
       if (useLegacyPaths) {
         try {
@@ -198,9 +236,9 @@ class MissionRepository {
     }
 
     try {
-      final raw = await rootBundle.loadString('AssetManifest.json');
-      final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      _assetManifestCache = decoded;
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      final assets = manifest.listAssets();
+      _assetManifestCache = {for (final key in assets) key: const <String>[]};
     } catch (_) {
       _assetManifestCache = <String, dynamic>{};
     }
@@ -212,14 +250,11 @@ class MissionRepository {
     if (chapterId != null && chapterId.isNotEmpty) {
       directPaths.addAll([
         'missions/$chapterId/$id.json',
-        'assets/missions/$chapterId/$id.json',
       ]);
     } else {
       directPaths.addAll([
         'missions/chapter_01/$id.json',
-        'assets/missions/chapter_01/$id.json',
         'missions/$id.json',
-        'assets/missions/$id.json',
       ]);
     }
 
