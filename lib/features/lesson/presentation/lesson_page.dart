@@ -22,10 +22,7 @@ import 'scenes/word_scene.dart';
 import 'widgets/xp_dialog.dart';
 
 class LessonPage extends StatefulWidget {
-  const LessonPage({
-    super.key,
-    required this.missionId,
-  });
+  const LessonPage({super.key, required this.missionId});
 
   final String missionId;
 
@@ -36,7 +33,8 @@ class LessonPage extends StatefulWidget {
 class _LessonPageState extends State<LessonPage> {
   final MissionManager _missionManager = MissionManager();
   final AudioPlaybackService _audioPlaybackService = NoopAudioPlaybackService();
-  final PicoAnimationController _picoAnimationController = PicoAnimationController();
+  final PicoAnimationController _picoAnimationController =
+      PicoAnimationController();
 
   MissionModel? _mission;
   int _sceneIndex = 0;
@@ -81,7 +79,9 @@ class _LessonPageState extends State<LessonPage> {
     final mission = _mission;
     if (mission == null) return;
 
-    final scene = _sceneIndex < mission.scenes.length ? mission.scenes[_sceneIndex] : _resolveCompleteScene();
+    final scene = _sceneIndex < mission.scenes.length
+        ? mission.scenes[_sceneIndex]
+        : _resolveCompleteScene();
     final sceneType = scene?.type ?? 'mission_complete';
     _picoAnimationController.setSceneType(sceneType);
   }
@@ -182,13 +182,13 @@ class _LessonPageState extends State<LessonPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading || _mission == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final mission = _mission!;
-    final scene = _sceneIndex < mission.scenes.length ? mission.scenes[_sceneIndex] : null;
+    final scene = _sceneIndex < mission.scenes.length
+        ? mission.scenes[_sceneIndex]
+        : null;
     final sceneTotal = mission.scenes.length;
     final visualSceneIndex = scene == null ? sceneTotal : (_sceneIndex + 1);
     final missionNumber = int.tryParse(mission.id.replaceFirst('mission_', ''));
@@ -213,7 +213,7 @@ class _LessonPageState extends State<LessonPage> {
         child: SafeArea(
           child: Stack(
             children: [
-              const _LessonBackgroundDecor(),
+              _LessonBackgroundDecor(),
               Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 760),
@@ -232,7 +232,9 @@ class _LessonPageState extends State<LessonPage> {
                           missionLabel: missionLabel,
                           title: mission.title,
                           sceneLabel: 'Scene $visualSceneIndex / $sceneTotal',
-                          progress: sceneTotal == 0 ? 0 : (visualSceneIndex / sceneTotal).clamp(0.0, 1.0),
+                          progress: sceneTotal == 0
+                              ? 0
+                              : (visualSceneIndex / sceneTotal).clamp(0.0, 1.0),
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Expanded(
@@ -259,7 +261,10 @@ class _LessonPageState extends State<LessonPage> {
                               switchInCurve: Curves.easeOut,
                               switchOutCurve: Curves.easeIn,
                               transitionBuilder: (child, animation) {
-                                return FadeTransition(opacity: animation, child: child);
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                );
                               },
                               child: KeyedSubtree(
                                 key: ValueKey<int>(_sceneIndex),
@@ -267,7 +272,9 @@ class _LessonPageState extends State<LessonPage> {
                                   builder: (context, constraints) {
                                     return SingleChildScrollView(
                                       child: ConstrainedBox(
-                                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                                        constraints: BoxConstraints(
+                                          minHeight: constraints.maxHeight,
+                                        ),
                                         child: _buildSceneContent(scene),
                                       ),
                                     );
@@ -322,12 +329,18 @@ class _LessonPageState extends State<LessonPage> {
       case 'word':
         return WordScene(
           scene: scene,
-          onPlayAudio: () => _audioPlaybackService.playSceneCue('scene_word_audio'),
-          onReplayAudio: () => _audioPlaybackService.playSceneCue('scene_word_repeat'),
+          onPlayAudio: () =>
+              _audioPlaybackService.playSceneCue('scene_word_audio'),
+          onReplayAudio: () =>
+              _audioPlaybackService.playSceneCue('scene_word_repeat'),
           onNext: _goToNextScene,
         );
       case 'practice':
-        return PracticeScene(scene: scene, onSkip: _goToNextScene, onNext: _goToNextScene);
+        return PracticeScene(
+          scene: scene,
+          onSkip: _goToNextScene,
+          onNext: _goToNextScene,
+        );
       case 'quiz':
         return QuizScene(
           scene: scene,
@@ -389,59 +402,250 @@ class _LessonPageState extends State<LessonPage> {
   }
 }
 
-class _LessonBackgroundDecor extends StatelessWidget {
-  const _LessonBackgroundDecor();
+class _LessonBackgroundDecor extends StatefulWidget {
+  @override
+  State<_LessonBackgroundDecor> createState() => _LessonBackgroundDecorState();
+}
+
+class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ambient;
+
+  @override
+  void initState() {
+    super.initState();
+    _ambient = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 4200),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _ambient.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
-      child: Stack(
+      child: AnimatedBuilder(
+        animation: _ambient,
+        builder: (context, child) {
+          final drift = (_ambient.value - 0.5) * 2;
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        const Color(0xFFFBF3DD),
+                        const Color(0xFFF3F8FF),
+                        const Color(0xFFF7F2D5).withValues(alpha: 0.95),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: -24,
+                top: 26,
+                child: Opacity(
+                  opacity: 0.22 + (_ambient.value * 0.18),
+                  child: Container(
+                    width: 190,
+                    height: 190,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFFFFE39D),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 56,
+                top: 52,
+                child: Transform.rotate(
+                  angle: -0.26 + (drift * 0.04),
+                  child: Container(
+                    width: 220,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFFFFE6A6).withValues(alpha: 0.42),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(right: 18, top: 30, child: _WindowPanel(drift: drift)),
+              Positioned(
+                left: 22,
+                top: 124,
+                child: Container(
+                  width: 170,
+                  height: 84,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3B8C62),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.12),
+                        blurRadius: 12,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      'ola amigos',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: const Color(0xFFDAF3DF),
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: 232,
+                child: Row(
+                  children: const [
+                    _PosterCard(label: 'A B C D', icon: Icons.abc_rounded),
+                    SizedBox(width: 8),
+                    _PosterCard(label: 'amigo', icon: Icons.favorite_rounded),
+                    SizedBox(width: 8),
+                    _PosterCard(label: 'escola', icon: Icons.school_rounded),
+                  ],
+                ),
+              ),
+              Positioned(
+                right: 20,
+                bottom: 96,
+                child: Transform.translate(
+                  offset: Offset(0, drift * 5),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.park_rounded,
+                        size: 48,
+                        color: Colors.green.shade400,
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.menu_book_rounded,
+                        size: 42,
+                        color: Colors.brown.shade300,
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.draw_rounded,
+                        size: 34,
+                        color: Colors.orange.shade300,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _WindowPanel extends StatelessWidget {
+  const _WindowPanel({required this.drift});
+
+  final double drift;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 188,
+      height: 126,
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE3D5BD),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: List.generate(2, (index) {
+          return Expanded(
+            child: Container(
+              margin: EdgeInsets.only(left: index == 0 ? 0 : 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFD9F1FF),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.7)),
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 8,
+                    left: 10,
+                    child: Transform.translate(
+                      offset: Offset(0, drift * 3),
+                      child: Icon(
+                        Icons.cloud_rounded,
+                        color: Colors.white.withValues(alpha: 0.9),
+                        size: 18,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class _PosterCard extends StatelessWidget {
+  const _PosterCard({required this.label, required this.icon});
+
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 70,
+      height: 74,
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.88),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Positioned(
-            left: -20,
-            top: 30,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFFFE39D).withValues(alpha: 0.26),
-              ),
+          Icon(icon, size: 18, color: const Color(0xFF4F7F61)),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF3F4D5A),
             ),
-          ),
-          Positioned(
-            right: -30,
-            top: 90,
-            child: Container(
-              width: 170,
-              height: 170,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFBDE7FF).withValues(alpha: 0.3),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 14,
-            bottom: 88,
-            child: Row(
-              children: [
-                Icon(Icons.school_rounded, size: 54, color: Colors.brown.shade300),
-                const SizedBox(width: 6),
-                Icon(Icons.person_rounded, size: 40, color: Colors.indigo.shade300),
-              ],
-            ),
-          ),
-          Positioned(
-            right: 20,
-            bottom: 92,
-            child: Row(
-              children: [
-                Icon(Icons.groups_rounded, size: 52, color: Colors.blueGrey.shade300),
-                const SizedBox(width: 6),
-                Icon(Icons.menu_book_rounded, size: 34, color: Colors.teal.shade300),
-              ],
-            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -464,14 +668,17 @@ class _LessonHeroBanner extends StatefulWidget {
   State<_LessonHeroBanner> createState() => _LessonHeroBannerState();
 }
 
-class _LessonHeroBannerState extends State<_LessonHeroBanner> with SingleTickerProviderStateMixin {
+class _LessonHeroBannerState extends State<_LessonHeroBanner>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 2800))
-      ..repeat(reverse: true);
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2800),
+    )..repeat(reverse: true);
   }
 
   @override
@@ -511,26 +718,65 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner> with SingleTickerP
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
-              final breath = 1 + (_controller.value * 0.04);
-              return Transform.scale(scale: breath, child: child);
+              final breath = 1 + (_controller.value * 0.035);
+              final float = (_controller.value - 0.5) * 7;
+              return Transform.translate(
+                offset: Offset(0, float),
+                child: Transform.scale(scale: breath, child: child),
+              );
             },
-            child: PicoAvatar(size: 132, controller: widget.controller),
+            child: PicoAvatar(size: 178, controller: widget.controller),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.86),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: const Color(0xFFE1EBD7)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.person_rounded,
+                        color: Colors.indigo.shade300,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Teacher Sofia',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: const Color(0xFF3A4A64),
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 6),
                 Row(
                   children: [
-                    Icon(Icons.school_rounded, color: Colors.brown.shade300, size: 20),
+                    Icon(
+                      Icons.school_rounded,
+                      color: Colors.brown.shade300,
+                      size: 20,
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         '${widget.header} - Teacher Sofia',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w900,
                             ),

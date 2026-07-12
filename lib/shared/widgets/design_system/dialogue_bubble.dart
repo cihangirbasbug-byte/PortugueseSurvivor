@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class DialogueBubble extends StatelessWidget {
+class DialogueBubble extends StatefulWidget {
   const DialogueBubble({
     super.key,
     required this.text,
@@ -13,32 +13,75 @@ class DialogueBubble extends StatelessWidget {
   final int? maxLines;
 
   @override
+  State<DialogueBubble> createState() => _DialogueBubbleState();
+}
+
+class _DialogueBubbleState extends State<DialogueBubble>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ambient;
+
+  @override
+  void initState() {
+    super.initState();
+    _ambient = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2600),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _ambient.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(22);
-    return CustomPaint(
-      painter: _BubbleTailPainter(alignLeft: alignLeft),
-      child: Container(
-        margin: EdgeInsets.only(left: alignLeft ? 0 : 14, right: alignLeft ? 14 : 0),
-        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.96),
-          borderRadius: radius,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 14,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Text(
-          text,
-          maxLines: maxLines,
-          overflow: maxLines == null ? TextOverflow.visible : TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: const Color(0xFF3D4350),
-                height: 1.3,
+    return AnimatedBuilder(
+      animation: _ambient,
+      builder: (context, child) {
+        final wobble = (_ambient.value - 0.5) * 2;
+        return Opacity(
+          opacity: 0.92 + (_ambient.value * 0.08),
+          child: Transform.translate(
+            offset: Offset(0, wobble * 1.8),
+            child: child,
+          ),
+        );
+      },
+      child: CustomPaint(
+        painter: _BubbleTailPainter(alignLeft: widget.alignLeft),
+        child: Container(
+          margin: EdgeInsets.only(
+            left: widget.alignLeft ? 0 : 14,
+            right: widget.alignLeft ? 14 : 0,
+          ),
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.9),
+            borderRadius: radius,
+            border: Border.all(color: const Color(0xFFE5F0E6), width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
               ),
+            ],
+          ),
+          child: Text(
+            widget.text,
+            maxLines: widget.maxLines,
+            overflow: widget.maxLines == null
+                ? TextOverflow.visible
+                : TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: const Color(0xFF3D4350),
+              height: 1.36,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
       ),
     );

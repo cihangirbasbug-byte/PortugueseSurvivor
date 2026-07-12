@@ -24,12 +24,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final MissionRepository _repository = MissionRepository();
-  late final MissionManager _missionManager = MissionManager(repository: _repository);
-  late final ProgressService _progressService = ProgressService(repository: _repository);
+  late final MissionManager _missionManager = MissionManager(
+    repository: _repository,
+  );
+  late final ProgressService _progressService = ProgressService(
+    repository: _repository,
+  );
 
   List<MissionState> _missionStates = const <MissionState>[];
-  ProgressSummary _summary =
-      const ProgressSummary(totalXp: 0, totalCourage: 0, completionPercent: 0, badges: <String>[]);
+  ProgressSummary _summary = const ProgressSummary(
+    totalXp: 0,
+    totalCourage: 0,
+    completionPercent: 0,
+    badges: <String>[],
+  );
   MissionModel? _currentMission;
 
   static const String _chapterId = 'chapter_01';
@@ -54,11 +62,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _openMission(String missionId) async {
-    final result = await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => LessonPage(missionId: missionId),
-      ),
-    );
+    final result = await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => LessonPage(missionId: missionId)));
 
     if (result == true) {
       await _loadHomeMissionState();
@@ -67,7 +73,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final completedMissionCount = _missionStates.where((state) => state.isCompleted).length;
+    final completedMissionCount = _missionStates
+        .where((state) => state.isCompleted)
+        .length;
 
     MissionState? nextPlayableState;
     for (final state in _missionStates) {
@@ -115,7 +123,9 @@ class _HomePageState extends State<HomePage> {
                           : 'Siradaki hedef: ${missionForAdventure.learningGoal}',
                       xp: missionRewardXp,
                       progress: missionProgress,
-                      onPressed: missionForAdventure == null ? null : () => _openMission(missionForAdventure.id),
+                      onPressed: missionForAdventure == null
+                          ? null
+                          : () => _openMission(missionForAdventure.id),
                     ),
                     const SizedBox(height: 16),
                     LayoutBuilder(
@@ -171,7 +181,8 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 20),
                     _SectionTitle(
                       title: 'Chapter Map',
-                      subtitle: 'Escola da Amizade dunyasi uzerinden gorev yolu.',
+                      subtitle:
+                          'Escola da Amizade dunyasi uzerinden gorev yolu.',
                     ),
                     const SizedBox(height: 8),
                     ChapterWorldMap(
@@ -204,7 +215,9 @@ class _TopBar extends StatelessWidget {
           height: 46,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: const LinearGradient(colors: [Color(0xFF0E8A4B), Color(0xFF48B774)]),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF0E8A4B), Color(0xFF48B774)],
+            ),
             boxShadow: [
               BoxShadow(
                 color: const Color(0xFF0E8A4B).withValues(alpha: 0.28),
@@ -214,7 +227,14 @@ class _TopBar extends StatelessWidget {
             ],
           ),
           child: const Center(
-            child: Text('P', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 20)),
+            child: Text(
+              'P',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 20,
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 10),
@@ -222,12 +242,15 @@ class _TopBar extends StatelessWidget {
           child: Text(
             'Escola da Amizade',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: const Color(0xFF233228),
-                ),
+              fontWeight: FontWeight.w900,
+              color: const Color(0xFF233228),
+            ),
           ),
         ),
-        IconButton(onPressed: onRefresh, icon: const Icon(Icons.refresh_rounded)),
+        IconButton(
+          onPressed: onRefresh,
+          icon: const Icon(Icons.refresh_rounded),
+        ),
         IconButton(onPressed: () {}, icon: const Icon(Icons.settings_rounded)),
       ],
     );
@@ -241,14 +264,17 @@ class _HeroSection extends StatefulWidget {
   State<_HeroSection> createState() => _HeroSectionState();
 }
 
-class _HeroSectionState extends State<_HeroSection> with SingleTickerProviderStateMixin {
+class _HeroSectionState extends State<_HeroSection>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 3000))
-      ..repeat(reverse: true);
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3000),
+    )..repeat(reverse: true);
   }
 
   @override
@@ -278,24 +304,76 @@ class _HeroSectionState extends State<_HeroSection> with SingleTickerProviderSta
       ),
       child: Stack(
         children: [
-          Positioned(
-            left: 8,
-            top: 6,
-            child: Icon(Icons.wb_sunny_rounded, color: Colors.amber.shade600, size: 30),
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final t = _controller.value;
+              return Positioned(
+                left: 8,
+                top: 4,
+                child: Opacity(
+                  opacity: 0.72 + (math.sin(t * math.pi * 2) * 0.15),
+                  child: Transform.scale(
+                    scale: 1 + (math.sin(t * math.pi * 2) * 0.08),
+                    child: child,
+                  ),
+                ),
+              );
+            },
+            child: Icon(
+              Icons.wb_sunny_rounded,
+              color: Colors.amber.shade600,
+              size: 34,
+            ),
           ),
-          Positioned(
-            right: 8,
-            top: 18,
-            child: Icon(Icons.cloud_rounded, color: Colors.lightBlue.shade200, size: 36),
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final t = _controller.value;
+              return Positioned(
+                right: 8 + (math.sin(t * math.pi * 2) * 12),
+                top: 18,
+                child: child!,
+              );
+            },
+            child: Icon(
+              Icons.cloud_rounded,
+              color: Colors.lightBlue.shade200,
+              size: 38,
+            ),
+          ),
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final t = _controller.value;
+              return Positioned(
+                right: 80 + (math.cos(t * math.pi * 2) * 8),
+                top: 30,
+                child: Opacity(opacity: 0.7, child: child!),
+              );
+            },
+            child: Icon(
+              Icons.cloud_rounded,
+              color: Colors.blue.shade100,
+              size: 26,
+            ),
           ),
           Positioned(
             right: 8,
             bottom: 8,
             child: Row(
               children: [
-                Icon(Icons.school_rounded, color: Colors.brown.shade300, size: 30),
+                Icon(
+                  Icons.school_rounded,
+                  color: Colors.brown.shade300,
+                  size: 30,
+                ),
                 const SizedBox(width: 6),
-                Icon(Icons.groups_rounded, color: Colors.blueGrey.shade300, size: 24),
+                Icon(
+                  Icons.groups_rounded,
+                  color: Colors.blueGrey.shade300,
+                  size: 24,
+                ),
               ],
             ),
           ),
@@ -308,21 +386,82 @@ class _HeroSectionState extends State<_HeroSection> with SingleTickerProviderSta
                   final t = _controller.value;
                   final floatY = math.sin(t * math.pi * 2) * 5;
                   final breathScale = 1 + (math.sin(t * math.pi * 2) * 0.03);
+                  final blink = math.sin(t * math.pi * 4).abs() > 0.96;
                   return Transform.translate(
                     offset: Offset(0, floatY),
-                    child: Transform.scale(scale: breathScale, child: child),
+                    child: Transform.scale(
+                      scale: breathScale,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          child!,
+                          if (blink)
+                            Positioned(
+                              top: 72,
+                              child: Opacity(
+                                opacity: 0.16,
+                                child: Container(
+                                  width: 116,
+                                  height: 18,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF2E3F52),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   );
                 },
-                child: const PicoAvatar(size: 190, animate: true),
+                child: const PicoAvatar(size: 206, animate: true),
               ),
               const SizedBox(width: 8),
               const Expanded(
                 child: DialogueBubble(
-                  text: 'Bom dia! Escola da Amizade hazir. Bugun yeni Portekizce kelimeler ogreniyoruz.',
+                  text:
+                      'Bom dia! Escola da Amizade hazir. Bugun yeni Portekizce kelimeler ogreniyoruz.',
                   maxLines: 5,
                 ),
               ),
             ],
+          ),
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final t = _controller.value;
+              return Positioned(
+                left: 18 + (math.cos(t * math.pi * 2) * 8),
+                bottom: 6,
+                child: Transform.rotate(
+                  angle: -0.24 + (math.sin(t * math.pi * 2) * 0.08),
+                  child: Icon(
+                    Icons.eco_rounded,
+                    color: Colors.green.shade300,
+                    size: 17,
+                  ),
+                ),
+              );
+            },
+          ),
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final t = _controller.value;
+              return Positioned(
+                left: 52 + (math.sin(t * math.pi * 2) * 8),
+                bottom: 10,
+                child: Transform.rotate(
+                  angle: 0.28 + (math.cos(t * math.pi * 2) * 0.07),
+                  child: Icon(
+                    Icons.eco_rounded,
+                    color: Colors.lightGreen.shade400,
+                    size: 15,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -344,14 +483,16 @@ class _SectionTitle extends StatelessWidget {
         Text(
           title,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: const Color(0xFF2A3A33),
-              ),
+            fontWeight: FontWeight.w900,
+            color: const Color(0xFF2A3A33),
+          ),
         ),
         const SizedBox(height: 2),
         Text(
           subtitle,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
         ),
       ],
     );
@@ -359,7 +500,11 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class _DailyGoalCard extends StatelessWidget {
-  const _DailyGoalCard({required this.progress, required this.completed, required this.target});
+  const _DailyGoalCard({
+    required this.progress,
+    required this.completed,
+    required this.target,
+  });
 
   final double progress;
   final int completed;
@@ -372,7 +517,9 @@ class _DailyGoalCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(colors: [Colors.white, Color(0xFFFFFCEF)]),
+        gradient: const LinearGradient(
+          colors: [Colors.white, Color(0xFFFFFCEF)],
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.07),
@@ -391,12 +538,16 @@ class _DailyGoalCard extends StatelessWidget {
               children: [
                 Text(
                   'Daily Goal',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Super! $completed / $target gorev tamamlandi. Hadi devam edelim.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
                 ),
               ],
             ),
@@ -446,7 +597,9 @@ class ChapterWorldMap extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 14, 12, 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(26),
-        gradient: const LinearGradient(colors: [Color(0xFFFFFCF0), Color(0xFFEFF7FF)]),
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFFCF0), Color(0xFFEFF7FF)],
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -464,7 +617,19 @@ class ChapterWorldMap extends StatelessWidget {
             children: [
               CustomPaint(
                 size: Size(width, 248),
-                painter: _WalkPathPainter(count: missionStates.length, spacing: spacing, startX: startX),
+                painter: _MapDecorationPainter(
+                  count: missionStates.length,
+                  spacing: spacing,
+                  startX: startX,
+                ),
+              ),
+              CustomPaint(
+                size: Size(width, 248),
+                painter: _WalkPathPainter(
+                  count: missionStates.length,
+                  spacing: spacing,
+                  startX: startX,
+                ),
               ),
               for (var i = 0; i < missionStates.length; i++)
                 Positioned(
@@ -475,16 +640,25 @@ class ChapterWorldMap extends StatelessWidget {
                       Text(
                         _locations[i % _locations.length],
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: const Color(0xFF52645B),
-                              fontWeight: FontWeight.w700,
-                            ),
+                          color: const Color(0xFF52645B),
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       MissionNode(
-                        label: 'M${missionStates[i].mission.id.replaceFirst('mission_', '')}',
-                        subtitle: _subtitleFor(missionStates[i], missionStates[i].mission.id == currentMissionId),
-                        state: _stateFor(missionStates[i], missionStates[i].mission.id == currentMissionId),
-                        onTap: missionStates[i].isUnlocked ? () => onMissionTap(missionStates[i].mission.id) : null,
+                        label:
+                            'M${missionStates[i].mission.id.replaceFirst('mission_', '')}',
+                        subtitle: _subtitleFor(
+                          missionStates[i],
+                          missionStates[i].mission.id == currentMissionId,
+                        ),
+                        state: _stateFor(
+                          missionStates[i],
+                          missionStates[i].mission.id == currentMissionId,
+                        ),
+                        onTap: missionStates[i].isUnlocked
+                            ? () => onMissionTap(missionStates[i].mission.id)
+                            : null,
                       ),
                     ],
                   ),
@@ -512,7 +686,11 @@ class ChapterWorldMap extends StatelessWidget {
 }
 
 class _WalkPathPainter extends CustomPainter {
-  const _WalkPathPainter({required this.count, required this.spacing, required this.startX});
+  const _WalkPathPainter({
+    required this.count,
+    required this.spacing,
+    required this.startX,
+  });
 
   final int count;
   final double spacing;
@@ -542,6 +720,64 @@ class _WalkPathPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _WalkPathPainter oldDelegate) {
+    return oldDelegate.count != count;
+  }
+}
+
+class _MapDecorationPainter extends CustomPainter {
+  const _MapDecorationPainter({
+    required this.count,
+    required this.spacing,
+    required this.startX,
+  });
+
+  final int count;
+  final double spacing;
+  final double startX;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final flower = Paint()..color = const Color(0xFFF9C87A);
+    final trunk = Paint()..color = const Color(0xFF8A5B3D);
+    final leaves = Paint()..color = const Color(0xFF7FC67D);
+    final bench = Paint()..color = const Color(0xFFC5955E);
+    final sign = Paint()..color = const Color(0xFFE7D3A9);
+
+    for (var i = 0; i < count; i++) {
+      final x = startX + (i * spacing);
+      final y = i.isEven ? 132.0 : 204.0;
+
+      canvas.drawCircle(Offset(x - 56, y + 30), 3.5, flower);
+      canvas.drawCircle(Offset(x - 50, y + 25), 2.6, flower);
+
+      canvas.drawRect(Rect.fromLTWH(x + 38, y + 18, 4, 10), trunk);
+      canvas.drawCircle(Offset(x + 40, y + 15), 7, leaves);
+
+      if (i % 3 == 0) {
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(x - 10, y + 34, 22, 5),
+            const Radius.circular(2),
+          ),
+          bench,
+        );
+      }
+
+      if (i % 4 == 1) {
+        canvas.drawRect(Rect.fromLTWH(x + 58, y + 20, 2.2, 11), trunk);
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(x + 52, y + 12, 14, 7),
+            const Radius.circular(2),
+          ),
+          sign,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _MapDecorationPainter oldDelegate) {
     return oldDelegate.count != count;
   }
 }
