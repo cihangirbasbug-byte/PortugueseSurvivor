@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 import 'primary_button.dart';
 import 'reward_chip.dart';
 
@@ -25,9 +27,9 @@ class AdventureCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         gradient: const LinearGradient(
           colors: [Color(0xFF0F8C4D), Color(0xFF4DBA77)],
           begin: Alignment.topLeft,
@@ -51,9 +53,9 @@ class AdventureCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                      ),
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ),
               RewardChip(
@@ -68,9 +70,9 @@ class AdventureCard extends StatelessWidget {
           Text(
             subtitle,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.92),
-                  height: 1.3,
-                ),
+              color: Colors.white.withValues(alpha: 0.92),
+              height: 1.3,
+            ),
           ),
           const SizedBox(height: 14),
           ClipRRect(

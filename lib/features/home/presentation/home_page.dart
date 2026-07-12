@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/pico_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/services/mission_manager.dart';
 import '../../../core/services/progress_service.dart';
@@ -10,7 +11,7 @@ import '../../../shared/widgets/design_system/dialogue_bubble.dart';
 import '../../../shared/widgets/design_system/mission_node.dart';
 import '../../../shared/widgets/design_system/progress_ring.dart';
 import '../../../shared/widgets/design_system/stat_card.dart';
-import '../../../shared/widgets/pico_avatar.dart';
+import '../../../shared/widgets/character/character_layer.dart';
 import '../../lesson/data/models/mission_model.dart';
 import '../../lesson/data/repositories/mission_repository.dart';
 import '../../lesson/presentation/lesson_page.dart';
@@ -286,13 +287,17 @@ class _HeroSectionState extends State<_HeroSection>
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         gradient: const LinearGradient(
           colors: [Color(0xFFFFECCD), Color(0xFFFFF7E6), Color(0xFFE2F3FF)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+        ),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.6),
+          width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
@@ -377,55 +382,44 @@ class _HeroSectionState extends State<_HeroSection>
               ],
             ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  final t = _controller.value;
-                  final floatY = math.sin(t * math.pi * 2) * 5;
-                  final breathScale = 1 + (math.sin(t * math.pi * 2) * 0.03);
-                  final blink = math.sin(t * math.pi * 4).abs() > 0.96;
-                  return Transform.translate(
-                    offset: Offset(0, floatY),
-                    child: Transform.scale(
-                      scale: breathScale,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          child!,
-                          if (blink)
-                            Positioned(
-                              top: 72,
-                              child: Opacity(
-                                opacity: 0.16,
-                                child: Container(
-                                  width: 116,
-                                  height: 18,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF2E3F52),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-                child: const PicoAvatar(size: 206, animate: true),
-              ),
-              const SizedBox(width: 8),
-              const Expanded(
-                child: DialogueBubble(
-                  text:
-                      'Bom dia! Escola da Amizade hazir. Bugun yeni Portekizce kelimeler ogreniyoruz.',
-                  maxLines: 5,
-                ),
-              ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 720;
+              final picoSize = isCompact ? 232.0 : 258.0;
+
+              final picoLayer = CharacterLayer(
+                role: CharacterRole.pico,
+                size: picoSize,
+                picoAnimate: true,
+                showPlate: true,
+                name: 'Pico ${PicoAssets.officialVersion}',
+              );
+
+              const speech = DialogueBubble(
+                text:
+                    'Bom dia! Escola da Amizade hazir. Bugun yeni Portekizce kelimeler ogreniyoruz.',
+                maxLines: 5,
+              );
+
+              if (isCompact) {
+                return Column(
+                  children: [
+                    picoLayer,
+                    const SizedBox(height: 10),
+                    const SizedBox(width: double.infinity, child: speech),
+                  ],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  picoLayer,
+                  const SizedBox(width: 10),
+                  const Expanded(child: speech),
+                ],
+              );
+            },
           ),
           AnimatedBuilder(
             animation: _controller,

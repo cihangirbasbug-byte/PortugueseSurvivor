@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_shadows.dart';
+import '../../../core/theme/app_spacing.dart';
+
 class DialogueBubble extends StatefulWidget {
   const DialogueBubble({
     super.key,
@@ -37,7 +41,7 @@ class _DialogueBubbleState extends State<DialogueBubble>
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(22);
+    final radius = BorderRadius.circular(AppRadius.lg);
     return AnimatedBuilder(
       animation: _ambient,
       builder: (context, child) {
@@ -57,18 +61,17 @@ class _DialogueBubbleState extends State<DialogueBubble>
             left: widget.alignLeft ? 0 : 14,
             right: widget.alignLeft ? 14 : 0,
           ),
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.sm,
+            AppSpacing.sm,
+            AppSpacing.sm,
+            AppSpacing.sm,
+          ),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.9),
             borderRadius: radius,
             border: Border.all(color: const Color(0xFFE5F0E6), width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 14,
-                offset: const Offset(0, 6),
-              ),
-            ],
+            boxShadow: AppShadows.panel,
           ),
           child: Text(
             widget.text,

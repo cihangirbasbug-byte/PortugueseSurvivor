@@ -2,6 +2,8 @@ import '../animation/pico_animation_controller.dart';
 
 /// Single source of truth for all renderable Pico visual states.
 abstract final class PicoAssets {
+  static const String officialVersion = 'v1.0';
+
   static const String idle = 'assets/characters/pico/pico_idle.png';
   static const String wave = 'assets/characters/pico/pico_wave.png';
   static const String think = 'assets/characters/pico/pico_think.png';

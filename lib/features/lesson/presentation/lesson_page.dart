@@ -5,9 +5,9 @@ import '../../../core/services/audio_playback_service.dart';
 import '../../../core/services/mission_manager.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/character/character_layer.dart';
 import '../../../shared/widgets/design_system/dialogue_bubble.dart';
 import '../../../shared/widgets/mission_header.dart';
-import '../../../shared/widgets/pico_avatar.dart';
 import '../data/models/mission_model.dart';
 import '../data/models/scene_model.dart';
 import 'scenes/celebration_scene.dart';
@@ -554,6 +554,18 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                   ),
                 ),
               ),
+              Positioned(
+                left: 16,
+                bottom: 36,
+                right: 16,
+                child: Opacity(
+                  opacity: 0.86,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: const [_DeskChair(), _DeskChair(), _DeskChair()],
+                  ),
+                ),
+              ),
             ],
           );
         },
@@ -712,10 +724,10 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner>
           ),
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          AnimatedBuilder(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 560;
+          final picoWidget = AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
               final breath = 1 + (_controller.value * 0.035);
@@ -725,68 +737,114 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner>
                 child: Transform.scale(scale: breath, child: child),
               );
             },
-            child: PicoAvatar(size: 178, controller: widget.controller),
+            child: CharacterLayer(
+              role: CharacterRole.pico,
+              size: compact ? 160 : 196,
+              picoController: widget.controller,
+              showPlate: true,
+            ),
+          );
+
+          final content = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  CharacterLayer(
+                    role: CharacterRole.teacherSofia,
+                    size: compact ? 62 : 76,
+                    showPlate: true,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Teacher Sofia ile sinifta canli pratik',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: const Color(0xFF3A4A64),
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Icon(
+                    Icons.school_rounded,
+                    color: Colors.brown.shade300,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      '${widget.header} - Teacher Sofia',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              DialogueBubble(text: bubbleText, maxLines: compact ? 4 : 3),
+            ],
+          );
+
+          if (compact) {
+            return Column(
+              children: [picoWidget, const SizedBox(height: 8), content],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              picoWidget,
+              const SizedBox(width: 10),
+              Expanded(child: content),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _DeskChair extends StatelessWidget {
+  const _DeskChair();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 76,
+      height: 52,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Positioned(
+            bottom: 18,
+            child: Container(
+              width: 70,
+              height: 14,
+              decoration: BoxDecoration(
+                color: const Color(0xFFD0A273),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.86),
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: const Color(0xFFE1EBD7)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.person_rounded,
-                        color: Colors.indigo.shade300,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Teacher Sofia',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: const Color(0xFF3A4A64),
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.school_rounded,
-                      color: Colors.brown.shade300,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        '${widget.header} - Teacher Sofia',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w900,
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                DialogueBubble(text: bubbleText, maxLines: 3),
-              ],
+          Positioned(
+            bottom: 0,
+            child: Container(
+              width: 40,
+              height: 20,
+              decoration: BoxDecoration(
+                color: const Color(0xFF9B6A4D),
+                borderRadius: BorderRadius.circular(7),
+              ),
             ),
           ),
         ],

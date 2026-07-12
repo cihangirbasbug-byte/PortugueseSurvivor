@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_shadows.dart';
+import '../../../core/theme/app_spacing.dart';
+
 class PrimaryButton extends StatefulWidget {
   const PrimaryButton({
     super.key,
@@ -30,14 +34,8 @@ class _PrimaryButtonState extends State<PrimaryButton> {
 
     final button = DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        boxShadow: [
-          BoxShadow(
-            color: bg.withValues(alpha: 0.24),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+        boxShadow: AppShadows.soft,
       ),
       child: FilledButton.icon(
         onPressed: widget.onPressed,
@@ -52,9 +50,13 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           backgroundColor: bg,
           foregroundColor: fg,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(AppRadius.pill),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          minimumSize: const Size(0, 52),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
+          ),
           elevation: 0,
         ),
       ),

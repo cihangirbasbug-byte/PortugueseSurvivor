@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+
 class RewardChip extends StatefulWidget {
   const RewardChip({
     super.key,
@@ -48,10 +51,13 @@ class _RewardChipState extends State<RewardChip>
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: widget.backgroundColor,
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(AppRadius.pill),
           border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
           gradient: LinearGradient(
             colors: [
