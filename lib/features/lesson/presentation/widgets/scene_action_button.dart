@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../shared/widgets/primary_button.dart';
+import '../../../../../shared/widgets/design_system/primary_button.dart';
 
 class SceneActionButton extends StatelessWidget {
   final String label;
@@ -19,7 +19,7 @@ class SceneActionButton extends StatelessWidget {
     return PrimaryButton(
       label: label,
       onPressed: onPressed,
-      isLarge: isLarge,
+      icon: isLarge ? Icons.arrow_forward_rounded : null,
     );
   }
 }

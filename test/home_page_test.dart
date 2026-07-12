@@ -10,10 +10,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 1200));
 
-    expect(find.text('Gunaydin!'), findsOneWidget);
-    expect(find.text('Bugun yeni bir Portekiz macerasi bizi bekliyor!'), findsOneWidget);
-    expect(find.text('Bugunun Macerasi'), findsOneWidget);
-    expect(find.text('Gorev Yolu'), findsOneWidget);
+    expect(find.textContaining('Bom dia!'), findsOneWidget);
+    expect(find.text('Adventure Card'), findsOneWidget);
+    expect(find.text('Daily Goal'), findsOneWidget);
+    expect(find.text('Chapter Map'), findsOneWidget);
     expect(find.text('Basla'), findsOneWidget);
   });
 }

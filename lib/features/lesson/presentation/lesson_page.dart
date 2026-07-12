@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/animation/pico_animation_controller.dart';
+import '../../../core/services/audio_playback_service.dart';
 import '../../../core/services/mission_manager.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/services/audio_playback_service.dart';
-import '../../../shared/widgets/pico_avatar.dart';
+import '../../../shared/widgets/design_system/dialogue_bubble.dart';
 import '../../../shared/widgets/mission_header.dart';
+import '../../../shared/widgets/pico_avatar.dart';
 import '../data/models/mission_model.dart';
 import '../data/models/scene_model.dart';
 import 'scenes/celebration_scene.dart';
@@ -35,8 +36,7 @@ class LessonPage extends StatefulWidget {
 class _LessonPageState extends State<LessonPage> {
   final MissionManager _missionManager = MissionManager();
   final AudioPlaybackService _audioPlaybackService = NoopAudioPlaybackService();
-  final PicoAnimationController _picoAnimationController =
-      PicoAnimationController();
+  final PicoAnimationController _picoAnimationController = PicoAnimationController();
 
   MissionModel? _mission;
   int _sceneIndex = 0;
@@ -79,13 +79,9 @@ class _LessonPageState extends State<LessonPage> {
 
   void _syncPicoAnimationForCurrentScene() {
     final mission = _mission;
-    if (mission == null) {
-      return;
-    }
+    if (mission == null) return;
 
-    final scene = _sceneIndex < mission.scenes.length
-        ? mission.scenes[_sceneIndex]
-        : _resolveCompleteScene();
+    final scene = _sceneIndex < mission.scenes.length ? mission.scenes[_sceneIndex] : _resolveCompleteScene();
     final sceneType = scene?.type ?? 'mission_complete';
     _picoAnimationController.setSceneType(sceneType);
   }
@@ -116,7 +112,7 @@ class _LessonPageState extends State<LessonPage> {
         barrierDismissible: false,
         builder: (context) => XpDialog(
           title: 'Harika!',
-          message: 'İlk Portekizce kelimeni öğrendin.',
+          message: 'Ilk Portekizce kelimeni ogrendin.',
           xp: _mission?.xpReward ?? 20,
           courage: _mission?.courageReward ?? 10,
           onPressed: () {
@@ -197,13 +193,13 @@ class _LessonPageState extends State<LessonPage> {
     final visualSceneIndex = scene == null ? sceneTotal : (_sceneIndex + 1);
     final missionNumber = int.tryParse(mission.id.replaceFirst('mission_', ''));
     final missionLabel = missionNumber == null
-      ? 'Mission / 10'
-      : 'Mission ${missionNumber.toString().padLeft(2, '0')} / 10';
+        ? 'Mission / 10'
+        : 'Mission ${missionNumber.toString().padLeft(2, '0')} / 10';
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFF9EA),
       appBar: AppBar(
-        title: const Text('Gorev'),
+        title: const Text('Lesson'),
         backgroundColor: const Color(0xFFFFF9EA),
       ),
       body: Container(
@@ -220,13 +216,13 @@ class _LessonPageState extends State<LessonPage> {
               const _LessonBackgroundDecor(),
               Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 700),
+                  constraints: const BoxConstraints(maxWidth: 760),
                   child: Padding(
                     padding: AppSpacing.screenPadding,
                     child: Column(
                       children: [
                         _LessonHeroBanner(
-                          header: 'Okul Avlusu',
+                          header: 'Classroom',
                           scene: scene,
                           controller: _picoAnimationController,
                         ),
@@ -236,30 +232,47 @@ class _LessonPageState extends State<LessonPage> {
                           missionLabel: missionLabel,
                           title: mission.title,
                           sceneLabel: 'Scene $visualSceneIndex / $sceneTotal',
-                          progress: sceneTotal == 0
-                              ? 0
-                              : (visualSceneIndex / sceneTotal).clamp(0.0, 1.0),
+                          progress: sceneTotal == 0 ? 0 : (visualSceneIndex / sceneTotal).clamp(0.0, 1.0),
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Expanded(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 350),
-                            switchInCurve: Curves.easeOut,
-                            switchOutCurve: Curves.easeIn,
-                            transitionBuilder: (child, animation) {
-                              return FadeTransition(opacity: animation, child: child);
-                            },
-                            child: KeyedSubtree(
-                              key: ValueKey<int>(_sceneIndex),
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  return SingleChildScrollView(
-                                    child: ConstrainedBox(
-                                      constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                                      child: _buildSceneContent(scene),
-                                    ),
-                                  );
-                                },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(26),
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Color(0xFFFFFCF2), Color(0xFFF0F9FF)],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.08),
+                                  blurRadius: 18,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 350),
+                              switchInCurve: Curves.easeOut,
+                              switchOutCurve: Curves.easeIn,
+                              transitionBuilder: (child, animation) {
+                                return FadeTransition(opacity: animation, child: child);
+                              },
+                              child: KeyedSubtree(
+                                key: ValueKey<int>(_sceneIndex),
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return SingleChildScrollView(
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                                        child: _buildSceneContent(scene),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ),
@@ -283,8 +296,8 @@ class _LessonPageState extends State<LessonPage> {
         xp: _mission?.xpReward ?? 20,
         courage: _mission?.courageReward ?? 10,
         badge: _mission?.badge ?? '',
-        title: complete?.title ?? 'Görev tamamlandı',
-        message: complete?.body ?? 'Bugün ilk cesur adımını attın.',
+        title: complete?.title ?? 'Gorev tamamlandi',
+        message: complete?.body ?? 'Bugun ilk cesur adimini attin.',
         picoAnimationController: _picoAnimationController,
         showChapterSummary: _mission?.id == 'mission_010',
         chapterId: 'chapter_01',
@@ -303,15 +316,9 @@ class _LessonPageState extends State<LessonPage> {
           onNext: _goToNextScene,
         );
       case 'story':
-        return StoryScene(
-          scene: scene,
-          onNext: _goToNextScene,
-        );
+        return StoryScene(scene: scene, onNext: _goToNextScene);
       case 'dialogue':
-        return DialogueScene(
-          scene: scene,
-          onNext: _goToNextScene,
-        );
+        return DialogueScene(scene: scene, onNext: _goToNextScene);
       case 'word':
         return WordScene(
           scene: scene,
@@ -320,11 +327,7 @@ class _LessonPageState extends State<LessonPage> {
           onNext: _goToNextScene,
         );
       case 'practice':
-        return PracticeScene(
-          scene: scene,
-          onSkip: _goToNextScene,
-          onNext: _goToNextScene,
-        );
+        return PracticeScene(scene: scene, onSkip: _goToNextScene, onNext: _goToNextScene);
       case 'quiz':
         return QuizScene(
           scene: scene,
@@ -343,7 +346,7 @@ class _LessonPageState extends State<LessonPage> {
       case 'celebration':
         return CelebrationScene(
           scene: scene,
-          badge: _mission?.badge ?? 'İlk Adım',
+          badge: _mission?.badge ?? 'Ilk Adim',
           xp: _mission?.xpReward ?? 20,
           courage: _mission?.courageReward ?? 10,
           picoAnimationController: _picoAnimationController,
@@ -352,10 +355,7 @@ class _LessonPageState extends State<LessonPage> {
       case 'realLifeTip':
       case 'real_life':
       case 'real_life_tip':
-        return RealLifeScene(
-          scene: scene,
-          onNext: _goToNextScene,
-        );
+        return RealLifeScene(scene: scene, onNext: _goToNextScene);
       case 'complete':
       case 'mission_complete':
         _markMissionCompleted();
@@ -422,14 +422,26 @@ class _LessonBackgroundDecor extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: 24,
-            bottom: 120,
-            child: Icon(Icons.school_rounded, size: 54, color: Colors.brown.shade300),
+            left: 14,
+            bottom: 88,
+            child: Row(
+              children: [
+                Icon(Icons.school_rounded, size: 54, color: Colors.brown.shade300),
+                const SizedBox(width: 6),
+                Icon(Icons.person_rounded, size: 40, color: Colors.indigo.shade300),
+              ],
+            ),
           ),
           Positioned(
-            right: 28,
-            bottom: 124,
-            child: Icon(Icons.groups_rounded, size: 52, color: Colors.blueGrey.shade300),
+            right: 20,
+            bottom: 92,
+            child: Row(
+              children: [
+                Icon(Icons.groups_rounded, size: 52, color: Colors.blueGrey.shade300),
+                const SizedBox(width: 6),
+                Icon(Icons.menu_book_rounded, size: 34, color: Colors.teal.shade300),
+              ],
+            ),
           ),
         ],
       ),
@@ -472,8 +484,8 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner> with SingleTickerP
   Widget build(BuildContext context) {
     final scene = widget.scene;
     final bubbleText = scene == null
-      ? 'Harika is cikardin, eve donmeye haziriz!'
-      : (scene.prompt.isNotEmpty ? scene.prompt : 'Hazirsan devam edelim!');
+        ? 'Harika is cikardin, eve donmeye haziriz!'
+        : (scene.prompt.isNotEmpty ? scene.prompt : 'Hazirsan devam edelim!');
 
     return Container(
       width: double.infinity,
@@ -511,41 +523,23 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner> with SingleTickerP
               children: [
                 Row(
                   children: [
-                    Icon(Icons.person_rounded, color: Colors.indigo.shade300, size: 20),
+                    Icon(Icons.school_rounded, color: Colors.brown.shade300, size: 20),
                     const SizedBox(width: 4),
-                    Icon(Icons.groups_rounded, color: Colors.teal.shade300, size: 20),
-                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        widget.header,
+                        '${widget.header} - Teacher Sofia',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               color: AppColors.primary,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w900,
                             ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.95),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: const Color(0xFFE4EFDF), width: 1.1),
-                  ),
-                  child: Text(
-                    bubbleText,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade700,
-                          height: 1.25,
-                        ),
-                  ),
-                ),
+                const SizedBox(height: 8),
+                DialogueBubble(text: bubbleText, maxLines: 3),
               ],
             ),
           ),
