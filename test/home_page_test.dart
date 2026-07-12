@@ -10,10 +10,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 1200));
 
-    expect(find.text('Merhaba Sidelya 👋'), findsOneWidget);
-    expect(find.text('Bugünkü görevin seni bekliyor!'), findsOneWidget);
-    expect(find.text('Bugünkü Görevler'), findsOneWidget);
-    expect(find.text('Devam Et'), findsOneWidget);
-    expect(find.text('Devam'), findsOneWidget);
+    expect(find.text('Gunaydin!'), findsOneWidget);
+    expect(find.text('Bugun yeni bir Portekiz macerasi bizi bekliyor!'), findsOneWidget);
+    expect(find.text('Bugunun Macerasi'), findsOneWidget);
+    expect(find.text('Gorev Yolu'), findsOneWidget);
+    expect(find.text('Basla'), findsOneWidget);
   });
 }
