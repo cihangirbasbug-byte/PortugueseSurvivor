@@ -45,7 +45,6 @@ class ProgressSection extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(999),
           child: TweenAnimationBuilder<double>(
-            key: ValueKey<double>(safeValue),
             tween: Tween<double>(begin: 0, end: safeValue),
             duration: const Duration(milliseconds: 700),
             curve: Curves.easeOutCubic,

@@ -113,8 +113,9 @@ class _LessonCardState extends State<LessonCard> {
                       ),
                       const SizedBox(height: 10),
                       ProgressSection(
-                        label: '',
+                        label: 'Görev ilerlemesi',
                         value: widget.progress,
+                        trailing: '${(widget.progress * 100).round()}%',
                       ),
                       const SizedBox(height: 10),
                       Wrap(

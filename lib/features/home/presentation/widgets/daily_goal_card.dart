@@ -18,6 +18,7 @@ class DailyGoalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final percent = (progress * 100).round();
+    final safeCompleted = completed.clamp(0, target);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -65,7 +66,7 @@ class DailyGoalCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Bugün 25 dersten 18 tanesini tamamladın.',
+                      'Bugün $safeCompleted / $target görevi tamamladın.',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.grey.shade600,
                       ),
@@ -91,13 +92,13 @@ class DailyGoalCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           ProgressSection(
-            label: 'Progress',
+            label: 'Günlük ilerleme',
             value: progress,
-            trailing: '$completed/$target',
+            trailing: '$safeCompleted/$target görev',
           ),
           const SizedBox(height: 12),
           Text(
-            '$completed / $target derse ulaştın.',
+            '$safeCompleted / $target göreve ulaştın.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Colors.grey.shade700,
             ),
