@@ -20,6 +20,7 @@ class CharacterLayer extends StatefulWidget {
     this.picoAnimate = false,
     this.customAvatar,
     this.showPlate = false,
+    this.enableAmbientFloat = true,
   });
 
   final CharacterRole role;
@@ -29,6 +30,7 @@ class CharacterLayer extends StatefulWidget {
   final bool picoAnimate;
   final Widget? customAvatar;
   final bool showPlate;
+  final bool enableAmbientFloat;
 
   @override
   State<CharacterLayer> createState() => _CharacterLayerState();
@@ -61,17 +63,20 @@ class _CharacterLayerState extends State<CharacterLayer>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        AnimatedBuilder(
-          animation: _ambient,
-          builder: (context, child) {
-            final t = _ambient.value * math.pi * 2;
-            return Transform.translate(
-              offset: Offset(0, math.sin(t) * 3),
-              child: child,
-            );
-          },
-          child: avatar,
-        ),
+        if (widget.enableAmbientFloat)
+          AnimatedBuilder(
+            animation: _ambient,
+            builder: (context, child) {
+              final t = _ambient.value * math.pi * 2;
+              return Transform.translate(
+                offset: Offset(0, math.sin(t) * 3),
+                child: child,
+              );
+            },
+            child: avatar,
+          )
+        else
+          avatar,
         if (widget.showPlate && effectiveName.isNotEmpty) ...[
           const SizedBox(height: 8),
           Container(

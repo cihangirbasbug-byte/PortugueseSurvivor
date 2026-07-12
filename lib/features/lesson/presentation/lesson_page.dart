@@ -4,6 +4,8 @@ import '../../../core/animation/pico_animation_controller.dart';
 import '../../../core/services/audio_playback_service.dart';
 import '../../../core/services/mission_manager.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/character/character_layer.dart';
 import '../../../shared/widgets/design_system/dialogue_bubble.dart';
@@ -226,7 +228,7 @@ class _LessonPageState extends State<LessonPage> {
                           scene: scene,
                           controller: _picoAnimationController,
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: AppSpacing.xs),
                         MissionHeader(
                           chapterLabel: 'Chapter 1',
                           missionLabel: missionLabel,
@@ -236,25 +238,29 @@ class _LessonPageState extends State<LessonPage> {
                               ? 0
                               : (visualSceneIndex / sceneTotal).clamp(0.0, 1.0),
                         ),
-                        const SizedBox(height: AppSpacing.sm),
+                        const SizedBox(height: AppSpacing.xs),
                         Expanded(
                           child: Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+                            padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(26),
-                              gradient: const LinearGradient(
+                              borderRadius: BorderRadius.circular(AppRadius.xl),
+                              gradient: LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: [Color(0xFFFFFCF2), Color(0xFFF0F9FF)],
+                                colors: [
+                                  const Color(
+                                    0xFFFFFCF2,
+                                  ).withValues(alpha: 0.88),
+                                  const Color(
+                                    0xFFF0F9FF,
+                                  ).withValues(alpha: 0.84),
+                                ],
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.08),
-                                  blurRadius: 18,
-                                  offset: const Offset(0, 10),
-                                ),
-                              ],
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.7),
+                              ),
+                              boxShadow: AppShadows.soft,
                             ),
                             child: AnimatedSwitcher(
                               duration: const Duration(milliseconds: 350),
@@ -403,6 +409,8 @@ class _LessonPageState extends State<LessonPage> {
 }
 
 class _LessonBackgroundDecor extends StatefulWidget {
+  const _LessonBackgroundDecor();
+
   @override
   State<_LessonBackgroundDecor> createState() => _LessonBackgroundDecorState();
 }
@@ -442,22 +450,26 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        const Color(0xFFFBF3DD),
-                        const Color(0xFFF3F8FF),
-                        const Color(0xFFF7F2D5).withValues(alpha: 0.95),
+                        const Color(0xFFF7EBD2),
+                        const Color(0xFFE9F4FF),
+                        const Color(0xFFF6EFD9),
                       ],
                     ),
                   ),
                 ),
               ),
+              Positioned.fill(
+                top: 306,
+                child: CustomPaint(painter: _WoodFloorPainter()),
+              ),
               Positioned(
-                left: -24,
-                top: 26,
+                left: -20,
+                top: 16,
                 child: Opacity(
                   opacity: 0.22 + (_ambient.value * 0.18),
                   child: Container(
-                    width: 190,
-                    height: 190,
+                    width: 226,
+                    height: 226,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Color(0xFFFFE39D),
@@ -466,17 +478,17 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                 ),
               ),
               Positioned(
-                left: 56,
-                top: 52,
+                left: 40,
+                top: 42,
                 child: Transform.rotate(
                   angle: -0.26 + (drift * 0.04),
                   child: Container(
-                    width: 220,
-                    height: 70,
+                    width: 300,
+                    height: 96,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFFFFE6A6).withValues(alpha: 0.42),
+                          const Color(0xFFFFE6A6).withValues(alpha: 0.44),
                           Colors.transparent,
                         ],
                       ),
@@ -484,16 +496,25 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                   ),
                 ),
               ),
-              Positioned(right: 18, top: 30, child: _WindowPanel(drift: drift)),
               Positioned(
-                left: 22,
-                top: 124,
+                left: 16,
+                right: 16,
+                top: 20,
+                child: _LargeWindowBand(drift: drift),
+              ),
+              Positioned(
+                left: 18,
+                top: 142,
+                right: 150,
                 child: Container(
-                  width: 170,
-                  height: 84,
+                  height: 102,
                   decoration: BoxDecoration(
                     color: const Color(0xFF3B8C62),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: const Color(0xFF295F43),
+                      width: 2,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.12),
@@ -504,7 +525,7 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                   ),
                   child: Center(
                     child: Text(
-                      'ola amigos',
+                      'ola turma',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: const Color(0xFFDAF3DF),
                         fontWeight: FontWeight.w800,
@@ -513,9 +534,10 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                   ),
                 ),
               ),
+              Positioned(right: 16, top: 138, child: const _BookshelfPanel()),
               Positioned(
-                left: 24,
-                top: 232,
+                left: 18,
+                top: 258,
                 child: Row(
                   children: const [
                     _PosterCard(label: 'A B C D', icon: Icons.abc_rounded),
@@ -523,12 +545,18 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                     _PosterCard(label: 'amigo', icon: Icons.favorite_rounded),
                     SizedBox(width: 8),
                     _PosterCard(label: 'escola', icon: Icons.school_rounded),
+                    SizedBox(width: 8),
+                    _PosterCard(
+                      label: 'obrigado',
+                      icon: Icons.pan_tool_alt_rounded,
+                    ),
                   ],
                 ),
               ),
+              const Positioned(right: 18, top: 258, child: _PortugalDecorRow()),
               Positioned(
                 right: 20,
-                bottom: 96,
+                bottom: 88,
                 child: Transform.translate(
                   offset: Offset(0, drift * 5),
                   child: Row(
@@ -550,20 +578,44 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                         size: 34,
                         color: Colors.orange.shade300,
                       ),
+                      const SizedBox(width: 6),
+                      Icon(
+                        Icons.local_florist_rounded,
+                        size: 30,
+                        color: Colors.green.shade500,
+                      ),
                     ],
                   ),
                 ),
               ),
               Positioned(
                 left: 16,
-                bottom: 36,
+                bottom: 24,
                 right: 16,
                 child: Opacity(
-                  opacity: 0.86,
+                  opacity: 0.92,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: const [_DeskChair(), _DeskChair(), _DeskChair()],
                   ),
+                ),
+              ),
+              Positioned(
+                left: 18,
+                bottom: 56,
+                child: Icon(
+                  Icons.local_florist_rounded,
+                  color: Colors.green.shade500,
+                  size: 34,
+                ),
+              ),
+              Positioned(
+                right: 26,
+                bottom: 52,
+                child: Icon(
+                  Icons.local_florist_rounded,
+                  color: Colors.green.shade600,
+                  size: 28,
                 ),
               ),
             ],
@@ -574,29 +626,28 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
   }
 }
 
-class _WindowPanel extends StatelessWidget {
-  const _WindowPanel({required this.drift});
+class _LargeWindowBand extends StatelessWidget {
+  const _LargeWindowBand({required this.drift});
 
   final double drift;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 188,
-      height: 126,
-      padding: const EdgeInsets.all(6),
+      height: 112,
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: const Color(0xFFE3D5BD),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
-        children: List.generate(2, (index) {
+        children: List.generate(3, (index) {
           return Expanded(
             child: Container(
-              margin: EdgeInsets.only(left: index == 0 ? 0 : 6),
+              margin: EdgeInsets.only(left: index == 0 ? 0 : 8),
               decoration: BoxDecoration(
                 color: const Color(0xFFD9F1FF),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.white.withValues(alpha: 0.7)),
               ),
               child: Stack(
@@ -609,7 +660,7 @@ class _WindowPanel extends StatelessWidget {
                       child: Icon(
                         Icons.cloud_rounded,
                         color: Colors.white.withValues(alpha: 0.9),
-                        size: 18,
+                        size: 20,
                       ),
                     ),
                   ),
@@ -618,6 +669,63 @@ class _WindowPanel extends StatelessWidget {
             ),
           );
         }),
+      ),
+    );
+  }
+}
+
+class _BookshelfPanel extends StatelessWidget {
+  const _BookshelfPanel();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 122,
+      height: 120,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFC79362),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: List.generate(2, (shelf) {
+          return Expanded(
+            child: Container(
+              margin: EdgeInsets.only(bottom: shelf == 0 ? 8 : 0),
+              decoration: BoxDecoration(
+                color: const Color(0xFFA97449),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: const [
+                  _Book(color: Color(0xFF62A8EA)),
+                  _Book(color: Color(0xFFE57F5D)),
+                  _Book(color: Color(0xFF7BBF7A)),
+                  _Book(color: Color(0xFFF0C75E)),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class _Book extends StatelessWidget {
+  const _Book({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 12,
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(3),
       ),
     );
   }
@@ -665,6 +773,54 @@ class _PosterCard extends StatelessWidget {
   }
 }
 
+class _PortugalDecorRow extends StatelessWidget {
+  const _PortugalDecorRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: const [
+        _PortugalTile(flag: true),
+        SizedBox(width: 6),
+        _PortugalTile(flag: false),
+      ],
+    );
+  }
+}
+
+class _PortugalTile extends StatelessWidget {
+  const _PortugalTile({required this.flag});
+
+  final bool flag;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: AppShadows.panel,
+      ),
+      child: flag
+          ? Row(
+              children: [
+                Expanded(child: Container(color: const Color(0xFF0E8A4B))),
+                Expanded(child: Container(color: const Color(0xFFE54949))),
+              ],
+            )
+          : const Center(
+              child: Icon(
+                Icons.pattern_rounded,
+                color: Color(0xFF3C74AD),
+                size: 20,
+              ),
+            ),
+    );
+  }
+}
+
 class _LessonHeroBanner extends StatefulWidget {
   const _LessonHeroBanner({
     required this.header,
@@ -708,21 +864,20 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner>
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+      padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFFFEFD1), Color(0xFFFFF9E6), Color(0xFFE8F7FF)],
+          colors: [
+            const Color(0xFFFFEFD1).withValues(alpha: 0.97),
+            const Color(0xFFFFF9E6).withValues(alpha: 0.95),
+            const Color(0xFFE8F7FF).withValues(alpha: 0.95),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 22,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        border: Border.all(color: Colors.white.withValues(alpha: 0.7)),
+        boxShadow: AppShadows.soft,
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -739,10 +894,18 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner>
             },
             child: CharacterLayer(
               role: CharacterRole.pico,
-              size: compact ? 160 : 196,
+              size: compact ? 150 : 178,
               picoController: widget.controller,
-              showPlate: true,
+              showPlate: false,
+              enableAmbientFloat: false,
             ),
+          );
+
+          final teacherWidget = CharacterLayer(
+            role: CharacterRole.teacherSofia,
+            size: compact ? 82 : 104,
+            showPlate: false,
+            enableAmbientFloat: false,
           );
 
           final content = Column(
@@ -750,15 +913,27 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner>
             children: [
               Row(
                 children: [
-                  CharacterLayer(
-                    role: CharacterRole.teacherSofia,
-                    size: compact ? 62 : 76,
-                    showPlate: true,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                    ),
+                    child: Text(
+                      'Teacher Sofia',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: const Color(0xFF3A4A64),
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      'Teacher Sofia ile sinifta canli pratik',
+                      'Pico ile Portekizce sinifina hos geldin',
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: const Color(0xFF3A4A64),
                         fontWeight: FontWeight.w800,
@@ -767,7 +942,7 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner>
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Row(
                 children: [
                   Icon(
@@ -789,28 +964,86 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner>
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              DialogueBubble(text: bubbleText, maxLines: compact ? 4 : 3),
+              const SizedBox(height: 6),
+              SizedBox(
+                width: double.infinity,
+                child: DialogueBubble(
+                  text: bubbleText,
+                  maxLines: compact ? 5 : 4,
+                ),
+              ),
             ],
           );
 
           if (compact) {
             return Column(
-              children: [picoWidget, const SizedBox(height: 8), content],
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    teacherWidget,
+                    const SizedBox(width: 6),
+                    picoWidget,
+                  ],
+                ),
+                const SizedBox(height: 6),
+                content,
+              ],
             );
           }
 
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          return Stack(
             children: [
-              picoWidget,
-              const SizedBox(width: 10),
-              Expanded(child: content),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 8,
+                child: Container(
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFC79664).withValues(alpha: 0.52),
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                ),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  teacherWidget,
+                  const SizedBox(width: 6),
+                  picoWidget,
+                  const SizedBox(width: 10),
+                  Expanded(child: content),
+                ],
+              ),
             ],
           );
         },
       ),
     );
+  }
+}
+
+class _WoodFloorPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final base = Paint()
+      ..color = const Color(0xFFD7B186).withValues(alpha: 0.62);
+    canvas.drawRect(Offset.zero & size, base);
+
+    final line = Paint()
+      ..color = const Color(0xFFB88C5F).withValues(alpha: 0.4)
+      ..strokeWidth = 1.2;
+
+    for (double y = 10; y < size.height; y += 14) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), line);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
 

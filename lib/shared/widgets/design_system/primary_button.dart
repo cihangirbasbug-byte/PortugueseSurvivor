@@ -44,7 +44,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
             : Icon(widget.icon, size: 18),
         label: Text(
           widget.label,
-          style: const TextStyle(fontWeight: FontWeight.w900),
+          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
         ),
         style: FilledButton.styleFrom(
           backgroundColor: bg,
@@ -52,7 +52,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.pill),
           ),
-          minimumSize: const Size(0, 52),
+          minimumSize: const Size(0, 58),
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.sm,

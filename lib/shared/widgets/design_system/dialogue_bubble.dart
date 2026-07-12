@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
-import '../../../core/theme/app_spacing.dart';
 
 class DialogueBubble extends StatefulWidget {
   const DialogueBubble({
@@ -41,7 +40,7 @@ class _DialogueBubbleState extends State<DialogueBubble>
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(AppRadius.lg);
+    final radius = BorderRadius.circular(AppRadius.xl + 4);
     return AnimatedBuilder(
       animation: _ambient,
       builder: (context, child) {
@@ -61,16 +60,11 @@ class _DialogueBubbleState extends State<DialogueBubble>
             left: widget.alignLeft ? 0 : 14,
             right: widget.alignLeft ? 14 : 0,
           ),
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.sm,
-            AppSpacing.sm,
-            AppSpacing.sm,
-            AppSpacing.sm,
-          ),
+          padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.9),
+            color: Colors.white.withValues(alpha: 0.95),
             borderRadius: radius,
-            border: Border.all(color: const Color(0xFFE5F0E6), width: 1),
+            border: Border.all(color: const Color(0xFFE3EFE4), width: 1.4),
             boxShadow: AppShadows.panel,
           ),
           child: Text(
@@ -81,8 +75,8 @@ class _DialogueBubbleState extends State<DialogueBubble>
                 : TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: const Color(0xFF3D4350),
-              height: 1.36,
-              fontWeight: FontWeight.w500,
+              height: 1.42,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -102,13 +96,13 @@ class _BubbleTailPainter extends CustomPainter {
     final path = Path();
 
     if (alignLeft) {
-      path.moveTo(8, size.height - 24);
-      path.lineTo(8, size.height - 10);
-      path.lineTo(20, size.height - 20);
+      path.moveTo(10, size.height - 24);
+      path.lineTo(10, size.height - 8);
+      path.lineTo(24, size.height - 20);
     } else {
-      path.moveTo(size.width - 8, size.height - 24);
-      path.lineTo(size.width - 8, size.height - 10);
-      path.lineTo(size.width - 20, size.height - 20);
+      path.moveTo(size.width - 10, size.height - 24);
+      path.lineTo(size.width - 10, size.height - 8);
+      path.lineTo(size.width - 24, size.height - 20);
     }
 
     path.close();
