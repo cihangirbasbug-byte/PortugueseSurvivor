@@ -4,7 +4,7 @@ import '../../../../core/animation/pico_animation_controller.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/pico_avatar.dart';
+import '../../../../shared/widgets/character/pico_character.dart';
 import '../../../../shared/widgets/speech_bubble.dart';
 import '../../data/models/scene_model.dart';
 import '../widgets/scene_action_button.dart';
@@ -45,9 +45,9 @@ class IntroScene extends StatelessWidget {
                 child: _TypewriterText(
                   text: scene.body,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.mutedText,
-                        height: 1.4,
-                      ),
+                    color: AppColors.mutedText,
+                    height: 1.4,
+                  ),
                 ),
               ),
             ),
@@ -96,21 +96,26 @@ class _IntroAnimationPanel extends StatelessWidget {
               Text(
                 'Sabah • Okul Girişi',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.text,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.text,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 10),
           Text(
             'Kuş sesleri • Hafif arka plan müziği',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.mutedText,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: AppColors.mutedText),
           ),
           const SizedBox(height: 18),
-          PicoAvatar(controller: picoAnimationController),
+          PicoCharacter(
+            size: PicoCharacterSize.medium,
+            state: PicoCharacterState.talking,
+            emotion: PicoEmotion.happy,
+            controller: picoAnimationController,
+          ),
           const SizedBox(height: 10),
           if (showBubble)
             Container(
@@ -122,9 +127,9 @@ class _IntroAnimationPanel extends StatelessWidget {
               child: Text(
                 'Pico',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.primary,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
               ),
             ),
         ],
@@ -134,10 +139,7 @@ class _IntroAnimationPanel extends StatelessWidget {
 }
 
 class _TypewriterText extends StatefulWidget {
-  const _TypewriterText({
-    required this.text,
-    this.style,
-  });
+  const _TypewriterText({required this.text, this.style});
 
   final String text;
   final TextStyle? style;
@@ -194,7 +196,10 @@ class _TypewriterTextState extends State<_TypewriterText>
         animation: _controller,
         builder: (context, _) {
           final visibleChars = (widget.text.length * _controller.value).floor();
-          final visibleText = widget.text.substring(0, visibleChars.clamp(0, widget.text.length));
+          final visibleText = widget.text.substring(
+            0,
+            visibleChars.clamp(0, widget.text.length),
+          );
           return Text(
             visibleText,
             textAlign: TextAlign.center,

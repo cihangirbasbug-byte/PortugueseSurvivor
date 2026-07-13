@@ -7,8 +7,8 @@ import '../../../../../core/theme/app_radius.dart';
 import '../../../../../core/theme/app_shadows.dart';
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../features/lesson/data/repositories/mission_repository.dart';
+import '../../../../../shared/widgets/character/pico_character.dart';
 import '../../../../../shared/widgets/celebration_card.dart';
-import '../../../../../shared/widgets/pico_avatar.dart';
 
 class LessonCompleteCard extends StatelessWidget {
   const LessonCompleteCard({
@@ -55,8 +55,11 @@ class LessonCompleteCard extends StatelessWidget {
         ],
         if (picoAnimationController != null) ...[
           const SizedBox(height: 12),
-          PicoAvatar(
-            size: 68,
+          PicoCharacter(
+            size: PicoCharacterSize.small,
+            customSize: 68,
+            state: PicoCharacterState.talking,
+            emotion: PicoEmotion.encouraging,
             controller: picoAnimationController,
           ),
         ],
@@ -103,34 +106,41 @@ class _ChapterSummaryCard extends StatelessWidget {
             children: [
               Text(
                 'Chapter 1 Complete',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: AppSpacing.sm),
-              _SummaryRow(label: 'Total XP', value: data == null ? '...' : '${data.totalXp}'),
+              _SummaryRow(
+                label: 'Total XP',
+                value: data == null ? '...' : '${data.totalXp}',
+              ),
               _SummaryRow(
                 label: 'Total Courage',
                 value: data == null ? '...' : '${data.totalCourage}',
               ),
               _SummaryRow(
                 label: 'Completion',
-                value: data == null ? '...' : '${(data.completionPercent * 100).round()}%',
+                value: data == null
+                    ? '...'
+                    : '${(data.completionPercent * 100).round()}%',
               ),
               _SummaryRow(
                 label: 'Badges',
-                value: data == null || data.badges.isEmpty ? '...' : data.badges.join(', '),
+                value: data == null || data.badges.isEmpty
+                    ? '...'
+                    : data.badges.join(', '),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 data == null
                     ? 'Yeni maceralar seni bekliyor!'
                     : (data.hasChapter2
-                        ? 'Chapter 2 unlocked. Yeni maceralar seni bekliyor!'
-                        : 'Chapter 2 yakında. Yeni maceralar seni bekliyor!'),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.mutedText,
-                    ),
+                          ? 'Chapter 2 unlocked. Yeni maceralar seni bekliyor!'
+                          : 'Chapter 2 yakında. Yeni maceralar seni bekliyor!'),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: AppColors.mutedText),
               ),
             ],
           ),
@@ -158,17 +168,17 @@ class _SummaryRow extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.text,
-                  ),
+                fontWeight: FontWeight.w700,
+                color: AppColors.text,
+              ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.mutedText,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.mutedText),
             ),
           ),
         ],

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../core/animation/pico_animation_controller.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
-import '../pico_avatar.dart';
+import 'pico_character.dart';
 import 'teacher_sofia_avatar.dart';
 
 enum CharacterRole { pico, teacherSofia, custom }
@@ -14,20 +14,26 @@ class CharacterLayer extends StatefulWidget {
   const CharacterLayer({
     super.key,
     required this.role,
-    required this.size,
+    this.size,
     this.name,
     this.picoController,
     this.picoAnimate = false,
+    this.picoState = PicoCharacterState.idle,
+    this.picoEmotion = PicoEmotion.neutral,
+    this.picoSize = PicoCharacterSize.medium,
     this.customAvatar,
     this.showPlate = false,
     this.enableAmbientFloat = true,
   });
 
   final CharacterRole role;
-  final double size;
+  final double? size;
   final String? name;
   final PicoAnimationController? picoController;
   final bool picoAnimate;
+  final PicoCharacterState picoState;
+  final PicoEmotion picoEmotion;
+  final PicoCharacterSize picoSize;
   final Widget? customAvatar;
   final bool showPlate;
   final bool enableAmbientFloat;
@@ -102,17 +108,27 @@ class _CharacterLayerState extends State<CharacterLayer>
   Widget _avatarForRole() {
     switch (widget.role) {
       case CharacterRole.pico:
-        return PicoAvatar(
-          size: widget.size,
-          animate: widget.picoAnimate,
+        return PicoCharacter(
+          state: widget.picoAnimate
+              ? PicoCharacterState.talking
+              : widget.picoState,
+          emotion: widget.picoAnimate ? PicoEmotion.happy : widget.picoEmotion,
+          size: widget.picoSize,
+          customSize: widget.size,
           controller: widget.picoController,
         );
       case CharacterRole.teacherSofia:
-        return TeacherSofiaAvatar(size: widget.size);
+        return TeacherSofiaAvatar(
+          size:
+              widget.size ??
+              PicoCharacter.dimensionFor(PicoCharacterSize.medium),
+        );
       case CharacterRole.custom:
+        final customSize =
+            widget.size ?? PicoCharacter.dimensionFor(PicoCharacterSize.medium);
         return SizedBox(
-          width: widget.size,
-          height: widget.size,
+          width: customSize,
+          height: customSize,
           child: widget.customAvatar ?? const SizedBox.shrink(),
         );
     }

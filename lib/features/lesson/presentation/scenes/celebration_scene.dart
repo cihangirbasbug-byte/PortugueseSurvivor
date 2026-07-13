@@ -3,9 +3,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../../core/animation/pico_animation_controller.dart';
+import '../../../../shared/widgets/character/pico_character.dart';
 import '../../../../shared/widgets/design_system/primary_button.dart';
 import '../../../../shared/widgets/design_system/reward_chip.dart';
-import '../../../../shared/widgets/pico_avatar.dart';
 import '../../data/models/scene_model.dart';
 
 class CelebrationScene extends StatefulWidget {
@@ -108,8 +108,11 @@ class _CelebrationSceneState extends State<CelebrationScene>
                       child: child,
                     );
                   },
-                  child: PicoAvatar(
-                    size: 136,
+                  child: PicoCharacter(
+                    size: PicoCharacterSize.large,
+                    customSize: 136,
+                    state: PicoCharacterState.celebrating,
+                    emotion: PicoEmotion.excited,
                     controller: widget.picoAnimationController,
                   ),
                 ),

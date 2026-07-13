@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/animation/pico_animation_controller.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/pico_avatar.dart';
+import '../../../../shared/widgets/character/pico_character.dart';
 import '../../data/models/scene_model.dart';
 import '../widgets/answer_button.dart';
 
@@ -34,16 +34,19 @@ class QuizScene extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          PicoAvatar(
-            size: 68,
+          PicoCharacter(
+            size: PicoCharacterSize.small,
+            customSize: 68,
+            state: PicoCharacterState.listening,
+            emotion: PicoEmotion.thinking,
             controller: picoAnimationController,
           ),
           const SizedBox(height: 12),
           Text(
             scene.prompt,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 20),
           ...List.generate(scene.options.length, (index) {
@@ -65,9 +68,11 @@ class QuizScene extends StatelessWidget {
                   Text(
                     isCorrect ? 'Harika!' : 'Güzel denedin.',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: isCorrect ? AppColors.primary : Colors.orange.shade700,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      color: isCorrect
+                          ? AppColors.primary
+                          : Colors.orange.shade700,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   if (!isCorrect) ...[
                     const SizedBox(height: 8),
@@ -80,11 +85,12 @@ class QuizScene extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
                         child: Text(
-                          scene.tip.isNotEmpty ? scene.tip : 'Öğretmen seni selamlıyor.',
+                          scene.tip.isNotEmpty
+                              ? scene.tip
+                              : 'Öğretmen seni selamlıyor.',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppColors.mutedText,
-                              ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: AppColors.mutedText),
                         ),
                       ),
                   ],

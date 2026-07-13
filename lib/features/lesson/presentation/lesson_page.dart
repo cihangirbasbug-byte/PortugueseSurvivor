@@ -8,6 +8,7 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/character/character_layer.dart';
+import '../../../shared/widgets/character/pico_character.dart';
 import '../../../shared/widgets/design_system/dialogue_bubble.dart';
 import '../../../shared/widgets/mission_header.dart';
 import '../data/models/mission_model.dart';
@@ -895,6 +896,11 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner>
             child: CharacterLayer(
               role: CharacterRole.pico,
               size: compact ? 150 : 178,
+              picoSize: compact
+                  ? PicoCharacterSize.large
+                  : PicoCharacterSize.hero,
+              picoState: PicoCharacterState.talking,
+              picoEmotion: PicoEmotion.happy,
               picoController: widget.controller,
               showPlate: false,
               enableAmbientFloat: false,

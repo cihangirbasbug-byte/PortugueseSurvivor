@@ -12,6 +12,7 @@ import '../../../shared/widgets/design_system/mission_node.dart';
 import '../../../shared/widgets/design_system/progress_ring.dart';
 import '../../../shared/widgets/design_system/stat_card.dart';
 import '../../../shared/widgets/character/character_layer.dart';
+import '../../../shared/widgets/character/pico_character.dart';
 import '../../lesson/data/models/mission_model.dart';
 import '../../lesson/data/repositories/mission_repository.dart';
 import '../../lesson/presentation/lesson_page.dart';
@@ -385,11 +386,13 @@ class _HeroSectionState extends State<_HeroSection>
           LayoutBuilder(
             builder: (context, constraints) {
               final isCompact = constraints.maxWidth < 720;
-              final picoSize = isCompact ? 232.0 : 258.0;
 
               final picoLayer = CharacterLayer(
                 role: CharacterRole.pico,
-                size: picoSize,
+                size: isCompact
+                    ? PicoCharacter.dimensionFor(PicoCharacterSize.hero) * 0.88
+                    : PicoCharacter.dimensionFor(PicoCharacterSize.hero),
+                picoSize: PicoCharacterSize.hero,
                 picoAnimate: true,
                 showPlate: true,
                 name: 'Pico ${PicoAssets.officialVersion}',
