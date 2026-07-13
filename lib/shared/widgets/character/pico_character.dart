@@ -6,9 +6,16 @@ import '../../../core/animation/pico_animation_controller.dart' as pico;
 import '../../../core/constants/pico_assets.dart';
 import '../../../core/theme/app_shadows.dart';
 
-enum PicoCharacterState { idle, talking, listening, celebrating, thinking }
+enum PicoCharacterState {
+  idle,
+  talking,
+  thinking,
+  listening,
+  celebrating,
+  encouraging,
+}
 
-enum PicoEmotion { happy, neutral, excited, thinking, encouraging }
+enum PicoEmotion { idle, happy, thinking, listen, celebrate, encourage }
 
 enum PicoCharacterSize { small, medium, large, hero }
 
@@ -16,7 +23,7 @@ class PicoCharacter extends StatefulWidget {
   const PicoCharacter({
     super.key,
     this.state = PicoCharacterState.idle,
-    this.emotion = PicoEmotion.neutral,
+    this.emotion = PicoEmotion.idle,
     this.size = PicoCharacterSize.medium,
     this.customSize,
     this.controller,
@@ -142,7 +149,8 @@ class _PicoCharacterState extends State<PicoCharacter>
           }
         }
 
-        if (resolvedState == PicoCharacterState.talking) {
+        if (resolvedState == PicoCharacterState.talking ||
+            resolvedState == PicoCharacterState.encouraging) {
           dy = math.sin(t * 2.4) * 1.4;
           rotation = math.sin(t * 2.4) * 0.012;
         } else if (resolvedState == PicoCharacterState.listening) {
@@ -178,8 +186,9 @@ class _PicoCharacterState extends State<PicoCharacter>
       case pico.PicoAnimationState.blink:
         return PicoCharacterState.idle;
       case pico.PicoAnimationState.wave:
-      case pico.PicoAnimationState.encourage:
         return PicoCharacterState.talking;
+      case pico.PicoAnimationState.encourage:
+        return PicoCharacterState.encouraging;
       case pico.PicoAnimationState.listen:
         return PicoCharacterState.listening;
       case pico.PicoAnimationState.think:
@@ -193,33 +202,35 @@ class _PicoCharacterState extends State<PicoCharacter>
     switch (state) {
       case pico.PicoAnimationState.idle:
       case pico.PicoAnimationState.blink:
-        return PicoEmotion.neutral;
+        return PicoEmotion.idle;
       case pico.PicoAnimationState.wave:
         return PicoEmotion.happy;
       case pico.PicoAnimationState.listen:
-        return PicoEmotion.neutral;
+        return PicoEmotion.listen;
       case pico.PicoAnimationState.think:
         return PicoEmotion.thinking;
       case pico.PicoAnimationState.encourage:
-        return PicoEmotion.encouraging;
+        return PicoEmotion.encourage;
       case pico.PicoAnimationState.celebrate:
-        return PicoEmotion.excited;
+        return PicoEmotion.celebrate;
     }
   }
 
   String _assetFor(PicoCharacterState state, PicoEmotion emotion) {
     if (state == PicoCharacterState.celebrating ||
-        emotion == PicoEmotion.excited) {
+        emotion == PicoEmotion.celebrate) {
       return PicoAssets.celebrate;
     }
     if (state == PicoCharacterState.thinking ||
         emotion == PicoEmotion.thinking) {
       return PicoAssets.think;
     }
-    if (state == PicoCharacterState.listening) {
+    if (state == PicoCharacterState.listening ||
+        emotion == PicoEmotion.listen) {
       return PicoAssets.listen;
     }
-    if (emotion == PicoEmotion.encouraging) {
+    if (state == PicoCharacterState.encouraging ||
+        emotion == PicoEmotion.encourage) {
       return PicoAssets.encourage;
     }
     if (state == PicoCharacterState.talking || emotion == PicoEmotion.happy) {

@@ -19,7 +19,7 @@ class CharacterLayer extends StatefulWidget {
     this.picoController,
     this.picoAnimate = false,
     this.picoState = PicoCharacterState.idle,
-    this.picoEmotion = PicoEmotion.neutral,
+    this.picoEmotion = PicoEmotion.idle,
     this.picoSize = PicoCharacterSize.medium,
     this.customAvatar,
     this.showPlate = false,

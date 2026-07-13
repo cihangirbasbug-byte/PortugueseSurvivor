@@ -59,7 +59,7 @@ class LessonCompleteCard extends StatelessWidget {
             size: PicoCharacterSize.small,
             customSize: 68,
             state: PicoCharacterState.talking,
-            emotion: PicoEmotion.encouraging,
+            emotion: PicoEmotion.encourage,
             controller: picoAnimationController,
           ),
         ],

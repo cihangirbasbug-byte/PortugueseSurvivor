@@ -112,7 +112,7 @@ class _CelebrationSceneState extends State<CelebrationScene>
                     size: PicoCharacterSize.large,
                     customSize: 136,
                     state: PicoCharacterState.celebrating,
-                    emotion: PicoEmotion.excited,
+                    emotion: PicoEmotion.celebrate,
                     controller: widget.picoAnimationController,
                   ),
                 ),

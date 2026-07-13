@@ -19,7 +19,7 @@ class PicoAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return PicoCharacter(
       state: animate ? PicoCharacterState.talking : PicoCharacterState.idle,
-      emotion: animate ? PicoEmotion.happy : PicoEmotion.neutral,
+      emotion: animate ? PicoEmotion.happy : PicoEmotion.idle,
       customSize: size,
       controller: controller,
     );
