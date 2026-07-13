@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_radius.dart';
+import '../design_system/colors.dart';
+import '../design_system/radius.dart';
 
 class MissionProgressBar extends StatelessWidget {
-  const MissionProgressBar({
-    super.key,
-    required this.progress,
-  });
+  const MissionProgressBar({super.key, required this.progress});
 
   final double progress;
 

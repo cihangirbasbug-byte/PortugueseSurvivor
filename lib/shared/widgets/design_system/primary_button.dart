@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_radius.dart';
-import '../../../core/theme/app_shadows.dart';
-import '../../../core/theme/app_spacing.dart';
+import '../../design_system/animations.dart';
+import '../../design_system/colors.dart';
+import '../../design_system/durations.dart';
+import '../../design_system/radius.dart';
+import '../../design_system/shadows.dart';
+import '../../design_system/spacing.dart';
+import '../../design_system/typography.dart';
 
 class PrimaryButton extends StatefulWidget {
   const PrimaryButton({
@@ -29,8 +33,8 @@ class _PrimaryButtonState extends State<PrimaryButton> {
 
   @override
   Widget build(BuildContext context) {
-    final bg = widget.invertColors ? Colors.white : const Color(0xFF0E8A4B);
-    final fg = widget.invertColors ? const Color(0xFF0E8A4B) : Colors.white;
+    final bg = widget.invertColors ? AppColors.surface : AppColors.primary;
+    final fg = widget.invertColors ? AppColors.primary : AppColors.surface;
 
     final button = DecoratedBox(
       decoration: BoxDecoration(
@@ -44,7 +48,10 @@ class _PrimaryButtonState extends State<PrimaryButton> {
             : Icon(widget.icon, size: 18),
         label: Text(
           widget.label,
-          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+          style: const TextStyle(
+            fontWeight: AppTypography.buttonWeight,
+            fontSize: AppTypography.buttonLabel,
+          ),
         ),
         style: FilledButton.styleFrom(
           backgroundColor: bg,
@@ -52,10 +59,10 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.pill),
           ),
-          minimumSize: const Size(0, 58),
+          minimumSize: const Size(0, AppSpacing.primaryButtonHeight),
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.sm,
+            horizontal: AppSpacing.primaryButtonHorizontal,
+            vertical: AppSpacing.primaryButtonVertical,
           ),
           elevation: 0,
         ),
@@ -67,13 +74,13 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       onTapCancel: () => setState(() => _pressed = false),
       onTapUp: (_) => setState(() => _pressed = false),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOut,
+        duration: AppDurations.fast,
+        curve: AppAnimations.standard,
         child: Transform.translate(
           offset: Offset(0, _pressed ? 1.5 : 0),
           child: AnimatedScale(
             scale: _pressed ? 0.97 : 1,
-            duration: const Duration(milliseconds: 100),
+            duration: AppDurations.buttonPress,
             child: widget.expand
                 ? SizedBox(width: double.infinity, child: button)
                 : button,

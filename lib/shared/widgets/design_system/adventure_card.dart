@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_radius.dart';
-import '../../../core/theme/app_spacing.dart';
+import '../../design_system/animations.dart';
+import '../../design_system/colors.dart';
+import '../../design_system/durations.dart';
+import '../../design_system/radius.dart';
+import '../../design_system/shadows.dart';
+import '../../design_system/spacing.dart';
 import 'primary_button.dart';
 import 'reward_chip.dart';
 
@@ -29,19 +33,13 @@ class AdventureCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.xl),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         gradient: const LinearGradient(
           colors: [Color(0xFF0F8C4D), Color(0xFF4DBA77)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0F8C4D).withValues(alpha: 0.28),
-            blurRadius: 24,
-            offset: const Offset(0, 14),
-          ),
-        ],
+        boxShadow: AppShadows.heroCard(const Color(0xFF0F8C4D)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +51,7 @@ class AdventureCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -61,37 +59,39 @@ class AdventureCard extends StatelessWidget {
               RewardChip(
                 label: '+$xp XP',
                 icon: Icons.auto_awesome_rounded,
-                backgroundColor: Colors.white.withValues(alpha: 0.23),
-                foregroundColor: Colors.white,
+                backgroundColor: AppColors.surface.withValues(alpha: 0.23),
+                foregroundColor: AppColors.surface,
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             subtitle,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Colors.white.withValues(alpha: 0.92),
+              color: AppColors.surface.withValues(alpha: 0.92),
               height: 1.3,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: AppSpacing.headerPadding),
           ClipRRect(
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(AppRadius.pill),
             child: TweenAnimationBuilder<double>(
               tween: Tween<double>(begin: 0, end: safeProgress),
-              duration: const Duration(milliseconds: 560),
-              curve: Curves.easeOutCubic,
+              duration: AppDurations.progressMedium,
+              curve: AppAnimations.emphasizeIn,
               builder: (context, value, _) {
                 return LinearProgressIndicator(
                   value: value,
                   minHeight: 9,
-                  backgroundColor: Colors.white.withValues(alpha: 0.3),
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                  backgroundColor: AppColors.surface.withValues(alpha: 0.3),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    AppColors.surface,
+                  ),
                 );
               },
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           Align(
             alignment: Alignment.centerRight,
             child: PrimaryButton(

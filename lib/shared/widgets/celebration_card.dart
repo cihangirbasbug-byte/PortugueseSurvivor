@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_shadows.dart';
-import '../../core/theme/app_spacing.dart';
+import '../design_system/animations.dart';
+import '../design_system/colors.dart';
+import '../design_system/durations.dart';
+import '../design_system/radius.dart';
+import '../design_system/shadows.dart';
+import '../design_system/spacing.dart';
 import 'primary_button.dart';
 
 class CelebrationCard extends StatefulWidget {
@@ -44,20 +46,20 @@ class _CelebrationCardState extends State<CelebrationCard>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: AppDurations.pulse,
     );
 
     _badgeOpacity = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.35, curve: Curves.easeOut),
+      curve: const Interval(0.0, 0.35, curve: AppAnimations.standard),
     );
     _xpOpacity = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.3, 0.65, curve: Curves.easeOut),
+      curve: const Interval(0.3, 0.65, curve: AppAnimations.standard),
     );
     _courageOpacity = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.6, 1.0, curve: Curves.easeOut),
+      curve: const Interval(0.6, 1.0, curve: AppAnimations.standard),
     );
 
     _controller.forward();
@@ -75,7 +77,7 @@ class _CelebrationCardState extends State<CelebrationCard>
       padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         boxShadow: AppShadows.soft,
       ),
       child: Column(
@@ -106,17 +108,17 @@ class _CelebrationCardState extends State<CelebrationCard>
           const SizedBox(height: AppSpacing.md),
           Text(
             widget.title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             widget.message,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.mutedText,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(color: AppColors.mutedText),
           ),
           const SizedBox(height: AppSpacing.md),
           Wrap(
@@ -128,7 +130,9 @@ class _CelebrationCardState extends State<CelebrationCard>
                 child: widget.badge.isNotEmpty
                     ? _RewardPill(
                         text: '🏅 ${widget.badge}',
-                        backgroundColor: AppColors.primary.withValues(alpha: 0.12),
+                        backgroundColor: AppColors.primary.withValues(
+                          alpha: 0.12,
+                        ),
                         textColor: AppColors.primary,
                       )
                     : const SizedBox.shrink(),
@@ -168,10 +172,7 @@ class _CelebrationCardState extends State<CelebrationCard>
             ],
           ),
           const SizedBox(height: AppSpacing.xl),
-          PrimaryButton(
-            label: widget.buttonLabel,
-            onPressed: widget.onPressed,
-          ),
+          PrimaryButton(label: widget.buttonLabel, onPressed: widget.onPressed),
         ],
       ),
     );
@@ -208,7 +209,10 @@ class _RewardPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -216,9 +220,9 @@ class _RewardPill extends StatelessWidget {
       child: Text(
         text,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: textColor,
-            ),
+          fontWeight: FontWeight.w700,
+          color: textColor,
+        ),
       ),
     );
   }

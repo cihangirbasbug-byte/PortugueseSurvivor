@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_radius.dart';
+import '../design_system/animations.dart';
+import '../design_system/colors.dart';
+import '../design_system/durations.dart';
+import '../design_system/radius.dart';
+import '../design_system/spacing.dart';
 
 class PrimaryButton extends StatefulWidget {
   const PrimaryButton({
@@ -31,7 +34,7 @@ class _PrimaryButtonState extends State<PrimaryButton>
     super.initState();
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: AppDurations.buttonPulse,
     )..repeat(reverse: true);
   }
 
@@ -47,12 +50,18 @@ class _PrimaryButtonState extends State<PrimaryButton>
       onPressed: widget.onPressed,
       style: FilledButton.styleFrom(
         backgroundColor: AppColors.primary,
-        minimumSize: Size.fromHeight(widget.isLarge ? 60 : 52),
-        padding: EdgeInsets.symmetric(vertical: widget.isLarge ? 18 : 16),
+        minimumSize: Size.fromHeight(
+          widget.isLarge
+              ? AppSpacing.primaryButtonHeightLarge
+              : AppSpacing.primaryButtonHeightRegular,
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: widget.isLarge
+              ? AppSpacing.primaryButtonVerticalLarge
+              : AppSpacing.primaryButtonVerticalRegular,
+        ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            widget.isLarge ? AppRadius.pill : AppRadius.md,
-          ),
+          borderRadius: BorderRadius.circular(AppRadius.pill),
         ),
       ),
       child: Text(widget.label),
@@ -65,8 +74,8 @@ class _PrimaryButtonState extends State<PrimaryButton>
         final scale = _isPressed ? 0.97 : pulse;
         return AnimatedScale(
           scale: scale,
-          duration: const Duration(milliseconds: 120),
-          curve: Curves.easeOut,
+          duration: AppDurations.fast,
+          curve: AppAnimations.standard,
           child: GestureDetector(
             onTapDown: (_) => setState(() => _isPressed = true),
             onTapCancel: () => setState(() => _isPressed = false),

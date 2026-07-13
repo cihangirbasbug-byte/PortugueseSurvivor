@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_shadows.dart';
+import '../design_system/colors.dart';
+import '../design_system/radius.dart';
+import '../design_system/shadows.dart';
+import '../design_system/spacing.dart';
 
 class SpeechBubble extends StatelessWidget {
   const SpeechBubble({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(16),
+    this.padding = const EdgeInsets.all(AppSpacing.md),
   });
 
   final Widget child;
@@ -21,7 +22,7 @@ class SpeechBubble extends StatelessWidget {
       padding: padding,
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
+        borderRadius: BorderRadius.circular(AppRadius.speechBubble),
         boxShadow: AppShadows.soft,
       ),
       child: child,

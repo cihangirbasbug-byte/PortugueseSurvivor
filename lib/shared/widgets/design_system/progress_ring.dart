@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../design_system/animations.dart';
+import '../../design_system/colors.dart';
+import '../../design_system/durations.dart';
+
 class ProgressRing extends StatelessWidget {
   const ProgressRing({
     super.key,
     required this.progress,
     this.size = 86,
-    this.color = const Color(0xFF0E8A4B),
+    this.color = AppColors.primary,
   });
 
   final double progress;
@@ -40,12 +44,12 @@ class ProgressRing extends StatelessWidget {
           CircularProgressIndicator(
             value: 1,
             strokeWidth: 8,
-            color: Colors.white.withValues(alpha: 0.65),
+            color: AppColors.surface.withValues(alpha: 0.65),
           ),
           TweenAnimationBuilder<double>(
             tween: Tween<double>(begin: 0, end: safeValue),
-            duration: const Duration(milliseconds: 650),
-            curve: Curves.easeOutCubic,
+            duration: AppDurations.progress,
+            curve: AppAnimations.emphasizeIn,
             builder: (context, value, _) {
               return CircularProgressIndicator(
                 value: value,
@@ -59,14 +63,14 @@ class ProgressRing extends StatelessWidget {
             height: size - 24,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.82),
+              color: AppColors.surface.withValues(alpha: 0.82),
             ),
           ),
           Text(
             '$percent%',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w900,
-              color: const Color(0xFF2E3442),
+              color: AppColors.speechText,
             ),
           ),
         ],

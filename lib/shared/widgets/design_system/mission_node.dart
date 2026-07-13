@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_radius.dart';
-import '../../../core/theme/app_shadows.dart';
-import '../../../core/theme/app_spacing.dart';
+import '../../design_system/colors.dart';
+import '../../design_system/durations.dart';
+import '../../design_system/illustration_sizes.dart';
+import '../../design_system/radius.dart';
+import '../../design_system/shadows.dart';
+import '../../design_system/spacing.dart';
 
 class MissionNode extends StatefulWidget {
   const MissionNode({
@@ -29,10 +32,7 @@ class _MissionNodeStateState extends State<MissionNode>
   @override
   void initState() {
     super.initState();
-    _pulse = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    );
+    _pulse = AnimationController(vsync: this, duration: AppDurations.pulse);
     if (widget.state == MissionNodeState.current) {
       _pulse.repeat(reverse: true);
     }
@@ -74,13 +74,15 @@ class _MissionNodeStateState extends State<MissionNode>
         Colors.white,
       ),
       MissionNodeState.open => (
-        Colors.white,
+        AppColors.surface,
         Icons.flag_rounded,
-        const Color(0xFF0E8A4B),
+        AppColors.primary,
       ),
     };
 
-    final size = widget.state == MissionNodeState.current ? 80.0 : 70.0;
+    final size = widget.state == MissionNodeState.current
+        ? AppIllustrationSizes.missionNodeCurrent
+        : AppIllustrationSizes.missionNode;
 
     return SizedBox(
       width: size + 44,
@@ -108,7 +110,7 @@ class _MissionNodeStateState extends State<MissionNode>
                   border: Border.all(
                     color: widget.state == MissionNodeState.current
                         ? const Color(0xFFF8E2A0)
-                        : Colors.white,
+                        : AppColors.surface,
                     width: 4,
                   ),
                   boxShadow: AppShadows.soft,
@@ -122,14 +124,14 @@ class _MissionNodeStateState extends State<MissionNode>
             widget.label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w800,
-              color: const Color(0xFF23422F),
+              color: AppColors.missionLabelText,
             ),
           ),
           Text(
             widget.subtitle,
             style: Theme.of(
               context,
-            ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
+            ).textTheme.bodySmall?.copyWith(color: AppColors.neutral700),
           ),
         ],
       ),

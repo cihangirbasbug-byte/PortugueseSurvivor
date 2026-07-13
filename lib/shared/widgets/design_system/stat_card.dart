@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../design_system/animations.dart';
+import '../../design_system/colors.dart';
+import '../../design_system/durations.dart';
+import '../../design_system/radius.dart';
+import '../../design_system/shadows.dart';
+import '../../design_system/spacing.dart';
+
 class StatCard extends StatelessWidget {
   const StatCard({
     super.key,
@@ -17,33 +24,27 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         gradient: const LinearGradient(
           colors: [Color(0xFFFFFFFF), Color(0xFFFFFDF5)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        boxShadow: AppShadows.statCard,
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppRadius.compactCard),
             ),
             child: Icon(icon, size: 28, color: color),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,20 +52,21 @@ class StatCard extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey.shade700,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    color: AppColors.neutral700,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: 0, end: value.toDouble()),
-                  duration: const Duration(milliseconds: 760),
-                  curve: Curves.easeOutCubic,
+                  duration: AppDurations.progressSlow,
+                  curve: AppAnimations.emphasizeIn,
                   builder: (context, animated, _) {
                     return Text(
                       animated.round().toString(),
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFF1F2E2B),
+                            color: AppColors.cardText,
                           ),
                     );
                   },

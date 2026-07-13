@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_radius.dart';
-import '../../../core/theme/app_spacing.dart';
+import '../../design_system/colors.dart';
+import '../../design_system/durations.dart';
+import '../../design_system/radius.dart';
+import '../../design_system/spacing.dart';
 
 class RewardChip extends StatefulWidget {
   const RewardChip({
@@ -9,7 +11,7 @@ class RewardChip extends StatefulWidget {
     required this.label,
     required this.icon,
     this.backgroundColor = const Color(0x220E8A4B),
-    this.foregroundColor = const Color(0xFF0E8A4B),
+    this.foregroundColor = AppColors.primary,
   });
 
   final String label;
@@ -30,7 +32,7 @@ class _RewardChipState extends State<RewardChip>
     super.initState();
     _pulse = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2200),
+      duration: AppDurations.ambientLoopSlow,
     )..repeat(reverse: true);
   }
 
@@ -58,7 +60,7 @@ class _RewardChipState extends State<RewardChip>
         decoration: BoxDecoration(
           color: widget.backgroundColor,
           borderRadius: BorderRadius.circular(AppRadius.pill),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
+          border: Border.all(color: AppColors.surface.withValues(alpha: 0.35)),
           gradient: LinearGradient(
             colors: [
               widget.backgroundColor.withValues(alpha: 0.95),
