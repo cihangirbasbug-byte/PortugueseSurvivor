@@ -6,7 +6,7 @@ import '../../../core/animation/pico_animation_controller.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import 'pico_character.dart';
-import 'teacher_sofia_avatar.dart';
+import 'teacher_character.dart';
 
 enum CharacterRole { pico, teacherSofia, custom }
 
@@ -21,6 +21,9 @@ class CharacterLayer extends StatefulWidget {
     this.picoState = PicoCharacterState.idle,
     this.picoEmotion = PicoEmotion.idle,
     this.picoSize = PicoCharacterSize.medium,
+    this.teacherController,
+    this.teacherEmotion = TeacherEmotion.idle,
+    this.teacherSize = TeacherCharacterSize.medium,
     this.customAvatar,
     this.showPlate = false,
     this.enableAmbientFloat = true,
@@ -34,6 +37,9 @@ class CharacterLayer extends StatefulWidget {
   final PicoCharacterState picoState;
   final PicoEmotion picoEmotion;
   final PicoCharacterSize picoSize;
+  final PicoAnimationController? teacherController;
+  final TeacherEmotion teacherEmotion;
+  final TeacherCharacterSize teacherSize;
   final Widget? customAvatar;
   final bool showPlate;
   final bool enableAmbientFloat;
@@ -118,10 +124,13 @@ class _CharacterLayerState extends State<CharacterLayer>
           controller: widget.picoController,
         );
       case CharacterRole.teacherSofia:
-        return TeacherSofiaAvatar(
-          size:
+        return TeacherCharacter(
+          emotion: widget.teacherEmotion,
+          size: widget.teacherSize,
+          customSize:
               widget.size ??
-              PicoCharacter.dimensionFor(PicoCharacterSize.medium),
+              TeacherCharacter.dimensionFor(TeacherCharacterSize.medium),
+          controller: widget.teacherController,
         );
       case CharacterRole.custom:
         final customSize =

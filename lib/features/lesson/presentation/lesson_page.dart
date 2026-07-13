@@ -9,6 +9,7 @@ import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/character/character_layer.dart';
 import '../../../shared/widgets/character/pico_character.dart';
+import '../../../shared/widgets/character/teacher_character.dart';
 import '../../../shared/widgets/design_system/dialogue_bubble.dart';
 import '../../../shared/widgets/mission_header.dart';
 import '../data/models/mission_model.dart';
@@ -910,6 +911,7 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner>
           final teacherWidget = CharacterLayer(
             role: CharacterRole.teacherSofia,
             size: compact ? 82 : 104,
+            teacherEmotion: _teacherEmotionForScene(scene?.type),
             showPlate: false,
             enableAmbientFloat: false,
           );
@@ -1028,6 +1030,26 @@ class _LessonHeroBannerState extends State<_LessonHeroBanner>
         },
       ),
     );
+  }
+
+  TeacherEmotion _teacherEmotionForScene(String? sceneType) {
+    switch ((sceneType ?? '').toLowerCase()) {
+      case 'intro':
+        return TeacherEmotion.smile;
+      case 'story':
+      case 'dialogue':
+      case 'word':
+      case 'practice':
+        return TeacherEmotion.explain;
+      case 'quiz':
+        return TeacherEmotion.listen;
+      case 'celebration':
+      case 'complete':
+      case 'mission_complete':
+        return TeacherEmotion.celebrate;
+      default:
+        return TeacherEmotion.encourage;
+    }
   }
 }
 
