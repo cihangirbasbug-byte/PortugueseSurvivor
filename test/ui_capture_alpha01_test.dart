@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:portuguese_survivor/core/animation/pico_animation_controller.dart';
 import 'package:portuguese_survivor/features/home/presentation/home_page.dart';
-import 'package:portuguese_survivor/features/lesson/data/models/scene_model.dart';
 import 'package:portuguese_survivor/features/lesson/presentation/lesson_page.dart';
 import 'package:portuguese_survivor/features/lesson/presentation/scenes/mission_complete_scene.dart';
 import 'package:portuguese_survivor/features/lesson/presentation/widgets/xp_dialog.dart';

@@ -43,9 +43,9 @@ class LessonCompleteCard extends StatelessWidget {
           xp: xp,
           courage: courage,
           badge: badge,
-          title: '$title • İlk Okul Günü',
+          title: 'Ilk okul gununu bitirdin',
           message:
-              '$message\n\nBugunun okul gunu bitti. Sinifa girdin, selam verdin ve cesaretini gosterdin.',
+              '$message\n\nIlk okul gunu tamamlandi. Yarin seni yeni bir macera bekliyor.',
           onPressed: onPressed,
           buttonLabel: 'Eve Don',
           showCountUp: false,
@@ -135,10 +135,10 @@ class _ChapterSummaryCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
               Text(
                 data == null
-                    ? 'Yeni maceralar seni bekliyor!'
+                    ? 'Yarinin macerasi aciliyor...'
                     : (data.hasChapter2
-                          ? 'Chapter 2 unlocked. Yeni maceralar seni bekliyor!'
-                          : 'Chapter 2 yakında. Yeni maceralar seni bekliyor!'),
+                          ? 'Yarinin macerasi acildi. Chapter 2 seni bekliyor!'
+                          : 'Yarinin macerasi cok yakinda acilacak.'),
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(color: AppColors.mutedText),
