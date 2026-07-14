@@ -505,6 +505,29 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                 ),
               ),
               Positioned(
+                left: 78 + (drift * 22),
+                top: 54,
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: 0.24,
+                    child: Container(
+                      width: 340,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            const Color(0xFFFFE89C),
+                            const Color(0xFFFFF6D3).withValues(alpha: 0.0),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
                 left: 16,
                 right: 16,
                 top: 20,
@@ -544,24 +567,48 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
               ),
               Positioned(right: 16, top: 138, child: const _BookshelfPanel()),
               Positioned(
-                left: 18,
-                top: 258,
+                left: 22,
+                top: 248,
                 child: Row(
                   children: const [
                     _PosterCard(label: 'A B C D', icon: Icons.abc_rounded),
                     SizedBox(width: 8),
+                    _PosterCard(label: 'bem-vindo', icon: Icons.waving_hand_rounded),
+                    SizedBox(width: 8),
                     _PosterCard(label: 'amigo', icon: Icons.favorite_rounded),
                     SizedBox(width: 8),
-                    _PosterCard(label: 'escola', icon: Icons.school_rounded),
-                    SizedBox(width: 8),
-                    _PosterCard(
-                      label: 'obrigado',
-                      icon: Icons.pan_tool_alt_rounded,
-                    ),
+                    _PosterCard(label: 'obrigado', icon: Icons.pan_tool_alt_rounded),
                   ],
                 ),
               ),
-              const Positioned(right: 18, top: 258, child: _PortugalDecorRow()),
+              Positioned(
+                right: 18,
+                top: 248,
+                child: const Row(
+                  children: [
+                    _PortugalMapPoster(),
+                    SizedBox(width: 8),
+                    _ChildrenDrawingsPoster(),
+                    SizedBox(width: 8),
+                    _PortugalDecorRow(),
+                  ],
+                ),
+              ),
+              Positioned(
+                right: 72,
+                top: 150,
+                child: Transform.translate(
+                  offset: Offset(0, drift * 4),
+                  child: const Opacity(
+                    opacity: 0.95,
+                    child: TeacherCharacter(
+                      size: TeacherCharacterSize.small,
+                      customSize: 82,
+                      emotion: TeacherEmotion.explain,
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 right: 20,
                 bottom: 88,
@@ -593,6 +640,13 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                         color: Colors.green.shade500,
                       ),
                     ],
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: CustomPaint(
+                    painter: _DustParticlesPainter(phase: _ambient.value),
                   ),
                 ),
               ),
@@ -793,6 +847,102 @@ class _PortugalDecorRow extends StatelessWidget {
         _PortugalTile(flag: false),
       ],
     );
+  }
+}
+
+class _PortugalMapPoster extends StatelessWidget {
+  const _PortugalMapPoster();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 70,
+      height: 74,
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: AppShadows.panel,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.map_rounded, size: 18, color: Colors.green.shade700),
+          const SizedBox(height: 4),
+          Text(
+            'Portugal',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF3F4D5A),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChildrenDrawingsPoster extends StatelessWidget {
+  const _ChildrenDrawingsPoster();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 70,
+      height: 74,
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: AppShadows.panel,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.palette_rounded, size: 12, color: Colors.orange.shade400),
+              const SizedBox(width: 3),
+              Icon(Icons.brush_rounded, size: 12, color: Colors.blue.shade400),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'cocuk\nresim',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF3F4D5A),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DustParticlesPainter extends CustomPainter {
+  const _DustParticlesPainter({required this.phase});
+
+  final double phase;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = const Color(0xFFFFF4CE).withValues(alpha: 0.22);
+
+    for (var i = 0; i < 28; i++) {
+      final x = ((i * 31.0) + (phase * 42)) % (size.width + 20) - 10;
+      final y = ((i * 23.0) + (phase * 16)) % (size.height * 0.75);
+      final radius = 0.8 + (i % 3) * 0.5;
+      canvas.drawCircle(Offset(x, y), radius, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DustParticlesPainter oldDelegate) {
+    return oldDelegate.phase != phase;
   }
 }
 
