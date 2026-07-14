@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/pico_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/services/mission_manager.dart';
 import '../../../core/services/progress_service.dart';
@@ -429,9 +428,10 @@ class _HeroSectionState extends State<_HeroSection>
                     ? PicoCharacter.dimensionFor(PicoCharacterSize.hero) * 0.88
                     : PicoCharacter.dimensionFor(PicoCharacterSize.hero),
                 picoSize: PicoCharacterSize.hero,
-                picoAnimate: true,
-                showPlate: true,
-                name: 'Pico ${PicoAssets.officialVersion}',
+                picoAnimate: false,
+                picoState: PicoCharacterState.idle,
+                picoEmotion: PicoEmotion.idle,
+                showPlate: false,
               );
 
               const speech = DialogueBubble(

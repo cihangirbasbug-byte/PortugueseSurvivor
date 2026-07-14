@@ -25,6 +25,7 @@ class PicoSceneAnimationMapper {
   static const Map<String, PicoAnimationState> _sceneMap = <String, PicoAnimationState>{
     'intro': PicoAnimationState.wave,
     'dialogue': PicoAnimationState.listen,
+    'word': PicoAnimationState.think,
     'practice': PicoAnimationState.encourage,
     'quiz': PicoAnimationState.think,
     'celebration': PicoAnimationState.celebrate,

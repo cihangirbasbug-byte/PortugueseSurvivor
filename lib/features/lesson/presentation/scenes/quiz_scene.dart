@@ -37,8 +37,14 @@ class QuizScene extends StatelessWidget {
           PicoCharacter(
             size: PicoCharacterSize.small,
             customSize: 68,
-            state: PicoCharacterState.listening,
-            emotion: PicoEmotion.thinking,
+            state: showFeedback
+                ? (isCorrect
+                      ? PicoCharacterState.celebrating
+                      : PicoCharacterState.encouraging)
+                : PicoCharacterState.thinking,
+            emotion: showFeedback
+                ? (isCorrect ? PicoEmotion.celebrate : PicoEmotion.encourage)
+                : PicoEmotion.thinking,
             controller: picoAnimationController,
           ),
           const SizedBox(height: 12),

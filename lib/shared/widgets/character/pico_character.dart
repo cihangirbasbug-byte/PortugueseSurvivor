@@ -118,13 +118,6 @@ class _PicoCharacterState extends State<PicoCharacter>
           fit: BoxFit.contain,
           width: dimension * 0.8,
           height: dimension * 0.8,
-          errorBuilder: (context, error, stackTrace) {
-            return Icon(
-              Icons.smart_toy_rounded,
-              size: dimension * 0.48,
-              color: Colors.lightBlue.shade700,
-            );
-          },
         ),
       ),
     );

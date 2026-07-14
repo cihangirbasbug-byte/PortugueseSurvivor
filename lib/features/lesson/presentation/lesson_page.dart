@@ -112,6 +112,7 @@ class _LessonPageState extends State<LessonPage> {
     });
 
     if (isCorrect) {
+      _picoAnimationController.setState(PicoAnimationState.celebrate);
       final showFirstCelebration = !_firstCorrectAnswerCelebrated;
       _firstCorrectAnswerCelebrated = true;
       showDialog<void>(
@@ -131,6 +132,8 @@ class _LessonPageState extends State<LessonPage> {
           },
         ),
       );
+    } else {
+      _picoAnimationController.setState(PicoAnimationState.encourage);
     }
   }
 
