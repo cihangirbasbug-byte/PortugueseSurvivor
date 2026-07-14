@@ -13,6 +13,6 @@ void main() {
 
     expect(find.text('İlk Okul Günüm'), findsOneWidget);
     expect(find.byType(SceneActionButton), findsOneWidget);
-    expect(find.textContaining('Kuş sesleri'), findsOneWidget);
+    expect(find.textContaining('Kapı açılıyor'), findsOneWidget);
   });
 }

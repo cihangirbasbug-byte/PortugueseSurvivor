@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/character/teacher_character.dart';
 import '../../../../shared/widgets/speech_bubble.dart';
 import '../../data/models/scene_model.dart';
 import '../widgets/scene_action_button.dart';
@@ -60,7 +61,10 @@ class DialogueScene extends StatelessWidget {
                         child: child,
                       );
                     },
-                    child: const Text('👩‍🏫', style: TextStyle(fontSize: 52)),
+                    child: const TeacherCharacter(
+                      size: TeacherCharacterSize.medium,
+                      emotion: TeacherEmotion.smile,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(

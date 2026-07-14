@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../shared/widgets/character/pico_character.dart';
+import '../../../../../shared/widgets/character/teacher_character.dart';
 
 class XpDialog extends StatelessWidget {
   final String title;
   final String message;
   final int xp;
   final int courage;
+  final bool showCelebrationCharacters;
   final VoidCallback onPressed;
 
   const XpDialog({
@@ -15,6 +18,7 @@ class XpDialog extends StatelessWidget {
     required this.message,
     required this.xp,
     required this.courage,
+    this.showCelebrationCharacters = false,
     required this.onPressed,
   });
 
@@ -35,6 +39,27 @@ class XpDialog extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (showCelebrationCharacters) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: const [
+                TeacherCharacter(
+                  size: TeacherCharacterSize.small,
+                  customSize: 72,
+                  emotion: TeacherEmotion.smile,
+                ),
+                SizedBox(width: 8),
+                PicoCharacter(
+                  size: PicoCharacterSize.small,
+                  customSize: 72,
+                  state: PicoCharacterState.celebrating,
+                  emotion: PicoEmotion.celebrate,
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
           Text(message),
           const SizedBox(height: 12),
           Wrap(

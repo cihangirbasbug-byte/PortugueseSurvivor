@@ -50,6 +50,7 @@ class _LessonPageState extends State<LessonPage> {
   bool _isReturningHome = false;
   bool _isCompletionSaved = false;
   bool _showIntroBubble = false;
+  bool _firstCorrectAnswerCelebrated = false;
 
   @override
   void initState() {
@@ -111,14 +112,19 @@ class _LessonPageState extends State<LessonPage> {
     });
 
     if (isCorrect) {
+      final showFirstCelebration = !_firstCorrectAnswerCelebrated;
+      _firstCorrectAnswerCelebrated = true;
       showDialog<void>(
         context: context,
         barrierDismissible: false,
         builder: (context) => XpDialog(
           title: 'Harika!',
-          message: 'Ilk Portekizce kelimeni ogrendin.',
+          message: showFirstCelebration
+              ? 'Ilk dogru cevabin! Pico kutluyor, Teacher Sofia gulumseyerek seni alkisliyor.'
+              : 'Dogru cevap! Harika devam ediyorsun.',
           xp: _mission?.xpReward ?? 20,
           courage: _mission?.courageReward ?? 10,
+          showCelebrationCharacters: showFirstCelebration,
           onPressed: () {
             Navigator.of(context).pop();
             _goToNextScene();

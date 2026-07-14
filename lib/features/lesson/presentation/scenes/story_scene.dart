@@ -43,17 +43,56 @@ class StoryScene extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  width: 96,
-                  height: 96,
+                  width: 210,
+                  height: 110,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
                     color: AppColors.accent.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(24),
                   ),
-                  child: Center(
-                    child: Text(
-                      scene.illustration.isNotEmpty ? scene.illustration : '🏫',
-                      style: const TextStyle(fontSize: 42),
-                    ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.wb_sunny_rounded,
+                            size: 20,
+                            color: Colors.amber.shade700,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Okul avlusu',
+                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.text,
+                                ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(
+                              Icons.school_rounded,
+                              color: Colors.brown.shade400,
+                              size: 30,
+                            ),
+                            Icon(
+                              Icons.directions_walk_rounded,
+                              color: Colors.blueGrey.shade500,
+                              size: 28,
+                            ),
+                            Icon(
+                              Icons.door_front_door_rounded,
+                              color: Colors.brown.shade600,
+                              size: 28,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 16),

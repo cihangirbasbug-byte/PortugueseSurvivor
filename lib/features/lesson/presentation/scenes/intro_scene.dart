@@ -4,6 +4,7 @@ import '../../../../core/animation/pico_animation_controller.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/character/teacher_character.dart';
 import '../../../../shared/widgets/character/pico_character.dart';
 import '../../../../shared/widgets/speech_bubble.dart';
 import '../../data/models/scene_model.dart';
@@ -94,7 +95,7 @@ class _IntroAnimationPanel extends StatelessWidget {
               Icon(Icons.wb_sunny_rounded, color: Colors.amber.shade700),
               const SizedBox(width: 6),
               Text(
-                'Sabah • Okul Girişi',
+                'Sabah 08:10 • Okula Varış',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppColors.text,
@@ -102,36 +103,100 @@ class _IntroAnimationPanel extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0, end: showBubble ? 1 : 0.65),
+            duration: const Duration(milliseconds: 550),
+            curve: Curves.easeOut,
+            builder: (context, value, child) {
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE1C8A4),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment(-1 + (value * 2), 0),
+                    child: Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0E8A4B),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF0E8A4B).withValues(alpha: 0.35),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
           const SizedBox(height: 10),
           Text(
-            'Kuş sesleri • Hafif arka plan müziği',
+            'Kapı açılıyor • Koridordan sınıfa geçiş',
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: AppColors.mutedText),
           ),
           const SizedBox(height: 18),
-          PicoCharacter(
-            size: PicoCharacterSize.medium,
-            state: PicoCharacterState.talking,
-            emotion: PicoEmotion.happy,
-            controller: picoAnimationController,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              AnimatedSlide(
+                offset: showBubble ? Offset.zero : const Offset(-0.08, 0),
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeOut,
+                child: const TeacherCharacter(
+                  size: TeacherCharacterSize.medium,
+                  emotion: TeacherEmotion.smile,
+                ),
+              ),
+              const SizedBox(width: 10),
+              AnimatedSlide(
+                offset: showBubble ? Offset.zero : const Offset(0.08, 0),
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeOut,
+                child: PicoCharacter(
+                  size: PicoCharacterSize.medium,
+                  state: PicoCharacterState.talking,
+                  emotion: PicoEmotion.happy,
+                  controller: picoAnimationController,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 10),
-          if (showBubble)
-            Container(
+          AnimatedOpacity(
+            opacity: showBubble ? 1 : 0,
+            duration: const Duration(milliseconds: 350),
+            child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
-                'Pico',
+                'Teacher Sofia: "Hoş geldin, bugün harika başlayacağız!"',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppColors.primary,
                 ),
               ),
             ),
+          ),
         ],
       ),
     );

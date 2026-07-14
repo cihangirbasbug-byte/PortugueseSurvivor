@@ -364,6 +364,24 @@ class _HeroSectionState extends State<_HeroSection>
               size: 26,
             ),
           ),
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final t = _controller.value;
+              return Positioned(
+                left: 138 + (math.sin(t * math.pi * 2) * 18),
+                top: 22,
+                child: Opacity(
+                  opacity: 0.62,
+                  child: Icon(
+                    Icons.flight_rounded,
+                    color: Colors.lightBlue.shade300,
+                    size: 16,
+                  ),
+                ),
+              );
+            },
+          ),
           Positioned(
             right: 8,
             bottom: 8,
@@ -383,6 +401,24 @@ class _HeroSectionState extends State<_HeroSection>
               ],
             ),
           ),
+          Positioned(
+            left: 14,
+            top: 44,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.85),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                'First School Day • Sabah',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF3A5B45),
+                ),
+              ),
+            ),
+          ),
           LayoutBuilder(
             builder: (context, constraints) {
               final isCompact = constraints.maxWidth < 720;
@@ -400,7 +436,7 @@ class _HeroSectionState extends State<_HeroSection>
 
               const speech = DialogueBubble(
                 text:
-                    'Bom dia! Escola da Amizade hazir. Bugun yeni Portekizce kelimeler ogreniyoruz.',
+                    'Bom dia! Ilk okul gunu basliyor. Sinifa birlikte varip ogretmene selam verecegiz.',
                 maxLines: 5,
               );
 

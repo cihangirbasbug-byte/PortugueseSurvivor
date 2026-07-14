@@ -43,10 +43,11 @@ class LessonCompleteCard extends StatelessWidget {
           xp: xp,
           courage: courage,
           badge: badge,
-          title: title,
-          message: message,
+          title: '$title • İlk Okul Günü',
+          message:
+              '$message\n\nBugunun okul gunu bitti. Sinifa girdin, selam verdin ve cesaretini gosterdin.',
           onPressed: onPressed,
-          buttonLabel: 'Devam Et',
+          buttonLabel: 'Eve Don',
           showCountUp: false,
         ),
         if (showChapterSummary && chapterId != null) ...[
