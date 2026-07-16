@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/mission_onboarding_service.dart';
 import '../../../core/services/mission_manager.dart';
 import '../../../core/services/progress_service.dart';
 import '../../../shared/widgets/design_system/adventure_card.dart';
@@ -15,6 +16,7 @@ import '../../../shared/widgets/character/pico_character.dart';
 import '../../lesson/data/models/mission_model.dart';
 import '../../lesson/data/repositories/mission_repository.dart';
 import '../../lesson/presentation/lesson_page.dart';
+import '../../onboarding/presentation/onboarding_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,6 +33,8 @@ class _HomePageState extends State<HomePage> {
   late final ProgressService _progressService = ProgressService(
     repository: _repository,
   );
+  final MissionOnboardingService _onboardingService =
+      MissionOnboardingService();
 
   List<MissionState> _missionStates = const <MissionState>[];
   ProgressSummary _summary = const ProgressSummary(
@@ -63,9 +67,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _openMission(String missionId) async {
+    final bool shouldShowOnboarding =
+        await _onboardingService.shouldShow(missionId);
+
+    if (!mounted) return;
+
     final result = await Navigator.of(
       context,
-    ).push(MaterialPageRoute(builder: (_) => LessonPage(missionId: missionId)));
+    ).push(
+      MaterialPageRoute(
+        builder: (_) => shouldShowOnboarding
+            ? OnboardingPage(missionId: missionId, entryFromHome: true)
+            : LessonPage(missionId: missionId),
+      ),
+    );
 
     if (result == true) {
       await _loadHomeMissionState();

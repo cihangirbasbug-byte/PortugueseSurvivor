@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../onboarding/presentation/onboarding_page.dart';
+import '../../home/presentation/home_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -21,7 +21,7 @@ class _SplashPageState extends State<SplashPage> {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => const OnboardingPage(),
+          builder: (_) => const HomePage(),
         ),
       );
     });
