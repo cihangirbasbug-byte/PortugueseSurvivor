@@ -425,8 +425,8 @@ class _HeroSectionState extends State<_HeroSection>
               final picoLayer = CharacterLayer(
                 role: CharacterRole.pico,
                 size: isCompact
-                    ? PicoCharacter.dimensionFor(PicoCharacterSize.hero) * 0.88
-                    : PicoCharacter.dimensionFor(PicoCharacterSize.hero),
+                    ? PicoCharacter.dimensionFor(PicoCharacterSize.hero) * 1.0736
+                    : PicoCharacter.dimensionFor(PicoCharacterSize.hero) * 1.22,
                 picoSize: PicoCharacterSize.hero,
                 picoAnimate: false,
                 picoState: PicoCharacterState.idle,

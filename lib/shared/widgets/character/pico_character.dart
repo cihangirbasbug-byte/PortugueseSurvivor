@@ -103,6 +103,9 @@ class _PicoCharacterState extends State<PicoCharacter>
         : _emotionFromController(controllerState);
 
     final assetPath = _assetFor(resolvedState, resolvedEmotion);
+    final imageExtent = dimension * 0.8;
+    final devicePixelRatio = MediaQuery.maybeDevicePixelRatioOf(context) ?? 1.0;
+    final cacheExtent = (imageExtent * devicePixelRatio).round();
 
     final avatar = Container(
       width: dimension,
@@ -116,8 +119,10 @@ class _PicoCharacterState extends State<PicoCharacter>
         child: Image.asset(
           assetPath,
           fit: BoxFit.contain,
-          width: dimension * 0.8,
-          height: dimension * 0.8,
+          width: imageExtent,
+          height: imageExtent,
+          cacheWidth: cacheExtent,
+          cacheHeight: cacheExtent,
         ),
       ),
     );
