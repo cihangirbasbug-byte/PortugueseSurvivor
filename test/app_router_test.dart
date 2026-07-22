@@ -52,23 +52,35 @@ void main() {
     expect(find.text('Chapter Map'), findsOneWidget);
   });
 
-  testWidgets('settings navigation opens settings route', (tester) async {
+  testWidgets('settings navigation opens settings and back returns home', (
+    tester,
+  ) async {
     SharedPreferences.setMockInitialValues(<String, Object>{
       'onboarding_mission_001_done': true,
     });
 
-    await tester.pumpWidget(const PortugueseSurvivorApp());
-    await _pumpFor(tester, const Duration(seconds: 3));
+    final router = AppRouter.createRouter(initialLocation: AppRouter.homePath);
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await _pumpFor(tester, const Duration(seconds: 1));
     await tester.pump(const Duration(milliseconds: 500));
 
     await tester.tap(find.byIcon(Icons.settings_rounded));
     await tester.pumpAndSettle();
 
+    expect(router.state.uri.path, AppRouter.settingsPath);
     expect(find.text('Ayarlar'), findsOneWidget);
     expect(
       find.text('Uygulama ayarlari yakinda buraya gelecek.'),
       findsOneWidget,
     );
+
+    expect(router.canPop(), isTrue);
+    router.pop();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(router.state.uri.path, AppRouter.homePath);
+    expect(find.text('Adventure Card'), findsOneWidget);
   });
 
   testWidgets('mission route uses mission id parameter', (tester) async {

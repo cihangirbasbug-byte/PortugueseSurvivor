@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -6,7 +7,10 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ayarlar')),
+      appBar: AppBar(
+        leading: BackButton(onPressed: () => context.pop()),
+        title: const Text('Ayarlar'),
+      ),
       body: const SafeArea(
         child: Center(child: Text('Uygulama ayarlari yakinda buraya gelecek.')),
       ),

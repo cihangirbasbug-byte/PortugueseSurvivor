@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     _TopBar(
                       onRefresh: _loadHomeMissionState,
-                      onSettings: () => context.go(AppRouter.settingsPath),
+                      onSettings: () => context.push(AppRouter.settingsPath),
                     ),
                     const SizedBox(height: 14),
                     const _HeroSection(),
