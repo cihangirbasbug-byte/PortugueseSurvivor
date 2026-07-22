@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
 
+import '../../../../app/router/app_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../lesson/presentation/lesson_page.dart';
 import 'progress_section.dart';
 
 class ContinueLessonCard extends StatefulWidget {
@@ -65,7 +66,9 @@ class _ContinueLessonCardState extends State<ContinueLessonCard>
               ),
             ],
           ),
-          child: isCompact ? _buildCompactLayout(context) : _buildRegularLayout(context),
+          child: isCompact
+              ? _buildCompactLayout(context)
+              : _buildRegularLayout(context),
         );
       },
     );
@@ -99,10 +102,7 @@ class _ContinueLessonCardState extends State<ContinueLessonCard>
         const SizedBox(height: 14),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildXpPill(context),
-            _buildContinueButton(context),
-          ],
+          children: [_buildXpPill(context), _buildContinueButton(context)],
         ),
       ],
     );
@@ -129,20 +129,20 @@ class _ContinueLessonCardState extends State<ContinueLessonCard>
       children: [
         Text(
           widget.title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 4),
         Text(
           widget.subtitle,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey.shade600,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
         ),
         const SizedBox(height: 14),
         ProgressSection(
-                  label: 'Sonraki görev',
+          label: 'Sonraki görev',
           value: widget.progress,
           trailing: '${(widget.progress * 100).round()}%',
         ),
@@ -170,9 +170,9 @@ class _ContinueLessonCardState extends State<ContinueLessonCard>
       child: Text(
         '+${widget.xp} XP',
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w700,
-            ),
+          color: AppColors.primary,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
@@ -187,18 +187,13 @@ class _ContinueLessonCardState extends State<ContinueLessonCard>
         return Transform.scale(scale: scale, child: child);
       },
       child: FilledButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(
-                MaterialPageRoute(
-                  builder: (_) => LessonPage(missionId: widget.missionId),
-                ),
-              )
-              .then((result) {
-            if (result == true) {
-              widget.onMissionCompleted?.call();
-            }
-          });
+        onPressed: () async {
+          final result = await context.push<bool>(
+            AppRouter.missionLocation(widget.missionId),
+          );
+          if (result == true) {
+            widget.onMissionCompleted?.call();
+          }
         },
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,

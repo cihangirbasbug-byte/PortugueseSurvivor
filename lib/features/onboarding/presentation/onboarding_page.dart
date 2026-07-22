@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../app/router/app_router.dart';
 import '../../../core/services/mission_onboarding_service.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../home/presentation/home_page.dart';
-import '../../lesson/presentation/lesson_page.dart';
 import 'widgets/dialogue_components.dart';
 
 enum _OnboardingStep {
@@ -30,8 +30,11 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
+  static const String _playerNameKey = 'player_name';
+
   final TextEditingController _nameController = TextEditingController();
-  final MissionOnboardingService _onboardingService = MissionOnboardingService();
+  final MissionOnboardingService _onboardingService =
+      MissionOnboardingService();
   _OnboardingStep _step = _OnboardingStep.teacherWelcome;
 
   bool _showTyping = true;
@@ -56,18 +59,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_titleForStep(_step)),
-      ),
+      appBar: AppBar(title: Text(_titleForStep(_step))),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: <Color>[
-              AppColors.background,
-              AppColors.surface,
-            ],
+            colors: <Color>[AppColors.background, AppColors.surface],
           ),
         ),
         child: SafeArea(
@@ -112,7 +110,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
             if (_showTyping) const TypingIndicator(),
             if (!_showTyping)
               const TeacherBubble(
-                message: 'Olá!\n\nBem-vindo à Escola da Amizade!',
+                message:
+                    'Olá! Eu sou a Teacher Sofia. Hoje vamos aprender português juntos.',
               ),
           ],
         );
@@ -121,7 +120,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
           key: ValueKey<String>('picoGreeting'),
           avatar: DialogueAvatar(role: DialogueAvatarRole.pico),
           bubbles: [
-            TeacherBubble(message: 'Olá!'),
+            TeacherBubble(
+              message: 'Olá! Eu sou o Pico! Vamos aprender português!',
+            ),
           ],
         );
       case _OnboardingStep.askName:
@@ -132,9 +133,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             teacherExpression: TeacherSofiaExpression.speaking,
           ),
           bubbles: [
-            const TeacherBubble(
-              message: 'Como te chamas?',
-            ),
+            const TeacherBubble(message: 'Como te chamas?'),
             const SizedBox(height: 12),
             TextField(
               controller: _nameController,
@@ -156,12 +155,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
             teacherExpression: TeacherSofiaExpression.encouraging,
           ),
           bubbles: [
-            TeacherBubble(
-              message: 'Prazer em conhecer-te, $playerName!',
-            ),
-            StudentBubble(
-              message: 'Vamos começar!',
-            ),
+            TeacherBubble(message: 'Prazer em conhecer-te, $playerName!'),
+            StudentBubble(message: 'Vamos começar!'),
           ],
         );
       case _OnboardingStep.missionIntroduction:
@@ -173,7 +168,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
           bubbles: [
             const TeacherBubble(
-              message: 'Missão 001: Primeiro Dia de Aula\n\nHoje vais aprender a cumprimentar em português europeu.',
+              message:
+                  'Missão 001: Primeiro Dia de Aula\n\nHoje vais aprender a cumprimentar em português europeu.',
             ),
             const SizedBox(height: 14),
             Container(
@@ -185,7 +181,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.auto_awesome_rounded, color: AppColors.primary),
+                  const Icon(
+                    Icons.auto_awesome_rounded,
+                    color: AppColors.primary,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     '+20 XP',
@@ -217,14 +216,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
       case _OnboardingStep.teacherWelcome:
       case _OnboardingStep.picoGreeting:
       case _OnboardingStep.teacherFollowUp:
-        return ContinueButton(
-          label: 'Continuar',
-          onPressed: _nextStep,
-        );
+        return ContinueButton(label: 'Continuar', onPressed: _nextStep);
       case _OnboardingStep.askName:
         return ContinueButton(
           label: 'Confirmar nome',
-          onPressed: _normalizedName().isEmpty ? null : _nextStep,
+          onPressed: _normalizedName().isEmpty ? null : _confirmNameAndContinue,
         );
       case _OnboardingStep.missionIntroduction:
         return ContinueButton(
@@ -241,34 +237,43 @@ class _OnboardingPageState extends State<OnboardingPage> {
         _OnboardingStep.picoGreeting => _OnboardingStep.askName,
         _OnboardingStep.askName => _OnboardingStep.teacherFollowUp,
         _OnboardingStep.teacherFollowUp => _OnboardingStep.missionIntroduction,
-        _OnboardingStep.missionIntroduction => _OnboardingStep.missionIntroduction,
+        _OnboardingStep.missionIntroduction =>
+          _OnboardingStep.missionIntroduction,
       };
     });
+  }
+
+  Future<void> _confirmNameAndContinue() async {
+    final playerName = _normalizedName();
+    if (playerName.isEmpty) {
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_playerNameKey, playerName);
+
+    if (!mounted) {
+      return;
+    }
+
+    _nextStep();
   }
 
   Future<void> _startMission() async {
     final prefs = await SharedPreferences.getInstance();
     final playerName = _normalizedName();
     if (playerName.isNotEmpty) {
-      await prefs.setString('player_name', playerName);
+      await prefs.setString(_playerNameKey, playerName);
     }
     await _onboardingService.markCompleted(widget.missionId);
 
     if (!mounted) return;
     if (widget.entryFromHome) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => LessonPage(missionId: widget.missionId),
-        ),
-      );
+      context.pushReplacement(AppRouter.missionLocation(widget.missionId));
       return;
     }
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => const HomePage(),
-      ),
-    );
+    context.go(AppRouter.homePath);
   }
 
   String _titleForStep(_OnboardingStep step) {
@@ -309,9 +314,7 @@ class _DialogueStage extends StatelessWidget {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ...bubbles,
-            ],
+            children: [...bubbles],
           ),
         ),
       ],

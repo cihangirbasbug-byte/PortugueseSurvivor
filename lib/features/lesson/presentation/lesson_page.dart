@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/animation/pico_animation_controller.dart';
 import '../../../core/services/audio_playback_service.dart';
@@ -188,7 +189,7 @@ class _LessonPageState extends State<LessonPage> {
     _isReturningHome = true;
     Future<void>.delayed(const Duration(seconds: 2), () {
       if (!mounted) return;
-      Navigator.of(context).pop(true);
+      context.pop(true);
     });
   }
 
@@ -576,11 +577,17 @@ class _LessonBackgroundDecorState extends State<_LessonBackgroundDecor>
                   children: const [
                     _PosterCard(label: 'A B C D', icon: Icons.abc_rounded),
                     SizedBox(width: 8),
-                    _PosterCard(label: 'bem-vindo', icon: Icons.waving_hand_rounded),
+                    _PosterCard(
+                      label: 'bem-vindo',
+                      icon: Icons.waving_hand_rounded,
+                    ),
                     SizedBox(width: 8),
                     _PosterCard(label: 'amigo', icon: Icons.favorite_rounded),
                     SizedBox(width: 8),
-                    _PosterCard(label: 'obrigado', icon: Icons.pan_tool_alt_rounded),
+                    _PosterCard(
+                      label: 'obrigado',
+                      icon: Icons.pan_tool_alt_rounded,
+                    ),
                   ],
                 ),
               ),
@@ -906,7 +913,11 @@ class _ChildrenDrawingsPoster extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.palette_rounded, size: 12, color: Colors.orange.shade400),
+              Icon(
+                Icons.palette_rounded,
+                size: 12,
+                color: Colors.orange.shade400,
+              ),
               const SizedBox(width: 3),
               Icon(Icons.brush_rounded, size: 12, color: Colors.blue.shade400),
             ],
@@ -933,7 +944,8 @@ class _DustParticlesPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = const Color(0xFFFFF4CE).withValues(alpha: 0.22);
+    final paint = Paint()
+      ..color = const Color(0xFFFFF4CE).withValues(alpha: 0.22);
 
     for (var i = 0; i < 28; i++) {
       final x = ((i * 31.0) + (phase * 42)) % (size.width + 20) - 10;
