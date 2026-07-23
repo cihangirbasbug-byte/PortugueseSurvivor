@@ -2,29 +2,33 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../home/presentation/home_page.dart';
-
 class SplashPage extends StatefulWidget {
-  const SplashPage({super.key});
+  const SplashPage({super.key, required this.onFinished});
+
+  final VoidCallback onFinished;
 
   @override
   State<SplashPage> createState() => _SplashPageState();
 }
 
 class _SplashPageState extends State<SplashPage> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
 
-    Timer(const Duration(seconds: 2), () {
+    _timer = Timer(const Duration(seconds: 2), () {
       if (!mounted) return;
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => const HomePage(),
-        ),
-      );
+      widget.onFinished();
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -35,11 +39,7 @@ class _SplashPageState extends State<SplashPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            Icon(
-              Icons.language,
-              size: 90,
-              color: Color(0xFF0E8A4B),
-            ),
+            Icon(Icons.language, size: 90, color: Color(0xFF0E8A4B)),
             SizedBox(height: 30),
             Text(
               'Portuguese Survivor',

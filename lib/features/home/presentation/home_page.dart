@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router/app_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/services/mission_onboarding_service.dart';
 import '../../../core/services/mission_manager.dart';
@@ -15,8 +17,6 @@ import '../../../shared/widgets/character/character_layer.dart';
 import '../../../shared/widgets/character/pico_character.dart';
 import '../../lesson/data/models/mission_model.dart';
 import '../../lesson/data/repositories/mission_repository.dart';
-import '../../lesson/presentation/lesson_page.dart';
-import '../../onboarding/presentation/onboarding_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -67,20 +67,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _openMission(String missionId) async {
-    final bool shouldShowOnboarding =
-        await _onboardingService.shouldShow(missionId);
+    final bool shouldShowOnboarding = await _onboardingService.shouldShow(
+      missionId,
+    );
 
     if (!mounted) return;
 
-    final result = await Navigator.of(
-      context,
-    ).push(
-      MaterialPageRoute(
-        builder: (_) => shouldShowOnboarding
-            ? OnboardingPage(missionId: missionId, entryFromHome: true)
-            : LessonPage(missionId: missionId),
-      ),
-    );
+    final bool? result;
+    if (shouldShowOnboarding) {
+      result = await context.push<bool>(
+        AppRouter.onboardingLocation(missionId: missionId, entryFromHome: true),
+      );
+    } else {
+      result = await context.push<bool>(AppRouter.missionLocation(missionId));
+    }
 
     if (result == true) {
       await _loadHomeMissionState();
@@ -123,7 +123,10 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _TopBar(onRefresh: _loadHomeMissionState),
+                    _TopBar(
+                      onRefresh: _loadHomeMissionState,
+                      onSettings: () => context.push(AppRouter.settingsPath),
+                    ),
                     const SizedBox(height: 14),
                     const _HeroSection(),
                     const SizedBox(height: 18),
@@ -218,9 +221,10 @@ class _HomePageState extends State<HomePage> {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.onRefresh});
+  const _TopBar({required this.onRefresh, required this.onSettings});
 
   final VoidCallback onRefresh;
+  final VoidCallback onSettings;
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +271,10 @@ class _TopBar extends StatelessWidget {
           onPressed: onRefresh,
           icon: const Icon(Icons.refresh_rounded),
         ),
-        IconButton(onPressed: () {}, icon: const Icon(Icons.settings_rounded)),
+        IconButton(
+          onPressed: onSettings,
+          icon: const Icon(Icons.settings_rounded),
+        ),
       ],
     );
   }
@@ -440,7 +447,8 @@ class _HeroSectionState extends State<_HeroSection>
               final picoLayer = CharacterLayer(
                 role: CharacterRole.pico,
                 size: isCompact
-                    ? PicoCharacter.dimensionFor(PicoCharacterSize.hero) * 1.0736
+                    ? PicoCharacter.dimensionFor(PicoCharacterSize.hero) *
+                          1.0736
                     : PicoCharacter.dimensionFor(PicoCharacterSize.hero) * 1.22,
                 picoSize: PicoCharacterSize.hero,
                 picoAnimate: false,
