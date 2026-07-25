@@ -7,6 +7,7 @@ Portuguese Survivor uses a Supabase Edge Function (`tts`) as a secure server-sid
 - Flutter must call Supabase Edge Function only.
 - OpenAI API key is stored only in Supabase secrets.
 - The function returns MP3 audio bytes and retry-safe JSON errors.
+- The endpoint is private and requires `Authorization: Bearer <SUPABASE_ACCESS_TOKEN>`.
 
 See deployment and contract details in:
 

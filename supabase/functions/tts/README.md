@@ -4,6 +4,9 @@ This function is the only component that talks to OpenAI Speech API.
 
 Flutter must call this edge function endpoint, never OpenAI directly.
 
+The endpoint is not public. Supabase JWT verification is enabled and callers must
+send a valid Supabase access token.
+
 ## Endpoint
 
 Deployed path:
@@ -21,6 +24,10 @@ Preflight:
 Content-Type:
 
 `application/json`
+
+Authorization:
+
+`Authorization: Bearer <SUPABASE_ACCESS_TOKEN>`
 
 ## Request Contract
 
@@ -52,7 +59,7 @@ Status:
 
 Headers:
 
-- `Content-Type: audio/mpeg` (or upstream audio MIME)
+- `Content-Type: audio/mpeg`
 - `X-Request-Id: <uuid>`
 - `Cache-Control: no-store`
 
@@ -98,8 +105,9 @@ Retry-safe behavior:
 - `405` wrong HTTP method.
 - `415` unsupported content type.
 - `500` server misconfiguration (`OPENAI_API_KEY` missing).
-- `502` upstream auth/unexpected upstream client-side error.
-- `503` transient upstream/network/rate-limit errors.
+- `429` upstream rate limit; retryable and forwards `Retry-After` when available.
+- `502` upstream `401/403` sanitized to generic backend configuration error; other unexpected upstream non-retryable failures also map to `502`.
+- `503` transient upstream/network/5xx failures.
 - `504` upstream timeout.
 
 ## CORS
@@ -134,14 +142,14 @@ Optional:
 5. Deploy function:
    - `supabase functions deploy tts`
 6. Test invocation:
-    - `supabase functions invoke tts --body '{"text":"Bom dia","voice":"alloy","language":"pt-PT"}'`
+   - `supabase functions invoke tts --header "Authorization: Bearer <SUPABASE_ACCESS_TOKEN>" --body '{"text":"Bom dia","voice":"alloy","language":"pt-PT"}'`
 
 ## Example curl Request
 
 ```bash
 curl -X POST "https://<project-ref>.supabase.co/functions/v1/tts" \
    -H "Content-Type: application/json" \
-   -H "Authorization: Bearer <anon-or-service-token>" \
+   -H "Authorization: Bearer <SUPABASE_ACCESS_TOKEN>" \
    -d '{"text":"Bom dia!","voice":"alloy","language":"pt-PT"}' \
    --output tts.mp3
 ```
@@ -171,5 +179,6 @@ Error format:
 1. Start local edge runtime:
    - `supabase start`
 2. Serve functions:
-   - `supabase functions serve --env-file .env.local`
+   - `supabase functions serve tts --env-file .env.local`
 3. Set `OPENAI_API_KEY` in `.env.local`.
+4. Call the local endpoint with a valid Supabase access token.

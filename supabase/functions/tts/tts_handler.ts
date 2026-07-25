@@ -283,6 +283,7 @@ async function mapUpstreamError(response: Response): Promise<{
   const status = response.status;
   const rawText = await response.text();
   const upstreamMessage = extractUpstreamMessage(rawText);
+  const retryAfterSeconds = parseRetryAfter(response.headers.get("retry-after"));
 
   if (status === 400 || status === 422) {
     return {
@@ -296,19 +297,19 @@ async function mapUpstreamError(response: Response): Promise<{
   if (status === 401 || status === 403) {
     return {
       status: 502,
-      code: "upstream_auth_error",
-      message: "Speech provider rejected server credentials.",
+      code: "backend_configuration_error",
+      message: "Speech backend configuration error.",
       retryable: false,
     };
   }
 
   if (status === 429) {
     return {
-      status: 503,
+      status: 429,
       code: "upstream_rate_limited",
       message: "Speech provider is rate-limiting requests.",
       retryable: true,
-      retryAfterSeconds: 2,
+      retryAfterSeconds: retryAfterSeconds ?? 2,
     };
   }
 
@@ -318,7 +319,7 @@ async function mapUpstreamError(response: Response): Promise<{
       code: "upstream_service_error",
       message: upstreamMessage ?? "Speech provider is temporarily unavailable.",
       retryable: true,
-      retryAfterSeconds: 2,
+      retryAfterSeconds: retryAfterSeconds ?? 2,
     };
   }
 
@@ -368,6 +369,27 @@ function extractUpstreamMessage(raw: string): string | undefined {
   } catch {
     return raw.slice(0, 200);
   }
+}
+
+function parseRetryAfter(value: string | null): number | undefined {
+  if (value == null) return undefined;
+
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isFinite(parsed) && parsed >= 0) {
+    return parsed;
+  }
+
+  const retryAt = Date.parse(value);
+  if (Number.isNaN(retryAt)) {
+    return undefined;
+  }
+
+  const deltaMs = retryAt - Date.now();
+  if (deltaMs <= 0) {
+    return 0;
+  }
+
+  return Math.ceil(deltaMs / 1000);
 }
 
 function backoffMs(attempt: number): number {
