@@ -1,205 +1,145 @@
 # Portuguese Survivor
-## Project Bible v1.0
 
----
+Version : 1.0
+
+Owner :
+Cihangir Başbuğ
+
+Project Type :
+Educational Mobile Application
+
+Platform :
+Flutter
+
+Language :
+European Portuguese
+
+Target Level :
+Absolute Beginner (A0)
+
+Audience :
+Tourists
+Expats
+Immigrants
+Families
+Students
+
+Goal :
+
+Teach European Portuguese through interactive missions,
 
 # Vision
 
-Portuguese Survivor is the most enjoyable way to learn European Portuguese through story-driven survival adventures.
+Portuguese Survivor will become the world's best
+European Portuguese learning application.
 
-The app is designed to feel like playing a game instead of studying a language.
+The application must feel like
+playing an adventure game,
+not studying a language.
 
-Every feature must increase immersion, motivation and long-term retention.
-
----
-
-# Mission
-
-Help complete beginners become confident Portuguese speakers through:
-
-- Story
-- Emotion
-- Repetition
-- Humor
-- Visual learning
-- Audio
-- Daily habits
-
----
+Every lesson should make users smile,
+feel rewarded,
+and naturally remember words.
 
 # Core Principles
 
-1. Game First
-2. Learning Hidden Inside Gameplay
-3. European Portuguese Only
-4. Every screen must feel alive.
-5. Every interaction should reward the player.
-6. Zero boring grammar screens.
+1.
+European Portuguese only.
 
----
+Never Brazilian Portuguese.
 
-# Target Audience
+2.
 
-Primary:
+Every screen teaches only one idea.
 
-- Turkish beginners
-- English speakers
-- Expats moving to Portugal
+3.
 
-Secondary:
+No long explanations.
 
-- Travelers
-- Families
-- Children
+4.
 
----
+Everything must be visual.
+
+5.
+
+Animations should feel alive.
+
+6.
+
+Learning must always feel like progress.
+
+7.
+
+Every completed lesson gives a feeling of success.
 
 # Design Philosophy
 
-Feeling:
+Warm
 
-- Disney
-- Pixar
-- Nintendo
-- Duolingo polish
-- Animal Crossing warmth
+Cute
 
-Never:
+Minimal
 
-- Corporate
-- Cold
-- Text heavy
+Premium
 
----
+Disney quality
 
-# Main Character
+Nintendo polish
 
-Pico
+Apple simplicity
 
-Rules:
+Duolingo accessibility
 
-- Always friendly
-- Never annoying
-- Encourages the player
-- Celebrates every success
+No clutter.
 
----
+No ugly screens.
 
-# Learning Method
-
-Story
-
-↓
-
-Scene
-
-↓
-
-Interaction
-
-↓
-
-Reward
-
-↓
-
-Memory
-
----
-
-# Mission Structure
-
-Mission
-
-↓
-
-Scenes
-
-↓
-
-Mini Games
-
-↓
-
-Mission Complete
-
-↓
-
-Reward
-
-↓
-
-Next Mission
-
----
-
-# Chapters
-
-Chapter 1
-Airport
-
-Chapter 2
-Taxi
-
-Chapter 3
-Apartment
-
-Chapter 4
-Market
-
-Chapter 5
-Cafe
-
-Chapter 6
-Hospital
-
-Chapter 7
-Friends
-
-Chapter 8
-Job
-
-Chapter 9
-Government
-
-Chapter 10
-Daily Life
-
----
-
-# Technical Rules
-
-Flutter
-
-Clean Architecture
-
-Riverpod
-
-Responsive Design
-
-Offline First
-
-Modular Components
-
-No duplicated widgets.
-
----
+No unnecessary buttons.
 
 # AI Rules
 
-Every AI assistant must:
+Every AI agent must follow Project Bible.
 
-- protect project quality
-- follow Project Bible
-- never invent architecture
-- keep UI consistent
-- explain decisions
-- update documentation
+If another document conflicts with Project Bible,
 
----
+Project Bible wins.
 
-# Success Metric
+# CEO Approval Rule
 
-Players should say:
+Any feature affecting
 
-"I forgot I was studying Portuguese."
+UX
+
+Architecture
+
+Learning System
+
+Mission Structure
+
+Reward System
+
+must be approved by the CEO Agent before implementation.
+
+# Quality Rule
+
+Every screen must answer:
+
+Is it simpler?
+
+Is it clearer?
+
+Is it more fun?
+
+If not,
+
+redesign it.
+
+# Golden Rule
+
+Portuguese Survivor is not a language course.
+
+Portuguese Survivor is an adventure game
+that accidentally teaches Portuguese.
+storytelling,
+visual learning,
+and AI-supported pronunciation.
