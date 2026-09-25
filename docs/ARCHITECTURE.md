@@ -1,66 +1,74 @@
-# Portuguese Survivor
+# Portuguese Survivor Architecture
 
-# Software Architecture
-
----
-
-# Framework
-
-Flutter
-
-Language
-
-Dart
-
-Architecture
-
-Clean Architecture
-
-State Management
-
-Riverpod
-
-Routing
-
-GoRouter
-
-Animation
-
-Flutter Animation Framework
-
-Storage
-
-Hive
-
-Audio
-
-just_audio
-
-TTS
-
-OpenAI Realtime
+Version: 1.0
 
 ---
 
-# Folder Structure
+# Philosophy
+
+Portuguese Survivor uses a Feature First architecture.
+
+Every feature is independent.
+
+Every feature owns its own
+
+- UI
+- Logic
+- Models
+- Repository
+- State
+
+Features must not depend directly on each other.
+
+Communication happens only through services.
+
+---
+
+# Project Structure
 
 lib/
 
 features/
 
-shared/
-
 core/
 
-assets/
+shared/
 
-docs/
+services/
+
+assets/
 
 ---
 
 # Feature Structure
 
-feature/
+Each feature contains
+
+presentation/
+
+domain/
+
+data/
+
+widgets/
+
+models/
+
+repositories/
+
+services/
+
+---
+
+Example
+
+lesson/
+
+presentation/
+
+widgets/
+
+domain/
 
 data/
 
@@ -68,25 +76,15 @@ models/
 
 repositories/
 
-presentation/
-
-widgets/
-
-scenes/
-
-controllers/
-
-services/
-
 ---
 
-# Layer Rules
+# Layers
 
 Presentation
 
 ↓
 
-Service
+Domain
 
 ↓
 
@@ -94,164 +92,208 @@ Repository
 
 ↓
 
-Data
+Data Source
 
 ↓
 
-Storage
+Storage / API
 
-Presentation never accesses Storage directly.
-
----
-
-# Naming Rules
-
-snake_case
-
-Examples
-
-lesson_page.dart
-
-mission_card.dart
-
-home_page.dart
-
-scene_model.dart
+No layer may skip another layer.
 
 ---
 
-# Widget Rules
+# State Management
 
-Widgets must stay small.
+Riverpod
 
-Maximum
+StateNotifier
 
-250 lines
+Provider
 
-Large widgets must be split.
+AsyncValue
 
----
+State must never be stored inside Widgets.
 
-# File Rules
+Widgets display state.
 
-One responsibility per file.
-
-Avoid files over
-
-500 lines.
+Providers own state.
 
 ---
 
-# Scene Rules
+# Dependency Rule
 
-Every mission is built from scenes.
+UI
 
-Scene Types
+↓
 
-story
+Controller
 
-dialog
+↓
 
-quiz
+Repository
 
-celebration
+↓
 
-realLifeTip
+Datasource
 
-mission_complete
-
----
-
-# UI Rules
-
-Rounded Corners
-
-16-24
-
-Soft Shadows
-
-Warm Colors
-
-Accessible Fonts
-
-Large Buttons
-
-Child Friendly
+Never reverse this flow.
 
 ---
 
-# Color Palette
+# Audio System
 
-Cream
+Audio Service
 
-Sky Blue
+↓
 
-Mint
+Cache
 
-Yellow
+↓
 
-Soft Green
+Player
 
-No dark aggressive colors.
+↓
+
+UI
+
+Audio generation must never block UI.
 
 ---
 
-# Coding Rules
+# Lesson Engine
 
-Readable code
+Lesson Engine controls
 
-Meaningful variable names
+Scenes
 
-No duplicated logic
+Questions
 
-Comment only when necessary
+Hints
 
-Keep methods short
+Progress
+
+Completion
+
+Animations
+
+The UI never decides lesson flow.
+
+Lesson Engine decides.
+
+---
+
+# Mission Engine
+
+Mission Engine controls
+
+Mission order
+
+Unlocks
+
+XP rewards
+
+Stars
+
+Completion
+
+Navigation
+
+---
+
+# XP Engine
+
+XP is calculated centrally.
+
+No screen calculates XP.
+
+---
+
+# Save System
+
+Single Save Service.
+
+All progress goes through Save Service.
+
+No widget writes directly.
+
+---
+
+# Offline Support
+
+Everything required for learning must work offline.
+
+Downloaded audio
+
+Lessons
+
+Images
+
+Progress
+
+---
+
+# Error Handling
+
+Errors must never crash the application.
+
+Instead
+
+Show friendly UI
+
+Retry automatically
+
+Log silently
 
 ---
 
 # Performance Rules
 
-Avoid rebuilding widgets.
+60 FPS minimum
 
-Use const whenever possible.
+Lazy loading
 
-Avoid unnecessary setState.
+Image caching
 
-Prefer StatelessWidget.
+Audio caching
 
----
-
-# Animation Rules
-
-Fast
-
-Friendly
-
-Simple
-
-Never distract learning.
+Minimal rebuilds
 
 ---
 
-# Git Rules
+# Testing
 
-One feature
+Unit Tests
 
-=
+Widget Tests
 
-One commit
+Integration Tests
 
-One feature
-
-=
-
-One branch
+Golden Tests
 
 ---
 
-# Golden Rule
+# Future Modules
 
-Every line of code must improve learning.
+AI Teacher
 
-Never add complexity without educational value.
+Conversation Mode
+
+Grammar Engine
+
+Story Engine
+
+Leaderboard
+
+Cloud Sync
+
+Premium
+
+---
+
+# Architecture Rule
+
+If a new feature does not fit this architecture,
+
+the architecture is updated first,
+
+then the feature is implemented.
